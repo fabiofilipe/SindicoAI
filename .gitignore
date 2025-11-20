@@ -11,4 +11,4 @@ venv/
 .idea/
 postgres_data/
 
-
+PERMISSIONS.md

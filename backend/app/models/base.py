@@ -22,6 +22,7 @@ class User(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     email = Column(String, unique=True, index=True, nullable=False)
+    cpf = Column(String, unique=True, index=True, nullable=True)  # CPF for validation
     hashed_password = Column(String, nullable=False)
     full_name = Column(String)
     role = Column(String, default="resident") # resident, admin, staff
@@ -39,6 +40,7 @@ class Unit(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     block = Column(String)
     number = Column(String, nullable=False)
+    authorized_cpfs = Column(String)  # JSON string of authorized CPFs for this unit
     
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="units")

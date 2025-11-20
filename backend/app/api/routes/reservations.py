@@ -29,7 +29,14 @@ async def create_reservation(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new reservation with conflict checking"""
+    """Create a new reservation with conflict checking (residents and admins only)"""
+    # Staff cannot create reservations
+    if current_user.role == "staff":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Staff members cannot create reservations"
+        )
+    
     # Check for time conflicts
     has_conflict = await check_reservation_conflict(
         db=db,
@@ -96,7 +103,7 @@ async def cancel_reservation(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Cancel a reservation"""
+    """Cancel a reservation (owner or admin only)"""
     result = await db.execute(
         select(Reservation).where(
             Reservation.id == reservation_id,
@@ -107,6 +114,14 @@ async def cancel_reservation(
     if not reservation:
         raise HTTPException(status_code=404, detail="Reservation not found")
     
+    # Only owner or admin can cancel
+    if current_user.role != "admin" and reservation.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only cancel your own reservations"
+        )
+    
     reservation.status = "cancelled"
     await db.commit()
     return None
+

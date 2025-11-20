@@ -28,7 +28,13 @@ async def create_common_area(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new common area"""
+    """Create a new common area (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can create common areas"
+        )
+    
     db_area = CommonArea(**area.model_dump(), tenant_id=current_user.tenant_id)
     db.add(db_area)
     await db.commit()
@@ -60,7 +66,13 @@ async def update_common_area(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Update a common area"""
+    """Update a common area (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can update common areas"
+        )
+    
     result = await db.execute(
         select(CommonArea).where(
             CommonArea.id == area_id,
@@ -84,7 +96,13 @@ async def delete_common_area(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Delete a common area"""
+    """Delete a common area (admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can delete common areas"
+        )
+    
     result = await db.execute(
         select(CommonArea).where(
             CommonArea.id == area_id,

@@ -1,0 +1,6 @@
+cpf,full_name,unit_number,email,role,password
+12345678901,John Doe,101,john.doe@example.com,resident,password123
+98765432100,Jane Smith,101,,,
+11122233344,Admin User,102,admin@example.com,admin,admin123
+99988877766,Bob Jones,201,,,
+12312312312,Carlos Silva,203,carlos.silva@example.com,staff,staff123

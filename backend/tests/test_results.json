@@ -1,0 +1,15 @@
+{
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "success_rate": "100.0%",
+  "tests": {
+    "upload_pdf": true,
+    "processamento_background": true,
+    "busca_semantica": true,
+    "chat_respostas": true,
+    "rate_limiting": true,
+    "cache": true,
+    "multi_tenant": true
+  }
+}

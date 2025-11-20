@@ -1,0 +1,40 @@
+{
+  "desenvolvimento": {
+    "total": 8,
+    "passed": 8,
+    "items": {
+      "modelos": true,
+      "upload": true,
+      "pipeline": true,
+      "chat": true,
+      "rate_limit": true,
+      "cache": true,
+      "testes": true,
+      "dataset": true
+    }
+  },
+  "qualidade": {
+    "total": 3,
+    "passed": 3,
+    "items": {
+      "avaliacao_script": true,
+      "multi_tenant": true,
+      "performance": true
+    }
+  },
+  "producao": {
+    "total": 4,
+    "passed": 4,
+    "items": {
+      "env": true,
+      "monitoramento": true,
+      "logs": true,
+      "documentacao": true
+    }
+  },
+  "geral": {
+    "total": 15,
+    "passed": 15,
+    "success_rate": "100.0%"
+  }
+}

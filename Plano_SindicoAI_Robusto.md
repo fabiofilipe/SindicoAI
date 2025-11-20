@@ -20,7 +20,7 @@
 
 ---
 
-## 📅 **Fase 1: Planejamento e Design (Semanas 1–2)**  
+## 📅 **Fase 1: Planejamento e Design **  
 **Objetivo:** Definir experiência completa + arquitetura preparada para escala.
 
 ### 🔹 **Tarefas**
@@ -61,7 +61,7 @@ Considerar:
 
 ---
 
-## 🛠️ **Fase 2: Backend Core (Semanas 3–5)**
+## 🛠️ **Fase 2: Backend Core **
 
 ### 🔐 **Camada de Segurança e Escalabilidade**
 - CI/CD  
@@ -107,7 +107,7 @@ Considerar:
 
 ---
 
-## 🤖 **Fase 3: Inteligência Artificial e RAG (Semanas 6–7)**
+## 🤖 **Fase 3: Inteligência Artificial e RAG **
 
 ### 📄 Upload de Documentos
 - Suporte à versão  
@@ -131,7 +131,7 @@ Considerar:
 
 ---
 
-## 📱 **Fase 4: Desenvolvimento Frontend e Mobile (Semanas 8–11)**
+## 📱 **Fase 4: Desenvolvimento Frontend e Mobile **
 
 ### **4.1 Painel do Administrador (Web)**
 - Dashboard com insights da IA  
@@ -153,7 +153,7 @@ Considerar:
 
 ---
 
-## 🧪 **Fase 5: Testes e Refinamento (Semana 12)**
+## 🧪 **Fase 5: Testes e Refinamento **
 
 - Testes de concorrência extrema  
 - Testes de estresse do RAG  
@@ -165,7 +165,7 @@ Considerar:
 
 ---
 
-## 🚀 **Fase 6: Lançamento e Monitoramento (Semana 13+)**
+## 🚀 **Fase 6: Lançamento e Monitoramento **
 
 - Deploy automatizado  
 - Monitoramento (Grafana + logs)  

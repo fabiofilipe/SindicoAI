@@ -2,7 +2,7 @@
 
 Este documento lista melhorias e funcionalidades que devem ser implementadas antes da Fase 3 (IA/RAG).
 
-## 🔴 CRÍTICO - Implementar IMEDIATAMENTE
+##  CRÍTICO - Implementar IMEDIATAMENTE
 
 ### 1. Migrações de Banco de Dados
 - [x] Criar migration inicial do Alembic com todos os modelos
@@ -13,24 +13,24 @@ Este documento lista melhorias e funcionalidades que devem ser implementadas ant
 
 ---
 
-## 🟡 IMPORTANTE - Implementar ANTES da Fase 3
+##  IMPORTANTE - Implementar ANTES da Fase 3
 
 ### 2. CRUD de Units (Unidades)
-- [ ] GET `/units` - Listar unidades do condomínio
-- [ ] POST `/units` - Criar unidade manualmente (admin)
-- [ ] GET `/units/{id}` - Detalhes de uma unidade
-- [ ] PUT `/units/{id}` - Atualizar unidade (incluindo CPFs autorizados)
-- [ ] DELETE `/units/{id}` - Deletar unidade
+- [x] GET `/units` - Listar unidades do condomínio
+- [x] POST `/units` - Criar unidade manualmente (admin)
+- [x] GET `/units/{id}` - Detalhes de uma unidade
+- [x] PUT `/units/{id}` - Atualizar unidade (incluindo CPFs autorizados)
+- [x] DELETE `/units/{id}` - Deletar unidade
 
 **Motivo**: Admin precisa gerenciar unidades sem depender apenas de importação.
 
 ### 3. Gestão de Usuários (Admin)
-- [ ] GET `/users` - Listar todos usuários do condomínio (admin)
-- [ ] GET `/users/{id}` - Detalhes de um usuário
-- [ ] PUT `/users/{id}/activate` - Ativar usuário
-- [ ] PUT `/users/{id}/deactivate` - Desativar usuário
-- [ ] PUT `/users/{id}/reset-password` - Resetar senha (admin)
-- [ ] GET `/users/me` - Dados do usuário atual
+- [x] GET `/users` - Listar todos usuários do condomínio (admin)
+- [x] GET `/users/{id}` - Detalhes de um usuário
+- [x] PUT `/users/{id}/activate` - Ativar usuário
+- [x] PUT `/users/{id}/deactivate` - Desativar usuário
+- [x] PUT `/users/{id}/reset-password` - Resetar senha (admin)
+- [x] GET `/users/me` - Dados do usuário atual
 
 **Motivo**: Admin precisa controle sobre usuários cadastrados.
 
@@ -43,7 +43,7 @@ Este documento lista melhorias e funcionalidades que devem ser implementadas ant
 
 ---
 
-## 🟢 NICE TO HAVE - Pode esperar para depois da Fase 3
+##  NICE TO HAVE - Pode esperar para depois da Fase 3
 
 ### 5. Validação e Testes
 - [ ] Configurar pytest com fixtures

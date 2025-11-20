@@ -29,3 +29,20 @@ class User(UserInDBBase):
 
 class UserInDB(UserInDBBase):
     hashed_password: str
+
+# User management schemas
+class UserResponse(BaseModel):
+    id: str
+    email: EmailStr
+    cpf: Optional[str] = None
+    full_name: Optional[str] = None
+    role: str
+    is_active: bool
+    tenant_id: str
+    unit_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class PasswordResetRequest(BaseModel):
+    new_password: str

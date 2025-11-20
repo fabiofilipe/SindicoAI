@@ -12,15 +12,64 @@ router = APIRouter()
 
 @router.get("/", response_model=List[NotificationResponse])
 async def list_notifications(
+    unread: bool = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """List all notifications for the current user"""
-    result = await db.execute(
-        select(Notification).where(Notification.user_id == current_user.id)
-    )
+    """List all notifications for the current user, optionally filter by unread"""
+    query = select(Notification).where(Notification.user_id == current_user.id)
+    
+    if unread is not None:
+        query = query.where(Notification.is_read == (not unread))
+    
+    result = await db.execute(query)
     notifications = result.scalars().all()
     return notifications
+
+@router.put("/{notification_id}/read", response_model=NotificationResponse)
+async def mark_notification_as_read(
+    notification_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Mark a notification as read"""
+    result = await db.execute(
+        select(Notification).where(
+            Notification.id == notification_id,
+            Notification.user_id == current_user.id
+        )
+    )
+    notification = result.scalars().first()
+    
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    notification.is_read = True
+    await db.commit()
+    await db.refresh(notification)
+    return notification
+
+@router.delete("/{notification_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_notification(
+    notification_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Delete a notification"""
+    result = await db.execute(
+        select(Notification).where(
+            Notification.id == notification_id,
+            Notification.user_id == current_user.id
+        )
+    )
+    notification = result.scalars().first()
+    
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    await db.delete(notification)
+    await db.commit()
+    return None
 
 @router.post("/", response_model=List[NotificationResponse], status_code=status.HTTP_201_CREATED)
 async def create_notification(

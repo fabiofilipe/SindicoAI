@@ -24,8 +24,8 @@ from dotenv import load_dotenv
 sys.path.append(os.getcwd())
 load_dotenv()
 
-from app.database import Base
-import app.models  # Import models to register them
+from app.core.database import Base
+import app.models.base  # Import models to register them
 
 target_metadata = Base.metadata
 

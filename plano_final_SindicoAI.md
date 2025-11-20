@@ -16,24 +16,24 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
 **Objetivo:** Configurar o ambiente de desenvolvimento containerizado e definir a estrutura de dados segura.
 
 ### 1.1 Setup do Ambiente (Docker)
-- [ ] **Configurar Repositório:** Git flow, pre-commit hooks (linting, formatação).
-- [ ] **Dockerização Inicial:** Criar `Dockerfile` para Backend e `docker-compose.yml` contendo:
+- [x] **Configurar Repositório:** Git flow, pre-commit hooks (linting, formatação).
+- [x] **Dockerização Inicial:** Criar `Dockerfile` para Backend e `docker-compose.yml` contendo:
     - API Service
     - PostgreSQL (com extensão `vector` habilitada)
     - Redis (para cache/filas futuras)
     - pgAdmin ou similar.
-- [ ] **Hello World:** Endpoint de healthcheck funcionando via Docker.
+- [x] **Hello World:** Endpoint de healthcheck funcionando via Docker.
 
 ### 1.2 Modelagem de Dados e Multi-tenancy
-- [ ] **Definir Estratégia Multi-tenant:** Decidir e documentar (Recomendado: RLS para simplicidade e escala inicial).
-- [ ] **Modelagem ERD Core:**
+- [x] **Definir Estratégia Multi-tenant:** Decidir e documentar (Recomendado: RLS para simplicidade e escala inicial).
+- [x] **Modelagem ERD Core:**
     - `Tenants` (Condomínios)
     - `Users` (Moradores, Síndicos, Funcionários)
     - `Units` (Apartamentos/Casas)
-- [ ] **Migrações:** Configurar Alembic (Python) ou TypeORM/Prisma (Node) para gerenciar schema.
+- [x] **Migrações:** Configurar Alembic (Python) ou TypeORM/Prisma (Node) para gerenciar schema.
 
 ### 1.3 Estruturação do Backend (Clean Architecture)
-- [ ] **Organização de Pastas:** Criar estrutura dentro de `backend/app`:
+- [x] **Organização de Pastas:** Criar estrutura dentro de `backend/app`:
     - `api/routes`: Endpoints da API (separados por módulo).
     - `schemas`: Modelos Pydantic (Request/Response).
     - `models`: Modelos SQLAlchemy (Banco de Dados).
@@ -42,11 +42,11 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
     - `core/security`: Utils de Auth (Hash, Token).
     - `dependencies`: Injeção de dependência (Get DB, Get User).
     - `utils`: Funções auxiliares genéricas.
-- [ ] **Refatoração:** Mover arquivos existentes para as novas pastas.
+- [x] **Refatoração:** Mover arquivos existentes para as novas pastas.
 
 ### 1.4 Autenticação Base
-- [ ] **Dependências:** Adicionar `passlib`, `python-jose`, `python-multipart`.
-- [ ] **Implementação:**
+- [x] **Dependências:** Adicionar `passlib`, `python-jose`, `python-multipart`.
+- [x] **Implementação:**
     - `core/security.py`: Funções de Hash e JWT.
     - `api/routes/auth.py`: Login e Refresh Token.
     - `dependencies/auth.py`: Middleware de proteção de rotas.
@@ -57,17 +57,17 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
 **Objetivo:** Construir as funcionalidades vitais de gestão e preparar a automação de infraestrutura.
 
 ### 2.1 Infraestrutura como Código (IaC)
-- [ ] **Setup Terraform/Pulumi:** Criar scripts para provisionar recursos básicos (Bucket S3, Banco de Dados) em ambiente de Staging.
-- [ ] **CI/CD Pipeline:** Configurar GitHub Actions para rodar testes unitários e build do Docker a cada Push.
+- [x] **Setup Terraform/Pulumi:** Criar scripts para provisionar recursos básicos (Bucket S3, Banco de Dados) em ambiente de Staging.
+- [x] **CI/CD Pipeline:** Configurar GitHub Actions para rodar testes unitários e build do Docker a cada Push.
 
 ### 2.2 Funcionalidades Core (CRUDs)
-- [ ] **Gestão de Áreas Comuns:** CRUD de áreas (Piscina, Salão) com regras de horário.
-- [ ] **Reservas:** Lógica de conflito de horários e limites por unidade.
+- [x] **Gestão de Áreas Comuns:** CRUD de áreas (Piscina, Salão) com regras de horário.
+- [x] **Reservas:** Lógica de conflito de horários e limites por unidade.
     - *Teste:* Criar testes unitários cobrindo cenários de conflito.
-- [ ] **Módulo de Notificações (Backend):** Estrutura para criar e listar notificações.
+- [x] **Módulo de Notificações (Backend):** Estrutura para criar e listar notificações.
 
 ### 2.3 Importador Universal (Onboarding)
-- [ ] **ETL de Importação:** Criar script/endpoint para importar moradores e unidades via CSV/Excel.
+- [x] **ETL de Importação:** Criar script/endpoint para importar moradores e unidades via CSV/Excel.
     - *Motivo:* Facilitar a entrada de novos condomínios.
 
 ---

@@ -10,5 +10,5 @@ venv/
 .vscode/
 .idea/
 postgres_data/
-
+Melhorias.md
 PERMISSIONS.md

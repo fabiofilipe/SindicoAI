@@ -3,6 +3,7 @@ from typing import Optional
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 class TokenPayload(BaseModel):
@@ -11,3 +12,6 @@ class TokenPayload(BaseModel):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+class TokenRefreshRequest(BaseModel):
+    refresh_token: str

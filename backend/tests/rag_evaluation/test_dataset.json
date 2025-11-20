@@ -1,0 +1,27 @@
+[
+  {
+    "question": "Qual o horário de funcionamento da piscina?",
+    "expected_answer": "A piscina funciona das 8h às 22h",
+    "context_should_contain": ["piscina", "horário", "funcionamento"]
+  },
+  {
+    "question": "Posso ter animais de estimação?",
+    "expected_answer": "Sim, são permitidos animais de estimação de pequeno porte",
+    "context_should_contain": ["animais", "estimação", "permitido"]
+  },
+  {
+    "question": "Qual a multa por barulho após 22h?",
+    "expected_answer": "A multa por perturbação do sossego após 22h é de R$ 200,00",
+    "context_should_contain": ["multa", "barulho", "22h"]
+  },
+  {
+    "question": "Como funciona o sistema de reservas?",
+    "expected_answer": "As reservas devem ser feitas com 48h de antecedência através do aplicativo",
+    "context_should_contain": ["reserva", "antecedência", "aplicativo"]
+  },
+  {
+    "question": "Quantas vagas de garagem tenho direito?",
+    "expected_answer": "Cada unidade tem direito a 2 vagas de garagem",
+    "context_should_contain": ["vagas", "garagem", "unidade"]
+  }
+]

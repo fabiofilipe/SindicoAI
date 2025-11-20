@@ -488,7 +488,7 @@ genai.configure(api_key=settings.GOOGLE_API_KEY)
 
 class RAGService:
     def __init__(self):
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
     
     async def generate_query_embedding(self, query: str) -> List[float]:
         """Gera embedding para a pergunta do usuário"""

@@ -43,8 +43,8 @@ print("\n3️⃣ Testando geração de resposta:")
 try:
     model = genai.GenerativeModel('gemini-2.5-flash')
     response = model.generate_content("Responda em uma frase: O que é um condomínio?")
-    print(f"   ✅ Resposta gerada com sucesso!")
-    print(f"   💬 Resposta: {response.text}")
+    print(f"    Resposta gerada com sucesso!")
+    print(f"    Resposta: {response.text}")
 except Exception as e:
     print(f"   ❌ Erro: {e}")
 

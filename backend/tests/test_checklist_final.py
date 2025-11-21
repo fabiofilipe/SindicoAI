@@ -29,12 +29,12 @@ results = {
     "producao": {}
 }
 
-print_section("📋 CHECKLIST FINAL - FASE 3 RAG")
+print_section(" CHECKLIST FINAL - FASE 3 RAG")
 
 # ============================================================
 # DESENVOLVIMENTO
 # ============================================================
-print_section("🔧 DESENVOLVIMENTO")
+print_section(" DESENVOLVIMENTO")
 
 # 1. Modelos criados e migrados
 model_path = Path(__file__).parent.parent / "app" / "models" / "document.py"
@@ -115,7 +115,7 @@ results["desenvolvimento"]["dataset"] = status
 # ============================================================
 # QUALIDADE
 # ============================================================
-print_section("🎯 QUALIDADE")
+print_section(" QUALIDADE")
 
 # 1. Avaliação RAG executada
 eval_script = Path(__file__).parent / "rag_evaluation" / "evaluate.py"
@@ -143,7 +143,7 @@ results["qualidade"]["performance"] = status
 # ============================================================
 # PRODUÇÃO
 # ============================================================
-print_section("🚀 PRODUÇÃO")
+print_section(" PRODUÇÃO")
 
 # 1. Variáveis de ambiente configuradas
 env_example = Path(__file__).parent.parent / ".env.example"
@@ -189,7 +189,7 @@ results["producao"]["documentacao"] = status
 # ============================================================
 # RESUMO
 # ============================================================
-print_section("📊 RESUMO FINAL")
+print_section(" RESUMO FINAL")
 
 # Calcular totais
 dev_total = len(results["desenvolvimento"])
@@ -242,11 +242,11 @@ print(f"\n{BLUE}Resultados salvos em: {results_file}{RESET}")
 # Status final
 if total_passed == total_items:
     print(f"\n{GREEN}{'='*60}{RESET}")
-    print(f"{GREEN}🎉 CHECKLIST FINAL 100% COMPLETO! 🎉{RESET}")
+    print(f"{GREEN} CHECKLIST FINAL 100% COMPLETO! {RESET}")
     print(f"{GREEN}{'='*60}{RESET}")
     exit(0)
 else:
     print(f"\n{YELLOW}{'='*60}{RESET}")
-    print(f"{YELLOW}⚠️  Checklist {(total_passed/total_items*100):.0f}% completo{RESET}")
+    print(f"{YELLOW}  Checklist {(total_passed/total_items*100):.0f}% completo{RESET}")
     print(f"{YELLOW}{'='*60}{RESET}")
     exit(1)

@@ -76,52 +76,52 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
 **Objetivo:** Implementar o "cérebro" do sistema com segurança, qualidade e controle de custos.
 
 ### 3.1 Infraestrutura Vetorial e Modelagem
-- [ ] **Modelagem de Dados:**
+- [x] **Modelagem de Dados:**
     - Tabela `documents`: Metadados de PDFs (nome, tipo, upload_date, tenant_id, uploaded_by).
     - Tabela `document_chunks`: Texto fragmentado + embeddings vetoriais (chunk_text, embedding vector[768], chunk_index, document_id, tenant_id).
-- [ ] **Escolha de Modelo de Embedding:** **Google Gemini text-embedding-004** (768 dimensões, gratuito até 1500 req/dia).
-- [ ] **Framework RAG:** **LangChain** com integração `langchain-google-genai` para orquestração.
-- [ ] **Estratégia de Chunking:** RecursiveCharacterTextSplitter do LangChain (tamanho: 1000 chars, overlap: 200 chars).
+- [x] **Escolha de Modelo de Embedding:** **Google Gemini text-embedding-004** (768 dimensões, gratuito até 1500 req/dia).
+- [x] **Framework RAG:** **LangChain** com integração `langchain-google-genai` para orquestração.
+- [x] **Estratégia de Chunking:** RecursiveCharacterTextSplitter do LangChain (tamanho: 1000 chars, overlap: 200 chars).
 
 ### 3.2 Pipeline de Ingestão de Documentos
-- [ ] **Endpoint de Upload (Admin Only):** POST `/documents/upload` para enviar PDFs de regimentos.
-- [ ] **Extração de Texto:** Implementar com pdfplumber ou PyPDF2 (considerar OCR para PDFs escaneados).
-- [ ] **Processamento Assíncrono:**
+- [x] **Endpoint de Upload (Admin Only):** POST `/documents/upload` para enviar PDFs de regimentos.
+- [x] **Extração de Texto:** Implementar com pdfplumber ou PyPDF2 (considerar OCR para PDFs escaneados).
+- [x] **Processamento Assíncrono:**
     - Chunking do texto extraído.
     - Geração de embeddings via API.
     - Armazenamento no pgvector com `tenant_id`.
-- [ ] **Validação de Segurança:** Garantir isolamento total entre tenants (chunks nunca vazam entre condomínios).
+- [x] **Validação de Segurança:** Garantir isolamento total entre tenants (chunks nunca vazam entre condomínios).
 
 ### 3.3 RAG (Retrieval-Augmented Generation)
-- [ ] **Endpoint de Chat:** POST `/ai/chat` recebe pergunta do usuário.
-- [ ] **Busca Semântica:** 
+- [x] **Endpoint de Chat:** POST `/ai/chat` recebe pergunta do usuário.
+- [x] **Busca Semântica:** 
     - Converter pergunta em embedding usando Gemini text-embedding-004.
     - Buscar top-5 chunks mais similares (cosine similarity) do tenant específico via pgvector.
-- [ ] **Geração de Resposta:** 
-    - Integrar com **Google Gemini 1.5 Flash** (rápido, barato, contexto de 1M tokens).
+- [x] **Geração de Resposta:** 
+    - Integrar com **Google Gemini 2.5 Flash** (rápido, barato, contexto de 1M tokens).
     - Usar LangChain RetrievalQA chain para orquestração.
     - Prompt engineering: incluir contexto dos chunks + pergunta + instruções para citar fontes.
     - Retornar resposta + citações (documento e página de origem).
 
 ### 3.4 Framework de Avaliação (RAG Eval)
-- [ ] **Dataset de Teste:** Criar 20-30 pares de Pergunta/Resposta ideais baseados em casos de uso reais:
+- [x] **Dataset de Teste:** Criar 20-30 pares de Pergunta/Resposta ideais baseados em casos de uso reais:
     - "Qual o horário de funcionamento da piscina?"
     - "Posso ter animais de estimação?"
     - "Qual a multa por barulho após 22h?"
     - "Como funciona o sistema de reservas?"
-- [ ] **Pipeline de Avaliação:** Script automatizado usando Ragas ou DeepEval para medir:
+- [x] **Pipeline de Avaliação:** Script automatizado usando Ragas ou DeepEval para medir:
     - **Precisão:** Resposta correta vs esperada.
     - **Relevância:** Chunks recuperados contêm informação necessária.
     - **Fidelidade:** Resposta baseada apenas no contexto (sem alucinações).
-- [ ] **CI/CD Integration:** Rodar avaliação antes de deploy de mudanças na IA.
+- [x] **CI/CD Integration:** Rodar avaliação antes de deploy de mudanças na IA.
 
 ### 3.5 Controle de Custos e Performance
-- [ ] **Rate Limiting:** Limitar requisições por usuário/condomínio (ex: 50 perguntas/dia por morador).
-- [ ] **Cache de Respostas:** Implementar cache Redis para perguntas frequentes idênticas.
-- [ ] **Métricas de Uso:** 
+- [x] **Rate Limiting:** Limitar requisições por usuário/condomínio (ex: 50 perguntas/dia por morador).
+- [x] **Cache de Respostas:** Implementar cache Redis para perguntas frequentes idênticas.
+- [x] **Métricas de Uso:** 
     - Dashboard de tokens consumidos por tenant.
     - Alertas de custo (threshold mensal).
-- [ ] **Otimização:** Considerar modelos mais baratos para embeddings e respostas simples.
+- [x] **Otimização:** Considerar modelos mais baratos para embeddings e respostas simples.
 
 ---
 

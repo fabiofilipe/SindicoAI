@@ -8,9 +8,9 @@ import { lazy, Suspense } from 'react'
 const LoginPage = lazy(() => import('@/pages/auth').then(m => ({ default: m.LoginPage })))
 const DashboardPage = lazy(() => import('@/pages/dashboard').then(m => ({ default: m.DashboardPage })))
 
-// Placeholder pages (will be implemented in Phase 2)
-const UnitsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Unidades - Em breve</h1></div> }))
-const UsersPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Usuários - Em breve</h1></div> }))
+// Units pages
+const UnitsPage = lazy(() => import('@/pages/units').then(m => ({ default: m.UnitsListPage })))
+const UsersPage = lazy(() => import('@/pages/users').then(m => ({ default: m.UsersListPage })))
 const CommonAreasPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Áreas Comuns - Em breve</h1></div> }))
 const ReservationsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Reservas - Em breve</h1></div> }))
 const DocumentsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Documentos - Em breve</h1></div> }))

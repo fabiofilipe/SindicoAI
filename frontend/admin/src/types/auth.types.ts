@@ -1,11 +1,4 @@
-export interface User {
-    id: string
-    email: string
-    full_name: string
-    role: 'admin' | 'resident' | 'employee'
-    tenant_id: string
-    is_active: boolean
-}
+import { User } from './user.types'
 
 export interface LoginRequest {
     email: string

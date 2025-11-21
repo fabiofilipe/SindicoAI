@@ -8,7 +8,7 @@ interface SelectOption {
 
 interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className'> {
     label?: string
-    options: SelectOption[]
+    options?: SelectOption[]
     error?: string
     helperText?: string
     variant?: 'neon' | 'terminal' | 'glass'
@@ -22,7 +22,7 @@ const variantClasses = {
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-    ({ label, options, error, helperText, variant = 'neon', placeholder, ...props }, ref) => {
+    ({ label, options, error, helperText, variant = 'neon', placeholder, children, ...props }, ref) => {
         return (
             <div className="w-full">
                 {label && (
@@ -52,11 +52,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                                 {placeholder}
                             </option>
                         )}
-                        {options.map((option) => (
+                        {options ? options.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
                             </option>
-                        ))}
+                        )) : children}
                     </select>
 
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-cyan pointer-events-none" />

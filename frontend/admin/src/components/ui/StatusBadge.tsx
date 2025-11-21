@@ -6,6 +6,7 @@ interface StatusBadgeProps {
     pulse?: boolean
     size?: 'sm' | 'md' | 'lg'
     className?: string
+    children?: React.ReactNode
 }
 
 const statusConfig = {
@@ -53,6 +54,7 @@ const StatusBadge = ({
     pulse = false,
     size = 'md',
     className = '',
+    children,
 }: StatusBadgeProps) => {
     const config = statusConfig[status]
 
@@ -78,7 +80,7 @@ const StatusBadge = ({
                     ${pulse ? 'animate-pulse' : ''}
                 `}
             />
-            {config.label}
+            {children || config.label}
         </motion.span>
     )
 }

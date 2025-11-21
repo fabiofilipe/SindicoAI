@@ -11,12 +11,12 @@ const DashboardPage = lazy(() => import('@/pages/dashboard').then(m => ({ defaul
 // Units pages
 const UnitsPage = lazy(() => import('@/pages/units').then(m => ({ default: m.UnitsListPage })))
 const UsersPage = lazy(() => import('@/pages/users').then(m => ({ default: m.UsersListPage })))
-const CommonAreasPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Áreas Comuns - Em breve</h1></div> }))
-const ReservationsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Reservas - Em breve</h1></div> }))
-const DocumentsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Documentos - Em breve</h1></div> }))
-const AIPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Assistente IA - Em breve</h1></div> }))
-const NotificationsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Notificações - Em breve</h1></div> }))
-const ImportsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Importações - Em breve</h1></div> }))
+const CommonAreasPage = lazy(() => import('@/pages/common-areas').then(m => ({ default: m.CommonAreasPage })))
+const ReservationsPage = lazy(() => import('@/pages/reservations').then(m => ({ default: m.ReservationsPage })))
+const DocumentsPage = lazy(() => import('@/pages/documents').then(m => ({ default: m.DocumentsPage })))
+const AIPage = lazy(() => import('@/pages/ai').then(m => ({ default: m.AIPage })))
+const NotificationsPage = lazy(() => import('@/pages/notifications').then(m => ({ default: m.NotificationsPage })))
+const ImportsPage = lazy(() => import('@/pages/imports').then(m => ({ default: m.ImportsPage })))
 const SettingsPage = lazy(() => Promise.resolve({ default: () => <div className="p-6"><h1 className="text-2xl text-cyan">Configurações - Em breve</h1></div> }))
 
 // Loading component

@@ -151,21 +151,21 @@ npm run test:coverage  # Coverage report
 
 ##  Roadmap
 
-### Week 1 ✅
+### Fase 1 ✅
 - [x] Setup Vite + React + TypeScript
 - [x] Estrutura de pastas
 - [x] Configuração TailwindCSS
-- [ ] Design System base
-- [ ] Sistema de rotas
+- [x] Design System base
+- [x] Sistema de rotas
 
-### Week 2
+### Fase 2
 - [ ] Página de Login
 - [ ] Dashboard Layout
 - [ ] Homepage
 - [ ] Gestão de Unidades
 - [ ] Gestão de Usuários
 
-### Week 3
+### Fase 3
 - [ ] Áreas Comuns
 - [ ] Sistema de Reservas
 - [ ] Upload de Documentos

@@ -6,11 +6,11 @@ api_key = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=api_key)
 
 print("=" * 60)
-print("🧪 TESTANDO GOOGLE GEMINI API")
+print(" TESTANDO GOOGLE GEMINI API")
 print("=" * 60)
 
 # Teste 1: Listar modelos disponíveis
-print("\n1️⃣ Modelos disponíveis:")
+print("\n Modelos disponíveis:")
 try:
     count = 0
     for model in genai.list_models():
@@ -32,14 +32,14 @@ try:
         task_type="retrieval_query"
     )
     embedding = result['embedding']
-    print(f"   ✅ Embedding gerado com sucesso!")
-    print(f"   📊 Dimensões: {len(embedding)}")
-    print(f"   📊 Primeiros 5 valores: {embedding[:5]}")
+    print(f"    Embedding gerado com sucesso!")
+    print(f"    Dimensões: {len(embedding)}")
+    print(f"    Primeiros 5 valores: {embedding[:5]}")
 except Exception as e:
     print(f"   ❌ Erro: {e}")
 
 # Teste 3: Gerar resposta com Gemini 2.5 Flash
-print("\n3️⃣ Testando geração de resposta:")
+print("\n Testando geração de resposta:")
 try:
     model = genai.GenerativeModel('gemini-2.5-flash')
     response = model.generate_content("Responda em uma frase: O que é um condomínio?")

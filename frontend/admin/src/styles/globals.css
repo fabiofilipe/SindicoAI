@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables - Industrial Tech Theme */
+:root {
+  /* Base Colors */
+  --bg-primary: #0B0C10;
+  --bg-secondary: #1F2833;
+  --bg-tertiary: #0D1117;
+  --bg-card: rgba(31, 40, 51, 0.85);
+  
+  /* Accent Colors */
+  --accent-cyan: #00FFF0;
+  --accent-blue: #0A84FF;
+  --accent-purple: #BF5AF2;
+  --accent-green: #30D158;
+  --accent-orange: #FF9F0A;
+  --accent-red: #FF453A;
+  
+  /* Industrial */
+  --metal-silver: #C5C6C7;
+  --metal-gold: #FFD60A;
+  --border-glow: rgba(0, 255, 240, 0.3);
+  --grid-color: rgba(0, 255, 240, 0.1);
+}
+
+/* Reset and Global Styles */
+@layer base {
+  body {
+    @apply bg-coal text-metal-silver font-sans antialiased;
+    background-color: var(--bg-primary);
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+/* Custom Components */
+@layer components {
+  /* Holographic Card */
+  .card-holographic {
+    @apply bg-coal-light/85 backdrop-blur-md border border-cyan-glow rounded-lg;
+    box-shadow: 0 0 20px rgba(0, 255, 240, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .card-holographic:hover {
+    @apply border-cyan shadow-glow;
+    transform: translateY(-2px);
+  }
+  
+  /* Neon Text */
+  .text-neon {
+    @apply text-cyan;
+    text-shadow: 0 0 10px rgba(0, 255, 240, 0.5);
+  }
+  
+  /* Neon Input */
+  .input-neon {
+    @apply bg-coal-light border border-cyan-glow rounded-md px-4 py-2 text-metal-silver;
+    @apply focus:outline-none focus:border-cyan focus:shadow-glow;
+    @apply transition-all duration-300;
+  }
+  
+  .input-neon::placeholder {
+    @apply text-metal-silver/50;
+  }
+  
+  /* Button Glow */
+  .btn-glow {
+    @apply bg-gradient-cyber text-coal font-semibold px-6 py-3 rounded-lg;
+    @apply transition-all duration-300;
+    box-shadow: 0 0 20px rgba(0, 255, 240, 0.3);
+  }
+  
+  .btn-glow:hover {
+    @apply shadow-glow-lg;
+    transform: scale(1.05);
+  }
+  
+  /* Tech Grid Background */
+  .bg-tech-grid {
+    background-image: 
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
+  /* Scan Line Effect */
+  .scan-line-container {
+    @apply relative overflow-hidden;
+  }
+  
+  .scan-line {
+    @apply absolute left-0 w-full h-0.5 bg-cyan/30;
+    animation: scan-line 3s linear infinite;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+  /* Scrollbar Styling */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--accent-cyan);
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+  }
+  
+  /* Text Glow */
+  .text-glow-cyan {
+    text-shadow: 0 0 10px rgba(0, 255, 240, 0.5);
+  }
+  
+  .text-glow-blue {
+    text-shadow: 0 0 10px rgba(10, 132, 255, 0.5);
+  }
+  
+  .text-glow-purple {
+    text-shadow: 0 0 10px rgba(191, 90, 242, 0.5);
+  }
+}

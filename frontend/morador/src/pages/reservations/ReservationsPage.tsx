@@ -168,14 +168,6 @@ const ReservationsPage = () => {
         }).format(value)
     }
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-        })
-    }
-
     // Helper para buscar nome da área comum
     const getCommonAreaName = (areaId: string) => {
         const area = commonAreas.find(a => a.id === areaId)
@@ -292,18 +284,6 @@ const ReservationsPage = () => {
                                         )
                                     }
                                 )}
-                            </div>
-
-                            {/* Data selecionada */}
-                            <div className="mt-4 pt-4 border-t border-cyan-glow/30">
-                                <p className="text-sm text-metal-silver/60 mb-1">
-                                    Data selecionada
-                                </p>
-                                <p className="font-bold text-cyan">
-                                    {formatDate(
-                                        selectedDate.toISOString().split('T')[0]
-                                    )}
-                                </p>
                             </div>
                         </HologramCard>
                     </div>

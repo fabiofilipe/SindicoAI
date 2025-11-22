@@ -1,7 +1,24 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import api_router
 
 app = FastAPI(title="SindicoAI API", version="0.1.0")
+
+# Configuração CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # Frontend Morador
+        "http://localhost:3001",  # Frontend Funcionário
+        "http://localhost:3002",  # Frontend Admin
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3002",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():

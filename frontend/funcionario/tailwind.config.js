@@ -7,21 +7,31 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Base Colors - Deep Industrial
+                // Base Colors (Industrial Dark)
                 coal: '#0B0C10',
-                charcoal: '#1F2833',
-                'github-dark': '#0D1117',
+                'coal-light': '#1F2833',
+                charcoal: '#2C3E50',
 
-                // Neon Tech Accents
+                // Accent Colors (Tech Neon)
+                cyan: '#00FFF0',
+                'cyan-glow': '#00FFF0',
                 'neon-cyan': '#00FFF0',
+                techblue: '#0A84FF',
                 'tech-blue': '#0A84FF',
+                purple: '#AF52DE',
                 'neon-purple': '#BF5AF2',
+
+                // Status Colors
+                terminalgreen: '#30D158',
                 'terminal-green': '#30D158',
+                alertorange: '#FF9F0A',
                 'alert-orange': '#FF9F0A',
+                criticalred: '#FF453A',
                 'critical-red': '#FF453A',
 
-                // Metal
-                'metal-silver': '#C5C6C7',
+                // Neutral Tech
+                'metal-silver': '#C7C7CC',
+                'metal-dark': '#48484A',
                 'metal-gold': '#FFD60A',
             },
             boxShadow: {

@@ -1,177 +1,138 @@
-# SindicoAI - Web Admin
+# SindicoAI Admin - Painel Administrativo
 
-> Interface administrativa premium com design industrial tech-focused
+Portal administrativo do SindicoAI para gestão completa do sistema de condomínio.
 
-##  Design Concept
+##  Funcionalidades Implementadas
 
-Interface inspirada em **painéis de controle aeroespacial** e **centros de comando**, com visual **cyberpunk clean**, high-tech e futurista.
+### Autenticação
+- ✅ Login com validação de role (apenas admins)
+- ✅ Proteção de rotas privadas
+- ✅ Refresh token automático
+- ✅ Logout
 
-### Visual Identity
-- **Coal Black** (#0B0C10) backgrounds
-- **Electric Cyan** (#00FFF0) primary accent
-- **Neon glow effects** em elementos interativos
-- **Scan lines** e **grid patterns** sutis
-- **Holographic cards** com semi-transparência
+### Dashboard
+- ✅ Métricas em tempo real
+  - Total de usuários (moradores, funcionários, admins)
+  - Total de reservas e áreas comuns
+  - Reservas ativas
+  - Novos usuários (últimos 7 dias)
+- ✅ Status do sistema
+- ✅ Ações rápidas
 
-##  Quick Start
+### Gestão de Usuários
+- ✅ Listar todos os usuários
+- ✅ Filtrar por tipo (admin, morador, funcionário)
+- ✅ Buscar por email, nome ou CPF
+- ✅ Criar novo usuário
+- ✅ Editar usuário existente
+- ✅ Ativar/Desativar usuário
+- ✅ Reset de senha
 
-### Prerequisites
-- Node.js >= 18
-- npm ou yarn
+##  Tecnologias
 
-### Installation
+- **React 19** - Framework UI
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **React Router** - Roteamento
+- **Axios** - HTTP client
+- **TailwindCSS** - Styling
+- **Lucide React** - Icons
+- **date-fns** - Date formatting
+- **Zustand** - State management (se necessário)
 
-```bash
-# Instalar dependências
-npm install
+##  Estrutura
 
-# Iniciar servidor de desenvolvimento
-npm run dev
-
-# Build para produção
-npm run build
-
-# Preview do build
-npm run preview
+```
+src/
+├── components/
+│   ├── ui/                 # Componentes reutilizáveis
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Select.tsx
+│   │   ├── Modal.tsx
+│   │   ├── Card.tsx
+│   │   └── Table.tsx
+│   ├── layout/             # Layout components
+│   │   ├── MainLayout.tsx
+│   │   └── Sidebar.tsx
+│   └── PrivateRoute.tsx    # Route guard
+├── contexts/
+│   └── AuthContext.tsx     # Auth state management
+├── pages/
+│   ├── LoginPage.tsx       # Login
+│   ├── DashboardPage.tsx   # Dashboard
+│   └── UsersPage.tsx       # User management
+├── services/
+│   ├── api.ts              # Axios config
+│   ├── authService.ts      # Auth API
+│   ├── userService.ts      # Users API
+│   └── dashboardService.ts # Dashboard metrics
+├── types/
+│   ├── auth.ts
+│   ├── user.ts
+│   └── dashboard.ts
+├── App.tsx                 # Routes
+├── main.tsx                # Entry point
+└── index.css               # Global styles
 ```
 
-##  Stack
+##  Como Rodar
 
-- **React 18** + **TypeScript**
-- **Vite** (Build tool)
-- **TailwindCSS 3.4** (Styling)
-- **Framer Motion 11** (Animations)
-- **Zustand** (State management)
-- **React Hook Form** + **Zod** (Forms)
-- **Axios** (HTTP client)
-- **React Router v6** (Routing)
-- **Recharts** (Charts)
-- **Lucide React** (Icons)
-- **date-fns** (Date utilities)
+1. Instalar dependências:
+```bash
+npm install --legacy-peer-deps
+```
 
-##  Project Structure
+2. Criar arquivo `.env` (copiar de `.env.example`):
+```bash
+cp .env.example .env
+```
 
-Ver `ARCHITECTURE.md` para detalhes completos da estrutura.
+3. Rodar em desenvolvimento:
+```bash
+npm run dev
+```
 
-##  Features
+O frontend estará disponível em: **http://localhost:3002**
 
-### Core Admin Features
-- ✅ Dashboard com métricas em tempo real
-- ✅ Gestão de Unidades (CRUD completo)
-- ✅ Gestão de Usuários (ativar, desativar, reset senha)
-- ✅ Áreas Comuns (CRUD com upload de imagens)
-- ✅ Sistema de Reservas (calendário visual)
-- ✅ Upload de Documentos (drag & drop)
-- ✅ Chat com IA (assistente virtual)
-- ✅ Centro de Notificações
-- ✅ Importação em massa (CSV)
+##  Credenciais de Teste
 
-### Tech Features
--  Design System industrial tech premium
--  Animações com Framer Motion
--  Dark mode nativo
--  Responsivo (desktop, tablet, mobile)
--  Performance otimizada
--  Autenticação JWT
--  Type-safe com TypeScript
+Use um usuário com role `admin` criado pelo backend.
+
+Exemplo (se você populou o banco):
+- Email: `admin@condominio.com`
+- Senha: `admin123`
 
 ##  Design System
 
-### Colors
+O projeto usa um design system **Industrial Tech** com:
 
-```css
-/* Primary */
---bg-primary: #0B0C10
---accent-cyan: #00FFF0
---accent-blue: #0A84FF
+- **Cores base**: Coal (#0B0C10), Coal Light (#1F2833)
+- **Accent colors**: Cyan (#00FFF0), Tech Blue (#0A84FF), Purple (#AF52DE)
+- **Status colors**: Terminal Green, Alert Orange, Critical Red
+- **Efeitos**: Neon glow, glassmorphism, holographic cards
 
-/* Status */
---success: #30D158
---warning: #FF9F0A
---error: #FF453A
-```
+##  Próximas Implementações
 
-### Typography
+- [ ] Gestão de Unidades (apartamentos)
+- [ ] Gestão de Áreas Comuns
+- [ ] Visualização de Reservas (calendário)
+- [ ] Notificações em Massa
+- [ ] Relatórios e Analytics
+- [ ] Configurações do Sistema
 
-```
-Display: SF Pro Display / Inter
-Mono: IBM Plex Mono
-Accent: Orbitron (use sparingly)
-```
+##  API Backend
 
-### Components
+O frontend se conecta ao backend em `http://localhost:8000/api/v1`
 
-Todos os componentes seguem o padrão:
-- Variants (holographic, solid, terminal, etc.)
-- Glow effects em hover/focus
-- Animações suaves
-- Acessibilidade (ARIA labels, keyboard navigation)
+Certifique-se de que o backend está rodando antes de usar o admin.
 
-##  Development
+##  Notas
 
-### Commands
-
-```bash
-npm run dev          # Dev server
-npm run build        # Production build
-npm run preview      # Preview production build
-npm run lint         # Lint code
-npm run type-check   # TypeScript check
-```
-
-### Environment Variables
-
-Copie `.env.example` para `.env`:
-
-```env
-VITE_API_URL=http://localhost:8000/api/v1
-VITE_APP_NAME=SindicoAI Admin
-```
-
-##  Code Style
-
-- **ESLint** + **Prettier** configurados
-- **Conventional Commits**
-- **TypeScript strict mode**
-- **Componentes funcionais** com hooks
-
-##  Testing
-
-```bash
-npm run test           # Run tests
-npm run test:watch     # Watch mode
-npm run test:coverage  # Coverage report
-```
-
-##  Documentation
-
-- [Architecture](./ARCHITECTURE.md) - Estrutura detalhada do projeto
-- [Components](./src/components/README.md) - Guia de componentes
-- [API Integration](./src/services/README.md) - Integração com backend
-
-##  Roadmap
-
-### Fase 1 ✅
-- [x] Setup Vite + React + TypeScript
-- [x] Estrutura de pastas
-- [x] Configuração TailwindCSS
-- [x] Design System base
-- [x] Sistema de rotas
-
-### Fase 2
-- [ ] Página de Login
-- [ ] Dashboard Layout
-- [ ] Homepage
-- [ ] Gestão de Unidades
-- [ ] Gestão de Usuários
-
-### Fase 3
-- [ ] Áreas Comuns
-- [ ] Sistema de Reservas
-- [ ] Upload de Documentos
-- [ ] Chat IA
-- [ ] Notificações
+- **Porta**: 3002 (configurada no vite.config.ts)
+- **Autenticação**: OAuth2 + JWT com refresh token
+- **Validação**: Apenas usuários com `role: 'admin'` podem acessar
+- **Design**: Responsivo e otimizado para desktop
 
 ---
-
 

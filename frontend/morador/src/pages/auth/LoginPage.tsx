@@ -204,9 +204,6 @@ const LoginPage = () => {
                     <p>
                         Entre em contato com a administração do seu condomínio para obter suas credenciais de acesso.
                     </p>
-                    <p className="text-xs text-metal-silver/60 mt-4">
-                        Powered by SindicoAI • Industrial Tech
-                    </p>
                 </div>
             </HologramCard>
         </div>

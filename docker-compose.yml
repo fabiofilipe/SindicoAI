@@ -43,6 +43,21 @@ services:
     networks:
       - sindicoai-network
 
+  frontend-admin:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: admin
+    ports:
+      - "3002:80"
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - sindicoai-network
+
   db:
     image: ankane/pgvector:latest
     ports:

@@ -1,12 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Building2, Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { Button, Input, HologramCard } from '@/components'
+import { useAuth } from '@/contexts'
 
 const LoginPage = () => {
     const navigate = useNavigate()
+    const { login, isAuthenticated } = useAuth()
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+
+    // Redireciona se já estiver autenticado
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/home', { replace: true })
+        }
+    }, [isAuthenticated, navigate])
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -55,19 +64,18 @@ const LoginPage = () => {
         setIsLoading(true)
 
         try {
-            // TODO: Integrar com API de autenticação
-            // const response = await api.post('/auth/login', formData)
-            // localStorage.setItem('token', response.data.token)
-
-            // Simulação de login
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-
-            navigate('/home')
-        } catch (error) {
+            await login(formData.email, formData.password)
+            // O navigate será feito automaticamente pelo useEffect quando isAuthenticated mudar
+        } catch (error: any) {
             console.error('Erro ao fazer login:', error)
+
+            // Trata mensagens de erro da API
+            const errorMessage =
+                error.response?.data?.detail || 'Email ou senha incorretos'
+
             setErrors({
                 email: '',
-                password: 'Email ou senha incorretos',
+                password: errorMessage,
             })
         } finally {
             setIsLoading(false)

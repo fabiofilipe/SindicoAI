@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Calendar,
@@ -8,55 +9,70 @@ import {
     Clock,
     CheckCircle2,
     TrendingUp,
+    Loader2,
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button } from '@/components'
+import { useAuth } from '@/contexts/AuthContext'
+import { getUpcomingReservations } from '@/services/reservationService'
+import { getRecentNotifications, getUnreadCount } from '@/services/notificationService'
+import { listCommonAreas } from '@/services/commonAreaService'
+import type { Reservation, Notification, CommonArea } from '@/types/models'
 
 const HomePage = () => {
     const navigate = useNavigate()
+    const { user } = useAuth()
 
-    // TODO: Buscar dados do usuário da API
-    const userName = 'João Silva'
-    const apartmentNumber = '301'
-    const building = 'Torre A'
+    const [isLoading, setIsLoading] = useState(true)
+    const [upcomingReservations, setUpcomingReservations] = useState<Reservation[]>([])
+    const [importantNotices, setImportantNotices] = useState<Notification[]>([])
+    const [unreadCount, setUnreadCount] = useState(0)
+    const [commonAreas, setCommonAreas] = useState<CommonArea[]>([])
 
-    // TODO: Buscar próximas reservas da API
-    const upcomingReservations = [
-        {
-            id: 1,
-            area: 'Salão de Festas',
-            date: '2025-11-25',
-            time: '14:00',
-        },
-        {
-            id: 2,
-            area: 'Churrasqueira 1',
-            date: '2025-11-28',
-            time: '18:00',
-        },
-    ]
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true)
 
-    // TODO: Buscar avisos importantes da API
-    const importantNotices = [
-        {
-            id: 1,
-            title: 'Manutenção Programada',
-            description: 'Elevadores em manutenção no dia 24/11',
-            type: 'warning',
-        },
-        {
-            id: 2,
-            title: 'Assembleia Geral',
-            description: 'Reunião dia 30/11 às 19h no salão',
-            type: 'info',
-        },
-    ]
+                // Buscar dados em paralelo
+                const [reservations, notifications, count, areas] = await Promise.all([
+                    getUpcomingReservations().catch(() => []),
+                    getRecentNotifications().catch(() => []),
+                    getUnreadCount().catch(() => 0),
+                    listCommonAreas().catch(() => []),
+                ])
 
-    // TODO: Buscar dados financeiros da API
+                setUpcomingReservations(reservations.slice(0, 2)) // Apenas as 2 próximas
+                setImportantNotices(notifications.slice(0, 2)) // Apenas as 2 mais recentes
+                setUnreadCount(count)
+                setCommonAreas(areas)
+            } catch (error) {
+                console.error('Erro ao carregar dados do dashboard:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [])
+
+    // Função helper para buscar nome da área comum
+    const getCommonAreaName = (areaId: string) => {
+        const area = commonAreas.find(a => a.id === areaId)
+        return area?.name || 'Área Comum'
+    }
+
+    // Dados do usuário vêm do AuthContext
+    const userName = user?.full_name || 'Morador'
+    // TODO: Buscar dados da unit do backend quando precisar exibir número e prédio
+    const apartmentNumber = user?.unit_id ? user.unit_id.slice(-3) : 'N/A'
+    const building = 'Torre A' // Placeholder - backend não retorna isso ainda
+
+    // TODO: Buscar dados financeiros da API quando endpoint estiver disponível
     const financialData = {
-        currentMonth: 'Novembro',
+        currentMonth: new Date().toLocaleDateString('pt-BR', { month: 'long' }),
         amount: 850.0,
         dueDate: '2025-11-10',
-        status: 'paid', // 'paid' | 'pending' | 'overdue'
+        status: 'paid' as const, // 'paid' | 'pending' | 'overdue'
     }
 
     const quickActions = [
@@ -181,7 +197,14 @@ const HomePage = () => {
                             Minhas Reservas
                         </h2>
                         <HologramCard className="p-6">
-                            {upcomingReservations.length > 0 ? (
+                            {isLoading ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+                                    <span className="ml-3 text-metal-silver">
+                                        Carregando reservas...
+                                    </span>
+                                </div>
+                            ) : upcomingReservations.length > 0 ? (
                                 <div className="space-y-4">
                                     {upcomingReservations.map((reservation) => (
                                         <div
@@ -193,12 +216,19 @@ const HomePage = () => {
                                             </div>
                                             <div className="flex-1">
                                                 <h4 className="font-semibold text-metal-silver">
-                                                    {reservation.area}
+                                                    {getCommonAreaName(reservation.common_area_id)}
                                                 </h4>
                                                 <p className="text-sm text-metal-silver/60 flex items-center gap-2 mt-1">
                                                     <Clock className="w-4 h-4" />
-                                                    {formatDate(reservation.date)} às{' '}
-                                                    {reservation.time}
+                                                    {new Date(reservation.start_time).toLocaleDateString('pt-BR', {
+                                                        day: '2-digit',
+                                                        month: 'long',
+                                                    })}{' '}
+                                                    às{' '}
+                                                    {new Date(reservation.start_time).toLocaleTimeString('pt-BR', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
                                                 </p>
                                             </div>
                                         </div>
@@ -236,46 +266,57 @@ const HomePage = () => {
                             Avisos Importantes
                         </h2>
                         <HologramCard className="p-6">
-                            <div className="space-y-4">
-                                {importantNotices.map((notice) => (
-                                    <div
-                                        key={notice.id}
-                                        className="flex items-start gap-4 p-4 bg-coal/50 rounded-lg"
-                                    >
-                                        <div
-                                            className={`p-2 rounded-lg ${
-                                                notice.type === 'warning'
-                                                    ? 'bg-alertorange/10'
-                                                    : 'bg-techblue/10'
-                                            }`}
-                                        >
-                                            <AlertCircle
-                                                className={`w-5 h-5 ${
-                                                    notice.type === 'warning'
-                                                        ? 'text-alertorange'
-                                                        : 'text-techblue'
-                                                }`}
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-semibold text-metal-silver">
-                                                {notice.title}
-                                            </h4>
-                                            <p className="text-sm text-metal-silver/60 mt-1">
-                                                {notice.description}
+                            {isLoading ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+                                    <span className="ml-3 text-metal-silver">
+                                        Carregando avisos...
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {importantNotices.length > 0 ? (
+                                        <>
+                                            {importantNotices.map((notice) => (
+                                                <div
+                                                    key={notice.id}
+                                                    className="flex items-start gap-4 p-4 bg-coal/50 rounded-lg"
+                                                >
+                                                    <div className="p-2 rounded-lg bg-techblue/10">
+                                                        <AlertCircle className="w-5 h-5 text-techblue" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h4 className="font-semibold text-metal-silver">
+                                                            {notice.title}
+                                                        </h4>
+                                                        <p className="text-sm text-metal-silver/60 mt-1">
+                                                            {notice.message}
+                                                        </p>
+                                                        <p className="text-xs text-metal-silver/40 mt-2">
+                                                            {new Date(notice.created_at).toLocaleDateString('pt-BR')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                fullWidth
+                                                onClick={() => navigate('/notifications')}
+                                            >
+                                                Ver todos os avisos
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <Bell className="w-12 h-12 text-metal-silver/30 mx-auto mb-4" />
+                                            <p className="text-metal-silver/60">
+                                                Nenhum aviso no momento
                                             </p>
                                         </div>
-                                    </div>
-                                ))}
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    fullWidth
-                                    onClick={() => navigate('/notifications')}
-                                >
-                                    Ver todos os avisos
-                                </Button>
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </HologramCard>
                     </section>
 
@@ -334,18 +375,16 @@ const HomePage = () => {
                                 {/* Status */}
                                 <div className="flex items-start gap-4">
                                     <div
-                                        className={`p-3 rounded-lg ${
-                                            financialData.status === 'paid'
-                                                ? 'bg-terminalgreen/10'
-                                                : 'bg-criticalred/10'
-                                        }`}
+                                        className={`p-3 rounded-lg ${financialData.status === 'paid'
+                                            ? 'bg-terminalgreen/10'
+                                            : 'bg-criticalred/10'
+                                            }`}
                                     >
                                         <CheckCircle2
-                                            className={`w-6 h-6 ${
-                                                financialData.status === 'paid'
-                                                    ? 'text-terminalgreen'
-                                                    : 'text-criticalred'
-                                            }`}
+                                            className={`w-6 h-6 ${financialData.status === 'paid'
+                                                ? 'text-terminalgreen'
+                                                : 'text-criticalred'
+                                                }`}
                                         />
                                     </div>
                                     <div>
@@ -353,11 +392,10 @@ const HomePage = () => {
                                             Status
                                         </p>
                                         <p
-                                            className={`text-xl font-bold ${
-                                                financialData.status === 'paid'
-                                                    ? 'text-terminalgreen'
-                                                    : 'text-criticalred'
-                                            }`}
+                                            className={`text-xl font-bold ${financialData.status === 'paid'
+                                                ? 'text-terminalgreen'
+                                                : 'text-criticalred'
+                                                }`}
                                         >
                                             {financialData.status === 'paid'
                                                 ? 'Pago'

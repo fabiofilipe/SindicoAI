@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Calendar as CalendarIcon,
     Clock,
@@ -6,27 +6,16 @@ import {
     Plus,
     ChevronLeft,
     ChevronRight,
+    Loader2,
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button, Modal, Input } from '@/components'
-
-interface CommonArea {
-    id: number
-    name: string
-    description: string
-    capacity: number
-    hourlyRate: number
-    availableHours: string[]
-}
-
-interface Reservation {
-    id: number
-    areaId: number
-    areaName: string
-    date: string
-    startTime: string
-    endTime: string
-    status: 'confirmed' | 'pending' | 'cancelled'
-}
+import { listCommonAreas } from '@/services/commonAreaService'
+import {
+    getMyReservations,
+    createReservation,
+    cancelReservation,
+} from '@/services/reservationService'
+import type { CommonArea, Reservation } from '@/types/models'
 
 const ReservationsPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date())
@@ -38,63 +27,37 @@ const ReservationsPage = () => {
         endTime: '',
     })
 
-    // TODO: Buscar áreas comuns da API
-    const commonAreas: CommonArea[] = [
-        {
-            id: 1,
-            name: 'Salão de Festas',
-            description: 'Espaço ideal para festas e eventos',
-            capacity: 80,
-            hourlyRate: 150,
-            availableHours: ['08:00', '14:00', '18:00'],
-        },
-        {
-            id: 2,
-            name: 'Churrasqueira 1',
-            description: 'Área gourmet com churrasqueira',
-            capacity: 20,
-            hourlyRate: 50,
-            availableHours: ['10:00', '14:00', '18:00'],
-        },
-        {
-            id: 3,
-            name: 'Churrasqueira 2',
-            description: 'Área gourmet com churrasqueira',
-            capacity: 20,
-            hourlyRate: 50,
-            availableHours: ['10:00', '14:00', '18:00'],
-        },
-        {
-            id: 4,
-            name: 'Quadra de Esportes',
-            description: 'Quadra poliesportiva',
-            capacity: 16,
-            hourlyRate: 30,
-            availableHours: ['06:00', '08:00', '14:00', '16:00', '18:00'],
-        },
-    ]
+    // Estados para dados da API
+    const [commonAreas, setCommonAreas] = useState<CommonArea[]>([])
+    const [myReservations, setMyReservations] = useState<Reservation[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-    // TODO: Buscar reservas do usuário da API
-    const myReservations: Reservation[] = [
-        {
-            id: 1,
-            areaId: 1,
-            areaName: 'Salão de Festas',
-            date: '2025-11-25',
-            startTime: '14:00',
-            endTime: '22:00',
-            status: 'confirmed',
-        },
-        {
-            id: 2,
-            areaId: 2,
-            areaName: 'Churrasqueira 1',
-            date: '2025-11-28',
-            startTime: '18:00',
-            endTime: '23:00',
-            status: 'confirmed',
-        },
-    ]
+    // Buscar dados ao montar o componente
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            setIsLoading(true)
+            setError(null)
+
+            const [areasData, reservationsData] = await Promise.all([
+                listCommonAreas(),
+                getMyReservations(),
+            ])
+
+            setCommonAreas(areasData)
+            setMyReservations(reservationsData)
+        } catch (err) {
+            console.error('Erro ao carregar dados:', err)
+            setError('Erro ao carregar dados. Tente novamente.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     // Funções do calendário
     const getDaysInMonth = (date: Date) => {
@@ -152,19 +115,50 @@ const ReservationsPage = () => {
     const handleSubmitReservation = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // TODO: Integrar com API de reservas
-        console.log('Nova reserva:', {
-            areaId: selectedArea?.id,
-            ...formData,
-        })
+        if (!selectedArea) return
 
-        // Fechar modal após sucesso
-        handleCloseModal()
+        try {
+            setIsSubmitting(true)
+            setError(null)
+
+            // Criar o objeto de reserva no formato esperado pelo backend
+            const startDateTime = new Date(`${formData.date}T${formData.startTime}:00`)
+            const endDateTime = new Date(`${formData.date}T${formData.endTime}:00`)
+
+            await createReservation({
+                common_area_id: selectedArea.id,
+                start_time: startDateTime.toISOString(),
+                end_time: endDateTime.toISOString(),
+            })
+
+            // Atualizar lista de reservas
+            await fetchData()
+
+            // Fechar modal após sucesso
+            handleCloseModal()
+        } catch (err: any) {
+            console.error('Erro ao criar reserva:', err)
+            setError(err.response?.data?.detail || 'Erro ao criar reserva. Tente novamente.')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
-    const handleCancelReservation = async (reservationId: number) => {
-        // TODO: Integrar com API para cancelar reserva
-        console.log('Cancelar reserva:', reservationId)
+    const handleCancelReservation = async (reservationId: string) => {
+        if (!confirm('Tem certeza que deseja cancelar esta reserva?')) {
+            return
+        }
+
+        try {
+            setError(null)
+            await cancelReservation(reservationId)
+
+            // Atualizar lista de reservas
+            await fetchData()
+        } catch (err: any) {
+            console.error('Erro ao cancelar reserva:', err)
+            setError(err.response?.data?.detail || 'Erro ao cancelar reserva. Tente novamente.')
+        }
     }
 
     const formatCurrency = (value: number) => {
@@ -182,6 +176,12 @@ const ReservationsPage = () => {
         })
     }
 
+    // Helper para buscar nome da área comum
+    const getCommonAreaName = (areaId: string) => {
+        const area = commonAreas.find(a => a.id === areaId)
+        return area?.name || 'Área Comum'
+    }
+
     const { daysInMonth, startingDayOfWeek } = getDaysInMonth(selectedDate)
     const today = new Date()
 
@@ -197,6 +197,19 @@ const ReservationsPage = () => {
                         Reserve espaços do condomínio de forma rápida e fácil
                     </p>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="p-4 bg-criticalred/10 border border-criticalred/30 rounded-lg flex items-start gap-3">
+                        <div className="text-criticalred">{error}</div>
+                        <button
+                            onClick={() => setError(null)}
+                            className="ml-auto text-criticalred hover:text-criticalred/80"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
 
                 {/* Grid Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -253,9 +266,9 @@ const ReservationsPage = () => {
                                         const isToday =
                                             today.getDate() === day &&
                                             today.getMonth() ===
-                                                selectedDate.getMonth() &&
+                                            selectedDate.getMonth() &&
                                             today.getFullYear() ===
-                                                selectedDate.getFullYear()
+                                            selectedDate.getFullYear()
                                         const isSelected =
                                             selectedDate.getDate() === day
 
@@ -266,12 +279,11 @@ const ReservationsPage = () => {
                                                 className={`
                                                     aspect-square rounded-lg text-sm font-medium
                                                     transition-all duration-200
-                                                    ${
-                                                        isSelected
-                                                            ? 'bg-gradient-cyber text-coal font-bold shadow-glow'
-                                                            : isToday
-                                                              ? 'bg-cyan/20 text-cyan border border-cyan'
-                                                              : 'text-metal-silver hover:bg-coal'
+                                                    ${isSelected
+                                                        ? 'bg-gradient-cyber text-coal font-bold shadow-glow'
+                                                        : isToday
+                                                            ? 'bg-cyan/20 text-cyan border border-cyan'
+                                                            : 'text-metal-silver hover:bg-coal'
                                                     }
                                                 `}
                                             >
@@ -328,7 +340,7 @@ const ReservationsPage = () => {
                                         <div className="flex items-center gap-2 text-sm text-metal-silver">
                                             <Clock className="w-4 h-4 text-cyan/50" />
                                             <span>
-                                                {formatCurrency(area.hourlyRate)}/hora
+                                                {area.hourly_rate ? formatCurrency(area.hourly_rate) : 'Gratuito'}
                                             </span>
                                         </div>
                                     </div>
@@ -354,7 +366,12 @@ const ReservationsPage = () => {
                         Minhas Reservas
                     </h2>
                     <HologramCard className="p-6">
-                        {myReservations.length > 0 ? (
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-8">
+                                <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+                                <span className="ml-3 text-metal-silver">Carregando reservas...</span>
+                            </div>
+                        ) : myReservations.length > 0 ? (
                             <div className="space-y-4">
                                 {myReservations.map((reservation) => (
                                     <div
@@ -367,36 +384,45 @@ const ReservationsPage = () => {
                                             </div>
                                             <div>
                                                 <h4 className="font-semibold text-metal-silver">
-                                                    {reservation.areaName}
+                                                    {getCommonAreaName(reservation.common_area_id)}
                                                 </h4>
                                                 <div className="flex items-center gap-4 text-sm text-metal-silver/60 mt-1">
                                                     <span className="flex items-center gap-1">
                                                         <CalendarIcon className="w-4 h-4" />
-                                                        {formatDate(reservation.date)}
+                                                        {new Date(reservation.start_time).toLocaleDateString('pt-BR', {
+                                                            day: '2-digit',
+                                                            month: 'long',
+                                                            year: 'numeric'
+                                                        })}
                                                     </span>
                                                     <span className="flex items-center gap-1">
                                                         <Clock className="w-4 h-4" />
-                                                        {reservation.startTime} -{' '}
-                                                        {reservation.endTime}
+                                                        {new Date(reservation.start_time).toLocaleTimeString('pt-BR', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })} -{' '}
+                                                        {new Date(reservation.end_time).toLocaleTimeString('pt-BR', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
                                                     </span>
                                                 </div>
                                                 <span
-                                                    className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${
-                                                        reservation.status ===
+                                                    className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${reservation.status ===
                                                         'confirmed'
-                                                            ? 'bg-terminalgreen/20 text-terminalgreen'
-                                                            : reservation.status ===
-                                                                'pending'
-                                                              ? 'bg-alertorange/20 text-alertorange'
-                                                              : 'bg-criticalred/20 text-criticalred'
-                                                    }`}
+                                                        ? 'bg-terminalgreen/20 text-terminalgreen'
+                                                        : reservation.status ===
+                                                            'pending'
+                                                            ? 'bg-alertorange/20 text-alertorange'
+                                                            : 'bg-criticalred/20 text-criticalred'
+                                                        }`}
                                                 >
                                                     {reservation.status === 'confirmed'
                                                         ? 'Confirmada'
                                                         : reservation.status ===
                                                             'pending'
-                                                          ? 'Pendente'
-                                                          : 'Cancelada'}
+                                                            ? 'Pendente'
+                                                            : 'Cancelada'}
                                                 </span>
                                             </div>
                                         </div>
@@ -447,7 +473,7 @@ const ReservationsPage = () => {
                             <div className="flex items-center gap-2 text-sm text-metal-silver">
                                 <Clock className="w-4 h-4 text-cyan/50" />
                                 <span>
-                                    Taxa: {formatCurrency(selectedArea.hourlyRate)}/hora
+                                    Taxa: {selectedArea.hourly_rate ? formatCurrency(selectedArea.hourly_rate) : 'Gratuito'}
                                 </span>
                             </div>
                         </div>
@@ -504,8 +530,20 @@ const ReservationsPage = () => {
                             >
                                 Cancelar
                             </Button>
-                            <Button type="submit" variant="primary" fullWidth>
-                                Confirmar Reserva
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                fullWidth
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                        Criando...
+                                    </>
+                                ) : (
+                                    'Confirmar Reserva'
+                                )}
                             </Button>
                         </div>
                     </form>

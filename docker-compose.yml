@@ -10,6 +10,23 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - sindicoai-network
+
+  frontend-morador:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: morador
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - sindicoai-network
 
   db:
     image: ankane/pgvector:latest
@@ -19,11 +36,19 @@ services:
       - ./.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sindicoai-network
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    networks:
+      - sindicoai-network
+
+networks:
+  sindicoai-network:
+    driver: bridge
 
 volumes:
   postgres_data:

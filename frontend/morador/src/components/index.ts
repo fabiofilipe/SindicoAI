@@ -8,3 +8,6 @@ export { default as Input } from './forms/Input'
 
 // Layout Components
 export { default as MainLayout } from './layout/MainLayout'
+
+// Auth Components
+export { default as PrivateRoute } from './auth/PrivateRoute'

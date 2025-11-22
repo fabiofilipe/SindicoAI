@@ -1,159 +1,101 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Bell,
     AlertCircle,
-    Calendar,
-    Wrench,
-    FileText,
     Trash2,
     Check,
     Filter,
+    Loader2,
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button } from '@/components'
-
-interface Notification {
-    id: number
-    type: 'important' | 'event' | 'maintenance' | 'general'
-    title: string
-    description: string
-    date: string
-    isRead: boolean
-}
+import {
+    listNotifications,
+    markAsRead,
+    deleteNotification,
+} from '@/services/notificationService'
+import type { Notification } from '@/types/models'
 
 const NotificationsPage = () => {
     const [selectedFilter, setSelectedFilter] = useState<string>('all')
+    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-    // TODO: Buscar notificações da API
-    const [notifications, setNotifications] = useState<Notification[]>([
-        {
-            id: 1,
-            type: 'important',
-            title: 'Assembleia Geral Extraordinária',
-            description:
-                'Reunião dia 30/11 às 19h no salão de festas para discussão do orçamento anual.',
-            date: '2025-11-20',
-            isRead: false,
-        },
-        {
-            id: 2,
-            type: 'maintenance',
-            title: 'Manutenção Programada - Elevadores',
-            description:
-                'Os elevadores da Torre A estarão em manutenção no dia 24/11 das 8h às 12h.',
-            date: '2025-11-19',
-            isRead: false,
-        },
-        {
-            id: 3,
-            type: 'event',
-            title: 'Festa Junina do Condomínio',
-            description:
-                'Participe da festa junina no dia 15/12. Haverá comidas típicas e quadrilha!',
-            date: '2025-11-18',
-            isRead: true,
-        },
-        {
-            id: 4,
-            type: 'general',
-            title: 'Novos Horários da Portaria',
-            description:
-                'A partir de 01/12, a portaria funcionará 24h com equipe completa.',
-            date: '2025-11-17',
-            isRead: true,
-        },
-        {
-            id: 5,
-            type: 'important',
-            title: 'Atualização do Regimento Interno',
-            description:
-                'O regimento interno foi atualizado. Consulte as novas regras no portal.',
-            date: '2025-11-15',
-            isRead: true,
-        },
-        {
-            id: 6,
-            type: 'maintenance',
-            title: 'Limpeza da Caixa d\'Água',
-            description:
-                'Limpeza programada para dia 28/11. Pode haver interrupção no fornecimento de água.',
-            date: '2025-11-14',
-            isRead: true,
-        },
-    ])
+    // Buscar notificações ao montar o componente
+    useEffect(() => {
+        fetchNotifications()
+    }, [])
+
+    const fetchNotifications = async () => {
+        try {
+            setIsLoading(true)
+            setError(null)
+            const data = await listNotifications()
+            setNotifications(data)
+        } catch (err) {
+            console.error('Erro ao carregar notificações:', err)
+            setError('Erro ao carregar notificações. Tente novamente.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     const filters = [
         { id: 'all', label: 'Todas', icon: Bell },
-        { id: 'important', label: 'Importantes', icon: AlertCircle },
-        { id: 'event', label: 'Eventos', icon: Calendar },
-        { id: 'maintenance', label: 'Manutenção', icon: Wrench },
-        { id: 'general', label: 'Gerais', icon: FileText },
+        { id: 'unread', label: 'Não Lidas', icon: AlertCircle },
     ]
-
-    const getTypeConfig = (type: Notification['type']) => {
-        const configs = {
-            important: {
-                color: 'criticalred',
-                bgColor: 'bg-criticalred/10',
-                borderColor: 'border-criticalred/30',
-                textColor: 'text-criticalred',
-                icon: AlertCircle,
-                label: 'Importante',
-            },
-            event: {
-                color: 'techblue',
-                bgColor: 'bg-techblue/10',
-                borderColor: 'border-techblue/30',
-                textColor: 'text-techblue',
-                icon: Calendar,
-                label: 'Evento',
-            },
-            maintenance: {
-                color: 'alertorange',
-                bgColor: 'bg-alertorange/10',
-                borderColor: 'border-alertorange/30',
-                textColor: 'text-alertorange',
-                icon: Wrench,
-                label: 'Manutenção',
-            },
-            general: {
-                color: 'cyan',
-                bgColor: 'bg-cyan/10',
-                borderColor: 'border-cyan/30',
-                textColor: 'text-cyan',
-                icon: FileText,
-                label: 'Geral',
-            },
-        }
-        return configs[type]
-    }
 
     const filteredNotifications =
         selectedFilter === 'all'
             ? notifications
-            : notifications.filter((n) => n.type === selectedFilter)
+            : notifications.filter((n) => !n.is_read)
 
-    const unreadCount = notifications.filter((n) => !n.isRead).length
+    const unreadCount = notifications.filter((n) => !n.is_read).length
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: 'long',
             year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
         })
     }
 
-    const handleMarkAsRead = (id: number) => {
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-        )
+    const handleMarkAsRead = async (id: string) => {
+        try {
+            await markAsRead(id)
+            await fetchNotifications() // Refresh list
+        } catch (err) {
+            console.error('Erro ao marcar como lida:', err)
+            setError('Erro ao marcar notificação como lida.')
+        }
     }
 
-    const handleMarkAllAsRead = () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+    const handleMarkAllAsRead = async () => {
+        try {
+            // Marcar todas as não lidas
+            const unreadNotifications = notifications.filter(n => !n.is_read)
+            await Promise.all(unreadNotifications.map(n => markAsRead(n.id)))
+            await fetchNotifications() // Refresh list
+        } catch (err) {
+            console.error('Erro ao marcar todas como lidas:', err)
+            setError('Erro ao marcar todas as notificações como lidas.')
+        }
     }
 
-    const handleDelete = (id: number) => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id))
+    const handleDelete = async (id: string) => {
+        if (!confirm('Tem certeza que deseja excluir esta notificação?')) {
+            return
+        }
+
+        try {
+            await deleteNotification(id)
+            await fetchNotifications() // Refresh list
+        } catch (err) {
+            console.error('Erro ao excluir notificação:', err)
+            setError('Erro ao excluir notificação.')
+        }
     }
 
     return (
@@ -191,6 +133,19 @@ const NotificationsPage = () => {
                     </div>
                 </div>
 
+                {/* Error Message */}
+                {error && (
+                    <div className="p-4 bg-criticalred/10 border border-criticalred/30 rounded-lg flex items-start gap-3">
+                        <div className="text-criticalred">{error}</div>
+                        <button
+                            onClick={() => setError(null)}
+                            className="ml-auto text-criticalred hover:text-criticalred/80"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
+
                 {/* Filters */}
                 <div>
                     <div className="flex items-center gap-2 mb-4">
@@ -204,8 +159,7 @@ const NotificationsPage = () => {
                             const count =
                                 filter.id === 'all'
                                     ? notifications.length
-                                    : notifications.filter((n) => n.type === filter.id)
-                                          .length
+                                    : notifications.filter((n) => !n.is_read).length
 
                             return (
                                 <button
@@ -214,10 +168,9 @@ const NotificationsPage = () => {
                                     className={`
                                         flex items-center gap-2 px-4 py-2 rounded-lg border
                                         transition-all duration-300
-                                        ${
-                                            isActive
-                                                ? 'bg-gradient-cyber text-coal font-bold border-transparent shadow-glow'
-                                                : 'bg-coal-light border-cyan-glow/30 text-metal-silver hover:bg-coal hover:border-cyan'
+                                        ${isActive
+                                            ? 'bg-gradient-cyber text-coal font-bold border-transparent shadow-glow'
+                                            : 'bg-coal-light border-cyan-glow/30 text-metal-silver hover:bg-coal hover:border-cyan'
                                         }
                                     `}
                                 >
@@ -239,91 +192,76 @@ const NotificationsPage = () => {
 
                 {/* Notifications List */}
                 <div className="space-y-4">
-                    {filteredNotifications.length > 0 ? (
-                        filteredNotifications.map((notification) => {
-                            const config = getTypeConfig(notification.type)
-                            const Icon = config.icon
+                    {isLoading ? (
+                        <HologramCard className="p-12">
+                            <div className="flex flex-col items-center justify-center">
+                                <Loader2 className="w-12 h-12 text-cyan animate-spin mb-4" />
+                                <p className="text-metal-silver">Carregando notificações...</p>
+                            </div>
+                        </HologramCard>
+                    ) : filteredNotifications.length > 0 ? (
+                        filteredNotifications.map((notification) => (
+                            <HologramCard
+                                key={notification.id}
+                                className={`
+                                    p-6 transition-all duration-300
+                                    ${!notification.is_read ? 'bg-cyan/5 border-l-4 border-l-cyan' : ''}
+                                `}
+                            >
+                                <div className="flex items-start gap-4">
+                                    {/* Icon */}
+                                    <div className="flex-shrink-0 p-3 rounded-lg bg-techblue/10 border border-techblue/30">
+                                        <Bell className="w-6 h-6 text-techblue" />
+                                    </div>
 
-                            return (
-                                <HologramCard
-                                    key={notification.id}
-                                    className={`
-                                        p-6 transition-all duration-300
-                                        ${!notification.isRead ? 'bg-cyan/5 border-l-4 border-l-cyan' : ''}
-                                    `}
-                                >
-                                    <div className="flex items-start gap-4">
-                                        {/* Icon */}
-                                        <div
-                                            className={`flex-shrink-0 p-3 rounded-lg ${config.bgColor} border ${config.borderColor}`}
-                                        >
-                                            <Icon
-                                                className={`w-6 h-6 ${config.textColor}`}
-                                            />
-                                        </div>
-
-                                        {/* Content */}
-                                        <div className="flex-1">
-                                            <div className="flex items-start justify-between gap-4 mb-2">
-                                                <div>
-                                                    <h3
-                                                        className={`text-lg font-bold ${!notification.isRead ? 'text-cyan' : 'text-metal-silver'}`}
-                                                    >
-                                                        {notification.title}
-                                                    </h3>
-                                                    <div className="flex items-center gap-3 mt-1">
-                                                        <span
-                                                            className={`text-xs px-2 py-1 rounded-full ${config.bgColor} ${config.textColor} font-medium`}
-                                                        >
-                                                            {config.label}
+                                    {/* Content */}
+                                    <div className="flex-1">
+                                        <div className="flex items-start justify-between gap-4 mb-2">
+                                            <div>
+                                                <h3 className={`text-lg font-bold ${!notification.is_read ? 'text-cyan' : 'text-metal-silver'}`}>
+                                                    {notification.title}
+                                                </h3>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <span className="text-sm text-metal-silver/60">
+                                                        {formatDate(notification.created_at)}
+                                                    </span>
+                                                    {!notification.is_read && (
+                                                        <span className="flex items-center gap-1 text-xs text-cyan">
+                                                            <span className="w-2 h-2 bg-cyan rounded-full animate-pulse" />
+                                                            Nova
                                                         </span>
-                                                        <span className="text-sm text-metal-silver/60">
-                                                            {formatDate(notification.date)}
-                                                        </span>
-                                                        {!notification.isRead && (
-                                                            <span className="flex items-center gap-1 text-xs text-cyan">
-                                                                <span className="w-2 h-2 bg-cyan rounded-full animate-pulse" />
-                                                                Nova
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                {/* Actions */}
-                                                <div className="flex gap-2">
-                                                    {!notification.isRead && (
-                                                        <button
-                                                            onClick={() =>
-                                                                handleMarkAsRead(
-                                                                    notification.id
-                                                                )
-                                                            }
-                                                            className="p-2 hover:bg-coal rounded-lg transition-colors group"
-                                                            title="Marcar como lida"
-                                                        >
-                                                            <Check className="w-5 h-5 text-metal-silver group-hover:text-terminalgreen transition-colors" />
-                                                        </button>
                                                     )}
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(notification.id)
-                                                        }
-                                                        className="p-2 hover:bg-coal rounded-lg transition-colors group"
-                                                        title="Excluir notificação"
-                                                    >
-                                                        <Trash2 className="w-5 h-5 text-metal-silver group-hover:text-criticalred transition-colors" />
-                                                    </button>
                                                 </div>
                                             </div>
 
-                                            <p className="text-metal-silver/80 leading-relaxed">
-                                                {notification.description}
-                                            </p>
+                                            {/* Actions */}
+                                            <div className="flex gap-2">
+                                                {!notification.is_read && (
+                                                    <button
+                                                        onClick={() => handleMarkAsRead(notification.id)}
+                                                        className="p-2 hover:bg-coal rounded-lg transition-colors group"
+                                                        title="Marcar como lida"
+                                                    >
+                                                        <Check className="w-5 h-5 text-metal-silver group-hover:text-terminalgreen transition-colors" />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleDelete(notification.id)}
+                                                    className="p-2 hover:bg-coal rounded-lg transition-colors group"
+                                                    title="Excluir notificação"
+                                                >
+                                                    <Trash2 className="w-5 h-5 text-metal-silver group-hover:text-criticalred transition-colors" />
+                                                </button>
+                                            </div>
                                         </div>
+
+                                        <p className="text-metal-silver/80 leading-relaxed">
+                                            {notification.message}
+                                        </p>
                                     </div>
-                                </HologramCard>
-                            )
-                        })
+                                </div>
+                            </HologramCard>
+                        ))
                     ) : (
                         <HologramCard className="p-12 text-center">
                             <Bell className="w-16 h-16 text-metal-silver/30 mx-auto mb-4" />

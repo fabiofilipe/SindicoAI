@@ -1,39 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     User,
     Mail,
-    Phone,
     Building2,
-    MapPin,
-    Car,
     Edit3,
     Save,
     X,
     Lock,
     Eye,
     EyeOff,
+    Loader2,
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button, Input } from '@/components'
+import { useAuth } from '@/contexts/AuthContext'
+import { updateUserProfile } from '@/services/authService'
 
 const ProfilePage = () => {
+    const { user, refreshUser } = useAuth()
     const [isEditingProfile, setIsEditingProfile] = useState(false)
     const [isEditingPassword, setIsEditingPassword] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState<string | null>(null)
+
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
         confirm: false,
     })
 
-    // TODO: Buscar dados do usuário da API
+    // Carregar dados do usuário do contexto
     const [profileData, setProfileData] = useState({
-        name: 'João Silva',
-        email: 'joao.silva@email.com',
-        phone: '(11) 98765-4321',
-        cpf: '123.456.789-00',
-        apartment: '301',
-        building: 'Torre A',
-        parking: 'G-15',
+        full_name: user?.full_name || '',
+        email: user?.email || '',
+        cpf: user?.cpf || '',
     })
+
+    // Atualizar quando user mudar
+    useEffect(() => {
+        if (user) {
+            setProfileData({
+                full_name: user.full_name || '',
+                email: user.email || '',
+                cpf: user.cpf || '',
+            })
+        }
+    }, [user])
 
     const [passwordData, setPasswordData] = useState({
         currentPassword: '',
@@ -54,27 +66,60 @@ const ProfilePage = () => {
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // TODO: Integrar com API para salvar perfil
-        console.log('Salvando perfil:', profileData)
-        setIsEditingProfile(false)
+        if (!user?.id) return
+
+        try {
+            setIsLoading(true)
+            setError(null)
+            setSuccess(null)
+
+            // Atualizar perfil via API
+            await updateUserProfile(user.id, {
+                full_name: profileData.full_name,
+                email: profileData.email,
+                cpf: profileData.cpf,
+            })
+
+            // Atualizar o contexto com os novos dados
+            await refreshUser()
+
+            setSuccess('Perfil atualizado com sucesso!')
+            setIsEditingProfile(false)
+
+            // Limpar mensagem de sucesso após 3s
+            setTimeout(() => setSuccess(null), 3000)
+        } catch (err: any) {
+            console.error('Erro ao salvar perfil:', err)
+            setError(err.response?.data?.detail || 'Erro ao atualizar perfil. Tente novamente.')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleCancelEditProfile = () => {
         // Reverte alterações não salvas
+        if (user) {
+            setProfileData({
+                full_name: user.full_name || '',
+                email: user.email || '',
+                cpf: user.cpf || '',
+            })
+        }
         setIsEditingProfile(false)
-        // TODO: Recarregar dados originais da API
+        setError(null)
     }
 
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            alert('As senhas não coincidem!')
+            setError('As senhas não coincidem!')
             return
         }
 
-        // TODO: Integrar com API para alterar senha
-        console.log('Alterando senha')
+        // TODO: Backend não tem endpoint de alterar senha ainda
+        // Quando tiver, usar: await changePassword({ current: ..., new: ... })
+        setError('Funcionalidade de alteração de senha em desenvolvimento.')
 
         // Limpar formulário
         setPasswordData({
@@ -102,6 +147,32 @@ const ProfilePage = () => {
                     </p>
                 </div>
 
+                {/* Success Message */}
+                {success && (
+                    <div className="p-4 bg-terminalgreen/10 border border-terminalgreen/30 rounded-lg flex items-start gap-3">
+                        <div className="text-terminalgreen">{success}</div>
+                        <button
+                            onClick={() => setSuccess(null)}
+                            className="ml-auto text-terminalgreen hover:text-terminalgreen/80"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                    <div className="p-4 bg-criticalred/10 border border-criticalred/30 rounded-lg flex items-start gap-3">
+                        <div className="text-criticalred">{error}</div>
+                        <button
+                            onClick={() => setError(null)}
+                            className="ml-auto text-criticalred hover:text-criticalred/80"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Profile Card */}
                     <div className="lg:col-span-1">
@@ -119,10 +190,10 @@ const ProfilePage = () => {
 
                                 {/* User Info */}
                                 <h2 className="text-2xl font-bold text-cyan mb-1">
-                                    {profileData.name}
+                                    {user?.full_name || 'Usuário'}
                                 </h2>
                                 <p className="text-metal-silver/60 mb-4">
-                                    Apt {profileData.apartment} - {profileData.building}
+                                    {user?.email || 'email@exemplo.com'}
                                 </p>
 
                                 {/* Status Badge */}
@@ -135,43 +206,31 @@ const ProfilePage = () => {
                             </div>
                         </HologramCard>
 
-                        {/* Apartment Details */}
+                        {/* Apartment Details - Removido por enquanto, backend não fornece */}
                         <HologramCard className="p-6 mt-6">
                             <h3 className="text-lg font-bold text-cyan mb-4">
-                                Dados do Imóvel
+                                Informações da Conta
                             </h3>
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
+                                    <Mail className="w-5 h-5 text-cyan/50" />
+                                    <div>
+                                        <p className="text-xs text-metal-silver/60">Email</p>
+                                        <p className="text-metal-silver">{user?.email || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <User className="w-5 h-5 text-cyan/50" />
+                                    <div>
+                                        <p className="text-xs text-metal-silver/60">CPF</p>
+                                        <p className="text-metal-silver">{user?.cpf || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
                                     <Building2 className="w-5 h-5 text-cyan/50" />
                                     <div>
-                                        <p className="text-xs text-metal-silver/60">
-                                            Torre
-                                        </p>
-                                        <p className="text-metal-silver">
-                                            {profileData.building}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <MapPin className="w-5 h-5 text-cyan/50" />
-                                    <div>
-                                        <p className="text-xs text-metal-silver/60">
-                                            Apartamento
-                                        </p>
-                                        <p className="text-metal-silver">
-                                            {profileData.apartment}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <Car className="w-5 h-5 text-cyan/50" />
-                                    <div>
-                                        <p className="text-xs text-metal-silver/60">
-                                            Vaga de Garagem
-                                        </p>
-                                        <p className="text-metal-silver">
-                                            {profileData.parking}
-                                        </p>
+                                        <p className="text-xs text-metal-silver/60">Função</p>
+                                        <p className="text-metal-silver capitalize">{user?.role || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -209,9 +268,19 @@ const ProfilePage = () => {
                                             variant="primary"
                                             size="sm"
                                             onClick={handleSaveProfile}
+                                            disabled={isLoading}
                                         >
-                                            <Save className="w-4 h-4" />
-                                            Salvar
+                                            {isLoading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                    Salvando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Save className="w-4 h-4" />
+                                                    Salvar
+                                                </>
+                                            )}
                                         </Button>
                                     </div>
                                 )}
@@ -222,8 +291,8 @@ const ProfilePage = () => {
                                     {/* Nome */}
                                     <Input
                                         label="Nome Completo"
-                                        name="name"
-                                        value={profileData.name}
+                                        name="full_name"
+                                        value={profileData.full_name}
                                         onChange={handleProfileChange}
                                         disabled={!isEditingProfile}
                                         required
@@ -240,7 +309,7 @@ const ProfilePage = () => {
                                     />
 
                                     {/* Email */}
-                                    <div className="relative">
+                                    <div className="relative md:col-span-2">
                                         <div className="absolute left-3 top-[52px] transform -translate-y-1/2 z-10">
                                             <Mail className="w-5 h-5 text-cyan/50" />
                                         </div>
@@ -249,23 +318,6 @@ const ProfilePage = () => {
                                             name="email"
                                             type="email"
                                             value={profileData.email}
-                                            onChange={handleProfileChange}
-                                            disabled={!isEditingProfile}
-                                            className="pl-12"
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Telefone */}
-                                    <div className="relative">
-                                        <div className="absolute left-3 top-[52px] transform -translate-y-1/2 z-10">
-                                            <Phone className="w-5 h-5 text-cyan/50" />
-                                        </div>
-                                        <Input
-                                            label="Telefone"
-                                            name="phone"
-                                            type="tel"
-                                            value={profileData.phone}
                                             onChange={handleProfileChange}
                                             disabled={!isEditingProfile}
                                             className="pl-12"

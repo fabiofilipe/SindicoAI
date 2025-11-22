@@ -125,3 +125,129 @@ async def cancel_reservation(
     await db.commit()
     return None
 
+
+@router.put("/{reservation_id}/start", response_model=ReservationResponse)
+async def start_reservation(
+    reservation_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Mark reservation as started (staff only)"""
+    # Only staff can start reservations
+    if current_user.role != "staff":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only staff members can start reservations"
+        )
+    
+    result = await db.execute(
+        select(Reservation).where(
+            Reservation.id == reservation_id,
+            Reservation.tenant_id == current_user.tenant_id
+        )
+    )
+    reservation = result.scalars().first()
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    
+    # Can only start confirmed reservations
+    if reservation.status != "confirmed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot start reservation with status: {reservation.status}"
+        )
+    
+    reservation.status = "in-progress"
+    await db.commit()
+    await db.refresh(reservation)
+    return reservation
+
+@router.put("/{reservation_id}/complete", response_model=ReservationResponse)
+async def complete_reservation(
+    reservation_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Mark reservation as completed (staff only)"""
+    # Only staff can complete reservations
+    if current_user.role != "staff":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only staff members can complete reservations"
+        )
+    
+    result = await db.execute(
+        select(Reservation).where(
+            Reservation.id == reservation_id,
+            Reservation.tenant_id == current_user.tenant_id
+        )
+    )
+    reservation = result.scalars().first()
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    
+    # Can only complete in-progress reservations
+    if reservation.status != "in-progress":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot complete reservation with status: {reservation.status}"
+        )
+    
+    reservation.status = "completed"
+    await db.commit()
+    await db.refresh(reservation)
+    return reservation
+
+@router.post("/{reservation_id}/report-issue", status_code=status.HTTP_201_CREATED)
+async def report_reservation_issue(
+    reservation_id: str,
+    issue: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Report an issue with a reservation (staff only)"""
+    # Only staff can report issues
+    if current_user.role != "staff":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only staff members can report issues"
+        )
+    
+    result = await db.execute(
+        select(Reservation).where(
+            Reservation.id == reservation_id,
+            Reservation.tenant_id == current_user.tenant_id
+        )
+    )
+    reservation = result.scalars().first()
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    
+    # Create notification for admins about the issue
+    from app.models.base import Notification
+    
+    description = issue.get("description", "Issue reported")
+    severity = issue.get("severity", "normal")
+    
+    # Get all admins in the tenant
+    admin_result = await db.execute(
+        select(User).where(
+            User.tenant_id == current_user.tenant_id,
+            User.role == "admin"
+        )
+    )
+    admins = admin_result.scalars().all()
+    
+    # Create notification for each admin
+    for admin in admins:
+        notification = Notification(
+            user_id=admin.id,
+            title=f"Problema Reportado - Reserva #{reservation_id[:8]}",
+            message=f"Funcionário {current_user.full_name} reportou: {description} (Severidade: {severity})",
+            tenant_id=current_user.tenant_id
+        )
+        db.add(notification)
+    
+    await db.commit()
+    
+    return {"message": "Issue reported successfully", "notifications_created": len(admins)}

@@ -14,7 +14,7 @@ import {
 import { MainLayout, HologramCard, Button } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 import { getUpcomingReservations } from '@/services/reservationService'
-import { getRecentNotifications, getUnreadCount } from '@/services/notificationService'
+import { getRecentNotifications } from '@/services/notificationService'
 import { listCommonAreas } from '@/services/commonAreaService'
 import type { Reservation, Notification, CommonArea } from '@/types/models'
 
@@ -25,7 +25,6 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [upcomingReservations, setUpcomingReservations] = useState<Reservation[]>([])
     const [importantNotices, setImportantNotices] = useState<Notification[]>([])
-    const [unreadCount, setUnreadCount] = useState(0)
     const [commonAreas, setCommonAreas] = useState<CommonArea[]>([])
 
     useEffect(() => {
@@ -34,16 +33,14 @@ const HomePage = () => {
                 setIsLoading(true)
 
                 // Buscar dados em paralelo
-                const [reservations, notifications, count, areas] = await Promise.all([
+                const [reservations, notifications, areas] = await Promise.all([
                     getUpcomingReservations().catch(() => []),
                     getRecentNotifications().catch(() => []),
-                    getUnreadCount().catch(() => 0),
                     listCommonAreas().catch(() => []),
                 ])
 
                 setUpcomingReservations(reservations.slice(0, 2)) // Apenas as 2 próximas
                 setImportantNotices(notifications.slice(0, 2)) // Apenas as 2 mais recentes
-                setUnreadCount(count)
                 setCommonAreas(areas)
             } catch (error) {
                 console.error('Erro ao carregar dados do dashboard:', error)

@@ -5,6 +5,7 @@ import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import UsersPage from '@/pages/UsersPage'
 import UnitsPage from '@/pages/UnitsPage'
+import CommonAreasPage from '@/pages/CommonAreasPage'
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
             element={
               <PrivateRoute>
                 <UnitsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/common-areas"
+            element={
+              <PrivateRoute>
+                <CommonAreasPage />
               </PrivateRoute>
             }
           />

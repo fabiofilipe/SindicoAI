@@ -4,6 +4,7 @@ import PrivateRoute from '@/components/PrivateRoute'
 import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import UsersPage from '@/pages/UsersPage'
+import UnitsPage from '@/pages/UnitsPage'
 
 function App() {
   return (
@@ -30,15 +31,11 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          {/* Placeholder routes */}
           <Route
             path="/units"
             element={
               <PrivateRoute>
-                <div className="min-h-screen bg-coal flex items-center justify-center">
-                  <p className="text-metal-silver text-lg">Página de Unidades em desenvolvimento</p>
-                </div>
+                <UnitsPage />
               </PrivateRoute>
             }
           />

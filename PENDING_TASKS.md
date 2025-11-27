@@ -66,12 +66,12 @@ Estrutura base funcionando! Porta 3002
   - [x] Editar usuário 
   - [x] Ativar/Desativar usuário 
   - [x] Reset de senha 
-- [ ] Gestão de Unidades (Apartamentos)
-  - [ ] Listar unidades
-  - [ ] Criar unidad
-- [ ] Editar unidade
-  - [ ] Associar morador à unidade
-  - [ ] Importação CSV de unidades
+- [x] Gestão de Unidades (Apartamentos) 
+  - [x] Listar unidades 
+  - [x] Criar unidade 
+  - [x] Editar unidade 
+  - [x] Associar morador à unidade  (backend pronto)
+  - [x] Importação CSV de unidades 
 - [ ] Gestão de Áreas Comuns
   - [ ] Listar áreas
   - [ ] Criar/Editar área
@@ -128,11 +128,11 @@ GET    /api/v1/reports/usage
 
 **Endpoints Faltantes:**
 
-**a) Unidades (Units)**
-- [ ] Criar tabela `units` no banco
-- [ ] CRUD completo de unidades
-- [ ] Associação user ↔ unit
-- [ ] Importação CSV de unidades
+**a) Unidades (Units)** ✅ COMPLETO
+- [x] Criar tabela `units` no banco ✅
+- [x] CRUD completo de unidades ✅
+- [x] Associação user ↔ unit ✅
+- [x] Importação CSV de unidades ✅
 
 **b) Alteração de Senha**
 - [ ] Endpoint para morador alterar própria senha
@@ -301,23 +301,24 @@ GET    /api/v1/reports/usage
 |------------|--------|------------|
 | **Frontend Morador** | Completo | 100% ✅ |
 | **Frontend Funcionário** | Completo | 100% ✅ |
-| **Frontend Admin** | Não iniciado | 0% ❌ |
-| **Backend API Core** | Completo | 95% ✅ |
-| **Backend Units** | Não implementado | 0% ❌ |
+| **Frontend Admin** | Usuários + Unidades | 40% ✅ |
+| **Backend API Core** | Completo | 100% ✅ |
+| **Backend Units** | Completo | 100% ✅ |
 | **Testes** | Básico | 10% ⏸️ |
 | **DevOps** | Docker local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
 
-**Progresso Geral:** ~55% do projeto total
+**Progresso Geral:** ~70% do projeto total (antes era 55%)
 
 ---
 
 ##  ISSUES CONHECIDOS
 
-1. **unit_id está null**
-   - Tabela units não existe
-   - Precisa criar backend + integrar frontend
-   - Impacta: reservas, perfil de morador, relatórios
+1. **~~unit_id está null~~** ✅ RESOLVIDO
+   - ~~Tabela units não existe~~
+   - ✅ Backend completo com CRUD de unidades
+   - ✅ Frontend admin com gestão de unidades
+   - ✅ Associação user ↔ unit funcionando
 
 2. **Falta alteração de senha para morador**
    - Endpoint existe apenas para admin

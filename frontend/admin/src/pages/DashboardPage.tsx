@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Users, UserCheck, Briefcase, Shield, Calendar, Building2, Activity, TrendingUp } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import Card from '@/components/ui/Card'
@@ -6,6 +7,7 @@ import { getDashboardMetrics } from '@/services/dashboardService'
 import type { DashboardMetrics } from '@/types/dashboard'
 
 const DashboardPage = () => {
+    const navigate = useNavigate()
     const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
@@ -135,7 +137,10 @@ const DashboardPage = () => {
                     <Card>
                         <h2 className="text-xl font-bold text-cyan mb-4">Ações Rápidas</h2>
                         <div className="space-y-3">
-                            <button className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all">
+                            <button
+                                onClick={() => navigate('/users')}
+                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                            >
                                 <div className="flex items-center gap-3">
                                     <Users className="w-5 h-5" />
                                     <div>
@@ -144,7 +149,10 @@ const DashboardPage = () => {
                                     </div>
                                 </div>
                             </button>
-                            <button className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all">
+                            <button
+                                onClick={() => navigate('/units')}
+                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                            >
                                 <div className="flex items-center gap-3">
                                     <Building2 className="w-5 h-5" />
                                     <div>
@@ -153,7 +161,10 @@ const DashboardPage = () => {
                                     </div>
                                 </div>
                             </button>
-                            <button className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all">
+                            <button
+                                onClick={() => navigate('/notifications')}
+                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                            >
                                 <div className="flex items-center gap-3">
                                     <Calendar className="w-5 h-5" />
                                     <div>

@@ -161,12 +161,6 @@ const ReservationsPage = () => {
         }
     }
 
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(value)
-    }
 
     // Helper para buscar nome da área comum
     const getCommonAreaName = (areaId: string) => {
@@ -317,12 +311,7 @@ const ReservationsPage = () => {
                                                 Capacidade: {area.capacity} pessoas
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm text-metal-silver">
-                                            <Clock className="w-4 h-4 text-cyan/50" />
-                                            <span>
-                                                {area.hourly_rate ? formatCurrency(area.hourly_rate) : 'Gratuito'}
-                                            </span>
-                                        </div>
+
                                     </div>
 
                                     <Button
@@ -450,12 +439,7 @@ const ReservationsPage = () => {
                                 <Users className="w-4 h-4 text-cyan/50" />
                                 <span>Capacidade: {selectedArea.capacity} pessoas</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-metal-silver">
-                                <Clock className="w-4 h-4 text-cyan/50" />
-                                <span>
-                                    Taxa: {selectedArea.hourly_rate ? formatCurrency(selectedArea.hourly_rate) : 'Gratuito'}
-                                </span>
-                            </div>
+
                         </div>
 
                         {/* Data */}

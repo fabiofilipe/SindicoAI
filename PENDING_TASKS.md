@@ -72,11 +72,11 @@ Estrutura base funcionando! Porta 3002
   - [x] Editar unidade 
   - [x] Associar morador à unidade  (backend pronto)
   - [x] Importação CSV de unidades 
-- [ ] Gestão de Áreas Comuns
-  - [ ] Listar áreas
-  - [ ] Criar/Editar área
-  - [ ] Definir horários e capacidade
-  - [ ] Definir preços (se aplicável)
+- [x] Gestão de Áreas Comuns ✅
+  - [x] Listar áreas ✅
+  - [x] Criar/Editar área ✅
+  - [x] Definir horários e capacidade ✅
+  - [x] Definir preços (se aplicável) ✅
 - [ ] Visualização de Reservas
   - [ ] Calendário geral de todas reservas
   - [ ] Filtros avançados
@@ -301,14 +301,16 @@ GET    /api/v1/reports/usage
 |------------|--------|------------|
 | **Frontend Morador** | Completo | 100% ✅ |
 | **Frontend Funcionário** | Completo | 100% ✅ |
-| **Frontend Admin** | Usuários + Unidades | 40% ✅ |
+| **Frontend Admin** | Usuários + Unidades + Áreas | 50% ✅ |
 | **Backend API Core** | Completo | 100% ✅ |
 | **Backend Units** | Completo | 100% ✅ |
 | **Testes** | Básico | 10% ⏸️ |
 | **DevOps** | Docker local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
 
-**Progresso Geral:** ~70% do projeto total (antes era 55%)
+**Progresso Geral:** ~72% do projeto total
+
+**Última atualização:** Gestão de Áreas Comuns + Layout Unidades corrigido
 
 ---
 

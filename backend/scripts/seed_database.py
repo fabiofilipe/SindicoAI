@@ -111,6 +111,48 @@ async def seed_data():
         
         await session.flush()
         
+        # 2.5. Criar Unidades (Apartamentos)
+        print("\n🏢 Criando Unidades...")
+        
+        from app.models.base import Unit
+        
+        units_data = [
+            # Torre A
+            {"number": "101", "block": "A", "floor": 1, "type": "2-quartos"},
+            {"number": "102", "block": "A", "floor": 1, "type": "3-quartos"},
+            {"number": "201", "block": "A", "floor": 2, "type": "2-quartos"},
+            {"number": "202", "block": "A", "floor": 2, "type": "3-quartos"},
+            {"number": "301", "block": "A", "floor": 3, "type": "2-quartos"},
+            # Torre B
+            {"number": "101", "block": "B", "floor": 1, "type": "2-quartos"},
+            {"number": "102", "block": "B", "floor": 1, "type": "3-quartos"},
+            {"number": "201", "block": "B", "floor": 2, "type": "cobertura"},
+            {"number": "202", "block": "B", "floor": 2, "type": "3-quartos"},
+            {"number": "301", "block": "B", "floor": 3, "type": "2-quartos"},
+            # Torre C
+            {"number": "101", "block": "C", "floor": 1, "type": "studio"},
+            {"number": "102", "block": "C", "floor": 1, "type": "2-quartos"},
+            {"number": "201", "block": "C", "floor": 2, "type": "2-quartos"},
+            {"number": "202", "block": "C", "floor": 2, "type": "3-quartos"},
+            {"number": "301", "block": "C", "floor": 3, "type": "penthouse"},
+        ]
+        
+        units = []
+        for unit_data in units_data:
+            unit = Unit(
+                tenant_id=tenant.id,
+                **unit_data
+            )
+            session.add(unit)
+            units.append(unit)
+            print(f"  ✓ Apto {unit_data['number']} - Torre {unit_data['block']} ({unit_data['type']})")
+        
+        await session.flush()
+        
+        # Associar morador à primeira unidade
+        resident.unit_id = units[0].id
+        print(f"\n  → Morador '{resident.full_name}' associado à Unidade {units[0].number} - Torre {units[0].block}")
+        
         # 3. Criar Áreas Comuns
         print("\n Criando Áreas Comuns...")
         

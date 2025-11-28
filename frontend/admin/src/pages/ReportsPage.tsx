@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BarChart3, Calendar, Download, TrendingUp } from 'lucide-react'
+import { BarChart3, Calendar, Download, TrendingUp, Building2, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
@@ -210,7 +210,7 @@ export default function ReportsPage() {
                     </button>
                 </div>
 
-                {/* Content Area - Will be filled in next tasks */}
+                {/* Content Area */}
                 <div className="min-h-[400px]">
                     {isLoading ? (
                         <Card>
@@ -221,16 +221,278 @@ export default function ReportsPage() {
                         </Card>
                     ) : (
                         <>
+                            {/* Areas Report */}
                             {activeTab === 'areas' && areasReport && (
-                                <div className="text-metal-silver">
-                                    {/* Areas report content will go here in next task */}
-                                    <p className="text-center py-12">Visualização de dados será implementada na próxima tarefa</p>
+                                <div className="space-y-6">
+                                    {/* Summary Cards */}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Total de Reservas</p>
+                                                        <p className="text-3xl font-bold text-cyan mt-2">
+                                                            {areasReport.total_reservations}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-cyan/10 border border-cyan/30 rounded-lg">
+                                                        <Calendar className="w-8 h-8 text-cyan" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Áreas Utilizadas</p>
+                                                        <p className="text-3xl font-bold text-cyan mt-2">
+                                                            {areasReport.total_areas_used}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-cyan/10 border border-cyan/30 rounded-lg">
+                                                        <Building2 className="w-8 h-8 text-cyan" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Horas Totais</p>
+                                                        <p className="text-3xl font-bold text-cyan mt-2">
+                                                            {areasReport.areas_stats.reduce((acc, area) => acc + area.total_hours_reserved, 0).toFixed(1)}h
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-cyan/10 border border-cyan/30 rounded-lg">
+                                                        <Clock className="w-8 h-8 text-cyan" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </div>
+
+                                    {/* Areas Table */}
+                                    <Card>
+                                        <div className="p-6">
+                                            <h3 className="text-xl font-bold text-cyan mb-4">Estatísticas por Área</h3>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full">
+                                                    <thead>
+                                                        <tr className="border-b border-cyan-glow/20">
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Área Comum
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Reservas
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Horas Reservadas
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Dia Mais Popular
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Duração Média (h)
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {areasReport.areas_stats.length === 0 ? (
+                                                            <tr>
+                                                                <td colSpan={5} className="text-center py-8 text-metal-silver/60">
+                                                                    Nenhuma área utilizada neste período
+                                                                </td>
+                                                            </tr>
+                                                        ) : (
+                                                            areasReport.areas_stats.map((area, index) => (
+                                                                <tr
+                                                                    key={area.common_area_id}
+                                                                    className="border-b border-cyan-glow/10 hover:bg-coal-light transition-colors"
+                                                                >
+                                                                    <td className="py-3 px-4 text-metal-silver">
+                                                                        {area.common_area_name}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-cyan font-medium">
+                                                                        {area.total_reservations}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver">
+                                                                        {area.total_hours_reserved}h
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver">
+                                                                        {area.most_popular_day || 'N/A'}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver">
+                                                                        {area.average_duration_hours?.toFixed(1) || 'N/A'}
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </Card>
                                 </div>
                             )}
+
+                            {/* Reservations Report */}
                             {activeTab === 'reservations' && reservationsReport && (
-                                <div className="text-metal-silver">
-                                    {/* Reservations report content will go here in next task */}
-                                    <p className="text-center py-12">Visualização de dados será implementada na próxima tarefa</p>
+                                <div className="space-y-6">
+                                    {/* Summary Cards */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Total</p>
+                                                        <p className="text-3xl font-bold text-cyan mt-2">
+                                                            {reservationsReport.total_reservations}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-cyan/10 border border-cyan/30 rounded-lg">
+                                                        <Calendar className="w-8 h-8 text-cyan" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Confirmadas</p>
+                                                        <p className="text-3xl font-bold text-green-500 mt-2">
+                                                            {reservationsReport.confirmed_count}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                                                        <CheckCircle className="w-8 h-8 text-green-500" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Pendentes</p>
+                                                        <p className="text-3xl font-bold text-yellow-500 mt-2">
+                                                            {reservationsReport.pending_count}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                                                        <AlertCircle className="w-8 h-8 text-yellow-500" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+
+                                        <Card hover>
+                                            <div className="p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-sm text-metal-silver/70">Canceladas</p>
+                                                        <p className="text-3xl font-bold text-red-500 mt-2">
+                                                            {reservationsReport.cancelled_count}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                                        <XCircle className="w-8 h-8 text-red-500" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </div>
+
+                                    {/* Reservations Table */}
+                                    <Card>
+                                        <div className="p-6">
+                                            <h3 className="text-xl font-bold text-cyan mb-4">Reservas Detalhadas</h3>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full">
+                                                    <thead>
+                                                        <tr className="border-b border-cyan-glow/20">
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Área Comum
+                                                            </th>
+                                                            <th className="text-left py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Usuário
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Unidade
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Data/Hora
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Duração
+                                                            </th>
+                                                            <th className="text-center py-3 px-4 text-sm font-medium text-metal-silver">
+                                                                Status
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {reservationsReport.reservations.length === 0 ? (
+                                                            <tr>
+                                                                <td colSpan={6} className="text-center py-8 text-metal-silver/60">
+                                                                    Nenhuma reserva encontrada neste período
+                                                                </td>
+                                                            </tr>
+                                                        ) : (
+                                                            reservationsReport.reservations.map((reservation) => (
+                                                                <tr
+                                                                    key={reservation.id}
+                                                                    className="border-b border-cyan-glow/10 hover:bg-coal-light transition-colors"
+                                                                >
+                                                                    <td className="py-3 px-4 text-metal-silver">
+                                                                        {reservation.common_area_name}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-metal-silver">
+                                                                        <div>
+                                                                            <p className="font-medium">{reservation.user_name}</p>
+                                                                            <p className="text-xs text-metal-silver/60">{reservation.user_email}</p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver">
+                                                                        {reservation.unit_number || 'N/A'}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver text-sm">
+                                                                        {new Date(reservation.start_time).toLocaleString('pt-BR', {
+                                                                            day: '2-digit',
+                                                                            month: '2-digit',
+                                                                            hour: '2-digit',
+                                                                            minute: '2-digit'
+                                                                        })}
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-metal-silver">
+                                                                        {reservation.duration_hours}h
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center">
+                                                                        <span className={`
+                                                                            px-3 py-1 rounded-full text-xs font-medium
+                                                                            ${reservation.status === 'confirmed' ? 'bg-green-500/10 text-green-500' : ''}
+                                                                            ${reservation.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' : ''}
+                                                                            ${reservation.status === 'cancelled' ? 'bg-red-500/10 text-red-500' : ''}
+                                                                        `}>
+                                                                            {reservation.status === 'confirmed' ? 'Confirmada' : ''}
+                                                                            {reservation.status === 'pending' ? 'Pendente' : ''}
+                                                                            {reservation.status === 'cancelled' ? 'Cancelada' : ''}
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </Card>
                                 </div>
                             )}
                         </>

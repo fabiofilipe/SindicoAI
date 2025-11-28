@@ -4,7 +4,7 @@ import Button from '../ui/Button'
 import Input from '../ui/Input'
 import { createNotification } from '../../services/notificationService'
 import { getUsers } from '../../services/userService'
-import { getUnits } from '../../services/unitService'
+import { listUnits } from '../../services/unitService'
 import type { NotificationCreate } from '../../types/notification'
 import type { UserListItem } from '../../types/user'
 import type { Unit } from '../../types/unit'
@@ -39,9 +39,9 @@ export default function NotificationFormModal({ onClose, onSuccess }: Notificati
             try {
                 const [usersData, unitsData] = await Promise.all([
                     getUsers(),
-                    getUnits()
+                    listUnits()
                 ])
-                setUsers(usersData.filter(u => u.role === 'resident')) // Apenas moradores
+                setUsers(usersData.filter((u: UserListItem) => u.role === 'resident')) // Apenas moradores
                 setUnits(unitsData)
             } catch (err) {
                 console.error('Erro ao carregar dados:', err)

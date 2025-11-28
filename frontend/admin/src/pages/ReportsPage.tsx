@@ -308,7 +308,7 @@ export default function ReportsPage() {
                                                                 </td>
                                                             </tr>
                                                         ) : (
-                                                            areasReport.areas_stats.map((area, index) => (
+                                                            areasReport.areas_stats.map((area) => (
                                                                 <tr
                                                                     key={area.common_area_id}
                                                                     className="border-b border-cyan-glow/10 hover:bg-coal-light transition-colors"

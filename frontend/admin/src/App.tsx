@@ -7,6 +7,7 @@ import UsersPage from '@/pages/UsersPage'
 import UnitsPage from '@/pages/UnitsPage'
 import CommonAreasPage from '@/pages/CommonAreasPage'
 import NotificationsPage from '@/pages/NotificationsPage'
+import ReportsPage from '@/pages/ReportsPage'
 
 function App() {
   return (
@@ -54,6 +55,14 @@ function App() {
             element={
               <PrivateRoute>
                 <NotificationsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <PrivateRoute>
+                <ReportsPage />
               </PrivateRoute>
             }
           />

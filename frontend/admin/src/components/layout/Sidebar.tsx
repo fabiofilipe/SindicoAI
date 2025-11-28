@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, Building2, Calendar, Bell, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, Building2, Calendar, Bell, BarChart3, Settings, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 const Sidebar = () => {
@@ -11,6 +11,7 @@ const Sidebar = () => {
         { to: '/units', icon: Building2, label: 'Unidades' },
         { to: '/common-areas', icon: Calendar, label: 'Áreas Comuns' },
         { to: '/notifications', icon: Bell, label: 'Notificações' },
+        { to: '/reports', icon: BarChart3, label: 'Relatórios' },
         { to: '/settings', icon: Settings, label: 'Configurações' },
     ]
 

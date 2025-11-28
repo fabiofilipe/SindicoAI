@@ -1,7 +1,7 @@
 #  SindicoAI - Tarefas Pendentes
 
-**Última Atualização:** 22/11/2024 01:21  
-**Status Atual:** Frontend Morador ✅ + Frontend Funcionário ✅ COMPLETOS
+**Última Atualização:** 28/11/2024
+**Status Atual:** Frontend Morador ✅ + Frontend Funcionário ✅ + Frontend Admin 75% ✅
 
 ---
 
@@ -81,9 +81,10 @@ Estrutura base funcionando! Porta 3002
   - [x] Calendário geral de todas reservas
   - [x] Filtros avançados
   - [ ] Aprovar/Rejeitar reservas (se houver moderação) (Pensando sobre ainda)
-- [ ] Notificações em Massa
-  - [ ] Enviar notificação para todos
-  - [ ] Enviar para unidades específicas
+- [x] Notificações em Massa ✅
+  - [x] Enviar notificação para todos ✅
+  - [x] Enviar para unidades específicas ✅
+  - [x] Enviar para usuários específicos ✅
   - [ ] Agendar notificações
 - [ ] Relatórios
   - [ ] Uso de áreas comuns
@@ -301,16 +302,16 @@ GET    /api/v1/reports/usage
 |------------|--------|------------|
 | **Frontend Morador** | Completo | 100% ✅ |
 | **Frontend Funcionário** | Completo | 100% ✅ |
-| **Frontend Admin** | Usuários + Unidades + Áreas | 50% ✅ |
+| **Frontend Admin** | Usuários + Unidades + Áreas + Notificações | 75% ✅ |
 | **Backend API Core** | Completo | 100% ✅ |
 | **Backend Units** | Completo | 100% ✅ |
 | **Testes** | Básico | 10% ⏸️ |
 | **DevOps** | Docker local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
 
-**Progresso Geral:** ~72% do projeto total
+**Progresso Geral:** ~76% do projeto total
 
-**Última atualização:** Gestão de Áreas Comuns + Layout Unidades corrigido
+**Última atualização:** Notificações em Massa implementada (envio para todos/unidades/usuários)
 
 ---
 
@@ -347,13 +348,14 @@ GET    /api/v1/reports/usage
 ✅ **Pronto:**
 - Morador pode fazer login, reservar áreas, ver notificações, usar IA
 - Funcionário pode gerenciar agenda, iniciar/concluir reservas, reportar problemas
+- Admin pode gerenciar usuários, unidades, áreas comuns, reservas e enviar notificações em massa
 - Backend está robusto e documentado
 - Docker funcionando perfeitamente
+- Tabela de unidades implementada e funcional
 
 ❌ **Falta para produção:**
-- Portal admin (CRÍTICO)
-- Tabela de unidades (IMPORTANTE)
+- Portal admin - Relatórios e Configurações (MÉDIO)
 - Deploy em servidor real (IMPORTANTE)
 - Testes automatizados (RECOMENDADO)
 
-**Próximo passo:** Iniciar Frontend Admin! 🚀
+**Próximo passo:** Implementar Relatórios ou Configurações do Sistema! 🚀

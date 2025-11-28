@@ -1,10 +1,13 @@
 from typing import Optional
 from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func, and_
 from sqlalchemy.orm import selectinload
+import csv
+import io
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user, require_admin
@@ -18,10 +21,92 @@ from app.schemas.report import (
 
 router = APIRouter()
 
-@router.get("/common-areas-usage", response_model=CommonAreasUsageReport)
+
+def generate_common_areas_csv(report: CommonAreasUsageReport) -> str:
+    """Generate CSV content for common areas usage report"""
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Header
+    writer.writerow([
+        'Área Comum',
+        'Total de Reservas',
+        'Horas Reservadas',
+        'Dia Mais Popular',
+        'Duração Média (horas)'
+    ])
+
+    # Data rows
+    for area_stat in report.areas_stats:
+        writer.writerow([
+            area_stat.common_area_name,
+            area_stat.total_reservations,
+            area_stat.total_hours_reserved,
+            area_stat.most_popular_day or 'N/A',
+            area_stat.average_duration_hours or 0
+        ])
+
+    # Summary row
+    writer.writerow([])
+    writer.writerow(['RESUMO'])
+    writer.writerow(['Período', f'{report.start_date} a {report.end_date}'])
+    writer.writerow(['Total de Reservas', report.total_reservations])
+    writer.writerow(['Áreas Utilizadas', report.total_areas_used])
+
+    return output.getvalue()
+
+
+def generate_reservations_csv(report: ReservationsReport) -> str:
+    """Generate CSV content for reservations report"""
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Header
+    writer.writerow([
+        'ID',
+        'Área Comum',
+        'Usuário',
+        'Email',
+        'Unidade',
+        'Data/Hora Início',
+        'Data/Hora Fim',
+        'Status',
+        'Duração (horas)',
+        'Criado em'
+    ])
+
+    # Data rows
+    for reservation in report.reservations:
+        writer.writerow([
+            reservation.id,
+            reservation.common_area_name,
+            reservation.user_name,
+            reservation.user_email,
+            reservation.unit_number or 'N/A',
+            reservation.start_time.strftime('%Y-%m-%d %H:%M'),
+            reservation.end_time.strftime('%Y-%m-%d %H:%M'),
+            reservation.status,
+            reservation.duration_hours,
+            reservation.created_at.strftime('%Y-%m-%d %H:%M')
+        ])
+
+    # Summary rows
+    writer.writerow([])
+    writer.writerow(['RESUMO'])
+    writer.writerow(['Período', f'{report.start_date} a {report.end_date}'])
+    writer.writerow(['Total de Reservas', report.total_reservations])
+    writer.writerow(['Confirmadas', report.confirmed_count])
+    writer.writerow(['Pendentes', report.pending_count])
+    writer.writerow(['Canceladas', report.cancelled_count])
+    writer.writerow(['Horas Totais', report.total_hours_reserved])
+
+    return output.getvalue()
+
+@router.get("/common-areas-usage")
 async def get_common_areas_usage_report(
     start_date: Optional[date] = Query(None, description="Start date for report (YYYY-MM-DD)"),
     end_date: Optional[date] = Query(None, description="End date for report (YYYY-MM-DD)"),
+    format: str = Query("json", description="Response format: json or csv"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_admin)
 ):
@@ -102,7 +187,7 @@ async def get_common_areas_usage_report(
     # Sort by most used
     areas_stats.sort(key=lambda x: x.total_reservations, reverse=True)
 
-    return CommonAreasUsageReport(
+    report = CommonAreasUsageReport(
         start_date=start_date,
         end_date=end_date,
         total_reservations=len(reservations),
@@ -110,13 +195,27 @@ async def get_common_areas_usage_report(
         areas_stats=areas_stats
     )
 
+    # Return CSV if requested
+    if format.lower() == "csv":
+        csv_content = generate_common_areas_csv(report)
+        return StreamingResponse(
+            iter([csv_content]),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": f"attachment; filename=relatorio_areas_comuns_{start_date}_{end_date}.csv"
+            }
+        )
 
-@router.get("/reservations", response_model=ReservationsReport)
+    return report
+
+
+@router.get("/reservations")
 async def get_reservations_report(
     start_date: Optional[date] = Query(None, description="Start date for report (YYYY-MM-DD)"),
     end_date: Optional[date] = Query(None, description="End date for report (YYYY-MM-DD)"),
     status: Optional[str] = Query(None, description="Filter by status: confirmed, pending, cancelled"),
     common_area_id: Optional[str] = Query(None, description="Filter by specific common area"),
+    format: str = Query("json", description="Response format: json or csv"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_admin)
 ):
@@ -194,7 +293,7 @@ async def get_reservations_report(
             created_at=reservation.created_at
         ))
 
-    return ReservationsReport(
+    report = ReservationsReport(
         start_date=start_date,
         end_date=end_date,
         total_reservations=len(reservations),
@@ -204,3 +303,16 @@ async def get_reservations_report(
         total_hours_reserved=round(total_hours, 2),
         reservations=reservation_items
     )
+
+    # Return CSV if requested
+    if format.lower() == "csv":
+        csv_content = generate_reservations_csv(report)
+        return StreamingResponse(
+            iter([csv_content]),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": f"attachment; filename=relatorio_reservas_{start_date}_{end_date}.csv"
+            }
+        )
+
+    return report

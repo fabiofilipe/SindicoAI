@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button, Input } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
-import { updateUserProfile } from '@/services/authService'
+import { updateUserProfile, changePassword } from '@/services/authService'
 
 const ProfilePage = () => {
     const { user, refreshUser } = useAuth()
@@ -117,17 +117,35 @@ const ProfilePage = () => {
             return
         }
 
-        // TODO: Backend não tem endpoint de alterar senha ainda
-        // Quando tiver, usar: await changePassword({ current: ..., new: ... })
-        setError('Funcionalidade de alteração de senha em desenvolvimento.')
+        try {
+            setIsLoading(true)
+            setError(null)
+            setSuccess(null)
 
-        // Limpar formulário
-        setPasswordData({
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: '',
-        })
-        setIsEditingPassword(false)
+            await changePassword({
+                current_password: passwordData.currentPassword,
+                new_password: passwordData.newPassword,
+            })
+
+            setSuccess('Senha alterada com sucesso!')
+
+            // Limpar formulário
+            setPasswordData({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+            })
+            setIsEditingPassword(false)
+
+            // Limpar mensagem de sucesso após 3s
+            setTimeout(() => setSuccess(null), 3000)
+        } catch (err: any) {
+            console.error('Erro ao alterar senha:', err)
+            const errorMessage = err.response?.data?.detail || 'Erro ao alterar senha. Tente novamente.'
+            setError(errorMessage)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {

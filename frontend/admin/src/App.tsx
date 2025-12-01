@@ -8,6 +8,7 @@ import UnitsPage from '@/pages/UnitsPage'
 import CommonAreasPage from '@/pages/CommonAreasPage'
 import NotificationsPage from '@/pages/NotificationsPage'
 import ReportsPage from '@/pages/ReportsPage'
+import SettingsPage from '@/pages/SettingsPage'
 
 function App() {
   return (
@@ -70,9 +71,7 @@ function App() {
             path="/settings"
             element={
               <PrivateRoute>
-                <div className="min-h-screen bg-coal flex items-center justify-center">
-                  <p className="text-metal-silver text-lg">Página de Configurações em desenvolvimento</p>
-                </div>
+                <SettingsPage />
               </PrivateRoute>
             }
           />

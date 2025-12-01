@@ -1,7 +1,7 @@
 #  SindicoAI - Tarefas Pendentes
 
-**Última Atualização:** 28/11/2024
-**Status Atual:** Frontend Morador ✅ + Frontend Funcionário ✅ + Frontend Admin 75% ✅
+**Última Atualização:** 01/12/2024
+**Status Atual:** Frontend Morador ✅ + Frontend Funcionário ✅ + Frontend Admin 95% ✅
 
 ---
 
@@ -28,9 +28,12 @@
 ### 3. Backend API
 - ✅ Autenticação (OAuth2 + JWT + Refresh)
 - ✅ Reservas CRUD
-- ✅ **Reservation Management** (start, complete, report-issue) 
+- ✅ **Reservation Management** (start, complete, report-issue)
 - ✅ Notificações CRUD
 - ✅ Áreas Comuns
+- ✅ Unidades CRUD + CSV Import
+- ✅ Relatórios (uso de áreas + reservas + CSV export)
+- ✅ **Configurações (Settings)** - Tenant settings com JSON ⭐ NEW
 - ✅ AI/RAG Chat
 - ✅ Upload de Documentos
 
@@ -90,10 +93,10 @@ Estrutura base funcionando! Porta 3002
   - [x] Uso de áreas comuns ✅
   - [x] Reservas por período ✅
   - [x] Exportar para CSV ✅
-- [ ] Configurações do Sistema
-  - [ ] Dados do condomínio
-  - [ ] Regras de reserva
-  - [ ] Configurações de notificação
+- [x] Configurações do Sistema ✅
+  - [x] Dados do condomínio ✅
+  - [x] Regras de reserva ✅
+  - [x] Configurações de notificação ✅
 
 **Tecnologias:**
 - React + TypeScript + Vite
@@ -101,25 +104,31 @@ Estrutura base funcionando! Porta 3002
 - React Router, Axios, Zustand
 - Reusár componentes do morador/funcionário
 
-**Endpoints Backend Necessários:**
+**Endpoints Backend Implementados:**
 ```typescript
-// Usuários
+// Usuários ✅
 GET    /api/v1/users                 // Listar todos
 POST   /api/v1/users                 // Criar usuário
 PUT    /api/v1/users/{id}            // Editar
 DELETE /api/v1/users/{id}            // Desativar
 PUT    /api/v1/users/{id}/reset-password
 
-// Unidades (PRECISA CRIAR BACKEND)
+// Unidades ✅
 GET    /api/v1/units
 POST   /api/v1/units
 PUT    /api/v1/units/{id}
 DELETE /api/v1/units/{id}
 POST   /api/v1/imports/units         // CSV import
 
-// Relatórios (PRECISA CRIAR BACKEND)
+// Relatórios ✅
+GET    /api/v1/reports/common-areas-usage
 GET    /api/v1/reports/reservations
-GET    /api/v1/reports/usage
+GET    /api/v1/reports/common-areas-usage/export
+GET    /api/v1/reports/reservations/export
+
+// Configurações ✅ NEW
+GET    /api/v1/settings              // Buscar configurações do tenant
+PUT    /api/v1/settings              // Atualizar configurações
 ```
 
 ---
@@ -148,10 +157,10 @@ GET    /api/v1/reports/usage
 - [ ] Validação de tipos (PDF, imagens)
 - [ ] Armazenamento em S3/MinIO (opcional)
 
-**d) Relatórios**
-- [ ] Endpoint de analytics/reservations
-- [ ] Endpoint de usage por área comum
-- [ ] Exportação para CSV
+**d) Relatórios** ✅ COMPLETO
+- [x] Endpoint de analytics/reservations ✅
+- [x] Endpoint de usage por área comum ✅
+- [x] Exportação para CSV ✅
 
 **e) WebSocket (Opcional)**
 - [ ] Real-time notifications
@@ -302,16 +311,18 @@ GET    /api/v1/reports/usage
 |------------|--------|------------|
 | **Frontend Morador** | Completo | 100% ✅ |
 | **Frontend Funcionário** | Completo | 100% ✅ |
-| **Frontend Admin** | Usuários + Unidades + Áreas + Notificações | 75% ✅ |
+| **Frontend Admin** | Usuários + Unidades + Áreas + Notificações + Relatórios + Configurações | 95% ✅ |
 | **Backend API Core** | Completo | 100% ✅ |
 | **Backend Units** | Completo | 100% ✅ |
+| **Backend Settings** | Completo | 100% ✅ |
+| **Backend Reports** | Completo | 100% ✅ |
 | **Testes** | Básico | 10% ⏸️ |
 | **DevOps** | Docker local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
 
-**Progresso Geral:** ~76% do projeto total
+**Progresso Geral:** ~85% do projeto total
 
-**Última atualização:** Notificações em Massa implementada (envio para todos/unidades/usuários)
+**Última atualização:** Configurações do Sistema implementada (dados do condomínio + regras de reserva + notificações)
 
 ---
 
@@ -327,9 +338,12 @@ GET    /api/v1/reports/usage
    - Endpoint existe apenas para admin
    - Morador precisa poder mudar própria senha
 
-3. **Sem portal admin**
-   - Síndico não tem interface para gerenciar sistema
-   - CRÍTICO para uso real
+3. **~~Sem portal admin~~** ✅ RESOLVIDO
+   - ✅ Portal admin completo e funcional
+   - ✅ Gestão de usuários, unidades, áreas comuns
+   - ✅ Notificações em massa
+   - ✅ Relatórios e exportação CSV
+   - ✅ Configurações do sistema
 
 ---
 
@@ -348,14 +362,25 @@ GET    /api/v1/reports/usage
 ✅ **Pronto:**
 - Morador pode fazer login, reservar áreas, ver notificações, usar IA
 - Funcionário pode gerenciar agenda, iniciar/concluir reservas, reportar problemas
-- Admin pode gerenciar usuários, unidades, áreas comuns, reservas e enviar notificações em massa
-- Backend está robusto e documentado
+- **Admin pode gerenciar:**
+  - Usuários (CRUD completo + reset senha)
+  - Unidades/Apartamentos (CRUD + importação CSV)
+  - Áreas Comuns (CRUD completo)
+  - Reservas (visualização + calendário)
+  - Notificações em massa (todos/unidades/usuários específicos)
+  - Relatórios (uso de áreas + reservas + exportação CSV)
+  - **Configurações do Sistema (dados do condomínio + regras + notificações)** ✅ NEW
+- Backend robusto com todos os endpoints necessários
 - Docker funcionando perfeitamente
-- Tabela de unidades implementada e funcional
+- Database com migrations controladas
 
 ❌ **Falta para produção:**
-- Portal admin - Relatórios e Configurações (MÉDIO)
+- Funcionalidades opcionais:
+  - Agendar notificações
+  - Aprovar/Rejeitar reservas (moderação)
+  - Alteração de senha pelo morador
+  - Melhorias de UX (toast, error boundary, skeleton loading)
 - Deploy em servidor real (IMPORTANTE)
 - Testes automatizados (RECOMENDADO)
 
-**Próximo passo:** Implementar Relatórios ou Configurações do Sistema! 🚀
+**Próximo passo:** Melhorias opcionais do Frontend ou preparar para Deploy! 🚀

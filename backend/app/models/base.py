@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, JSON
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 import uuid
@@ -13,8 +13,35 @@ class Tenant(Base):
     name = Column(String, nullable=False)
     domain = Column(String, unique=True, index=True)
     address = Column(String)
+
+    # Dados adicionais do condomínio
+    phone = Column(String)
+    cnpj = Column(String)
+    city = Column(String)
+    state = Column(String)
+    zipcode = Column(String)
+
+    # Configurações de reserva (JSON)
+    reservation_settings = Column(JSON, default=lambda: {
+        "min_hours_advance": 1,
+        "max_days_advance": 30,
+        "max_hours_duration": 4,
+        "cancellation_hours_advance": 24
+    })
+
+    # Configurações de notificação (JSON)
+    notification_settings = Column(JSON, default=lambda: {
+        "email_enabled": True,
+        "sms_enabled": False,
+        "push_enabled": True,
+        "notification_email": "",
+        "quiet_hours_start": "22:00",
+        "quiet_hours_end": "08:00"
+    })
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
     users = relationship("User", back_populates="tenant")
     units = relationship("Unit", back_populates="tenant")
 

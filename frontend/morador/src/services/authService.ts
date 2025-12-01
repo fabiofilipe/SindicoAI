@@ -88,3 +88,16 @@ export const getAccessToken = (): string | null => {
 export const getRefreshToken = (): string | null => {
     return localStorage.getItem('refresh_token')
 }
+
+/**
+ * Altera a senha do usuário atual
+ * @param data - Senha atual e nova senha
+ * @returns Promise com os dados do usuário atualizado
+ */
+export const changePassword = async (data: {
+    current_password: string
+    new_password: string
+}): Promise<User> => {
+    const response = await api.put<User>('/users/me/change-password', data)
+    return response.data
+}

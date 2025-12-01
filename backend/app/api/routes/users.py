@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.database import get_db
-from app.core.security import get_password_hash
+from app.core.security import get_password_hash, verify_password
 from app.dependencies.auth import get_current_user
 from app.models.base import User
-from app.schemas.user import UserResponse, UserUpdate, PasswordResetRequest
+from app.schemas.user import UserResponse, UserUpdate, PasswordResetRequest, ChangePasswordRequest
 
 router = APIRouter()
 
@@ -157,3 +157,23 @@ async def reset_user_password(
     await db.commit()
     await db.refresh(user)
     return user
+
+@router.put("/me/change-password", response_model=UserResponse)
+async def change_own_password(
+    password_change: ChangePasswordRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Change current user's password"""
+    # Verify current password
+    if not verify_password(password_change.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Senha atual incorreta"
+        )
+
+    # Update to new password
+    current_user.hashed_password = get_password_hash(password_change.new_password)
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user

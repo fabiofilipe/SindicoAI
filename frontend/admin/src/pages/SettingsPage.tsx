@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Save, Building2, Clock, Bell } from 'lucide-react'
 import { getSettings, updateSettings } from '../services/settingsService'
-import type { Settings, SettingsUpdate, ReservationSettings, NotificationSettings } from '../types/settings'
+import type { SettingsUpdate, ReservationSettings, NotificationSettings } from '../types/settings'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Input from '../components/ui/Input'
 import MainLayout from '../components/layout/MainLayout'
 
 export default function SettingsPage() {
-    const [settings, setSettings] = useState<Settings | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState('')
@@ -46,7 +45,6 @@ export default function SettingsPage() {
             setLoading(true)
             setError('')
             const data = await getSettings()
-            setSettings(data)
 
             // Populate form states
             setCondominiumData({

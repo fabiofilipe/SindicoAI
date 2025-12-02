@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Building2, Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Button, Input, HologramCard } from '@/components'
 import { useAuth } from '@/contexts'
 

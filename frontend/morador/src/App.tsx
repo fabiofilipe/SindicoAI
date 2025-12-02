@@ -7,6 +7,30 @@ import { LoginPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage
 function App() {
     return (
         <AuthProvider>
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#0a0e27',
+                        color: '#00f0ff',
+                        border: '1px solid #00f0ff',
+                        fontFamily: 'monospace',
+                    },
+                    success: {
+                        iconTheme: {
+                            primary: '#00f0ff',
+                            secondary: '#0a0e27',
+                        },
+                    },
+                    error: {
+                        iconTheme: {
+                            primary: '#ff0055',
+                            secondary: '#0a0e27',
+                        },
+                    },
+                }}
+            />
             <BrowserRouter>
                 <Routes>
                     {/* Rota padrão redireciona para login */}

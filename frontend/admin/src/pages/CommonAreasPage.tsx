@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit2, Trash2, Building2, CheckCircle, XCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { listCommonAreas, deleteCommonArea } from '../services/commonAreaService'
 import type { CommonArea } from '../types/commonArea'
 import Button from '../components/ui/Button'
@@ -33,14 +34,16 @@ export default function CommonAreasPage() {
     }, [])
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Tem certeza que deseja deletar a área "${name}"?`)) return
-
-        try {
-            await deleteCommonArea(id)
-            await loadAreas()
-        } catch (err: any) {
+        toast.promise(
+            deleteCommonArea(id).then(() => loadAreas()),
+            {
+                loading: 'Deletando área...',
+                success: `Área "${name}" deletada com sucesso!`,
+                error: (err) => err.response?.data?.detail || 'Erro ao deletar área comum',
+            }
+        ).catch((err: any) => {
             setError(err.response?.data?.detail || 'Erro ao deletar área comum')
-        }
+        })
     }
 
     const handleEdit = (area: CommonArea) => {

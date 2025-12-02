@@ -1,7 +1,7 @@
 # 📋 SindicoAI - Roadmap & Status
 
 **Última Atualização:** 01/12/2024
-**Progresso Geral:** ~87% do projeto completo
+**Progresso Geral:** ~89% do projeto completo
 
 ---
 
@@ -51,13 +51,13 @@
 
 ## 🔧 MELHORIAS DE UX (Prioridade: Alta)
 
-### **Toast Notifications Global**
-- [ ] Implementar react-hot-toast ou sonner
-- [ ] Substituir alerts por toasts em:
+### **Toast Notifications Global** ✅
+- [x] Implementar react-hot-toast ou sonner
+- [x] Substituir alerts por toasts em:
   - Frontend Morador (reservas, notificações, perfil)
   - Frontend Funcionário (agenda, reservas)
   - Frontend Admin (todas operações CRUD)
-- [ ] Mensagens de sucesso/erro/info/warning com auto-dismiss
+- [x] Mensagens de sucesso/erro/info/warning com auto-dismiss
 
 ### **Error Boundary Component**
 - [ ] Criar ErrorBoundary.tsx para cada frontend
@@ -189,7 +189,7 @@
 | **Frontend Funcionário** | Completo | 100% ✅ |
 | **Frontend Admin** | Completo | 95% ✅ |
 | **Backend API** | Completo | 100% ✅ |
-| **UX/Polish** | Básico | 40% ⏸️ |
+| **UX/Polish** | Avançado | 55% 🚀 |
 | **Testes** | Mínimo | 10% ⏸️ |
 | **DevOps** | Local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
@@ -199,13 +199,13 @@
 ## 📝 LISTA RESUMIDA - O QUE FALTA
 
 ### **🎯 Prioridade ALTA (Para Produção)**
-1. Toast Notifications Global
+1. ~~Toast Notifications Global~~ ✅ **CONCLUÍDO**
 2. Error Boundary Component
-3. Deploy em servidor (SSL + Domain + Backups)
-4. CI/CD básico (GitHub Actions)
+3. Skeleton Loading States
+4. Deploy em servidor (SSL + Domain + Backups)
+5. CI/CD básico (GitHub Actions)
 
 ### **🔧 Prioridade MÉDIA (Polish e Features)**
-5. Skeleton Loading States
 6. Alteração de senha para Funcionário
 7. Agendar notificações
 8. Audit Log
@@ -223,7 +223,7 @@
 ## 🎯 PRÓXIMOS PASSOS RECOMENDADOS
 
 **Fase 1 - UX Polish (Essencial para Produção):**
-1. Toast Notifications Global → Melhora dramática na UX
+1. ~~Toast Notifications Global~~ ✅ **CONCLUÍDO**
 2. Error Boundary Component → Previne crashes
 3. Skeleton Loading States → Feedback visual profissional
 
@@ -256,7 +256,7 @@
 
 ## ✨ CONCLUSÃO
 
-**O sistema está 87% completo e FUNCIONAL para demonstração!**
+**O sistema está 89% completo e FUNCIONAL para demonstração!**
 
 **✅ Pronto para uso:**
 - Morador: login, reservas, notificações, IA, alterar senha
@@ -264,9 +264,10 @@
 - Admin: gestão completa (usuários, unidades, áreas, relatórios, configurações)
 - Backend robusto com todos os endpoints necessários
 - Docker funcionando perfeitamente
+- **Toast Notifications implementadas em todos os frontends** 🎉
 
 **🚀 Para PRODUÇÃO, falta apenas:**
-- Polish de UX (toasts, error boundaries, skeleton)
+- Polish de UX (error boundaries, skeleton loading)
 - Deploy em servidor real com HTTPS
 - Backups e monitoring
 

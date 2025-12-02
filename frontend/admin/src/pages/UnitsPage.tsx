@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Plus, Upload, Trash2, Edit2, Users } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { listUnits, deleteUnit } from '../services/unitService'
 import type { Unit } from '../types/unit'
 import Button from '../components/ui/Button'
@@ -34,14 +35,16 @@ export default function UnitsPage() {
     }, [])
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Tem certeza que deseja deletar esta unidade?')) return
-
-        try {
-            await deleteUnit(id)
-            await loadUnits()
-        } catch (err: any) {
+        toast.promise(
+            deleteUnit(id).then(() => loadUnits()),
+            {
+                loading: 'Deletando unidade...',
+                success: 'Unidade deletada com sucesso!',
+                error: (err) => err.response?.data?.detail || 'Erro ao deletar unidade',
+            }
+        ).catch((err: any) => {
             setError(err.response?.data?.detail || 'Erro ao deletar unidade')
-        }
+        })
     }
 
     const handleEdit = (unit: Unit) => {

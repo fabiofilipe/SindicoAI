@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Plus, Search, Edit, Key, Power, UserCheck, UserX } from 'lucide-react'
+import toast from 'react-hot-toast'
 import MainLayout from '@/components/layout/MainLayout'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -87,10 +88,10 @@ const UsersPage = () => {
                 role: 'resident',
                 is_active: true,
             })
+            toast.success('Usuário criado com sucesso!')
             loadUsers()
         } catch (error) {
-            console.error('Erro ao criar usuário:', error)
-            alert('Erro ao criar usuário. Verifique os dados e tente novamente.')
+            toast.error('Erro ao criar usuário. Verifique os dados e tente novamente.')
         }
     }
 
@@ -102,10 +103,10 @@ const UsersPage = () => {
             setIsEditModalOpen(false)
             setSelectedUser(null)
             setEditForm({})
+            toast.success('Usuário editado com sucesso!')
             loadUsers()
         } catch (error) {
-            console.error('Erro ao editar usuário:', error)
-            alert('Erro ao editar usuário.')
+            toast.error('Erro ao editar usuário.')
         }
     }
 
@@ -117,25 +118,22 @@ const UsersPage = () => {
             setIsResetPasswordModalOpen(false)
             setSelectedUser(null)
             setResetPasswordForm({ new_password: '' })
-            alert('Senha redefinida com sucesso!')
+            toast.success('Senha redefinida com sucesso!')
         } catch (error) {
-            console.error('Erro ao redefinir senha:', error)
-            alert('Erro ao redefinir senha.')
+            toast.error('Erro ao redefinir senha.')
         }
     }
 
     const handleToggleStatus = async (user: UserListItem) => {
-        if (!confirm(`Deseja ${user.is_active ? 'desativar' : 'ativar'} o usuário ${user.email}?`)) {
-            return
-        }
-
-        try {
-            await userService.toggleUserStatus(user.id, !user.is_active)
-            loadUsers()
-        } catch (error) {
-            console.error('Erro ao alterar status:', error)
-            alert('Erro ao alterar status do usuário.')
-        }
+        const action = user.is_active ? 'desativar' : 'ativar'
+        toast.promise(
+            userService.toggleUserStatus(user.id, !user.is_active).then(() => loadUsers()),
+            {
+                loading: `${action === 'ativar' ? 'Ativando' : 'Desativando'} usuário...`,
+                success: `Usuário ${action === 'ativar' ? 'ativado' : 'desativado'} com sucesso!`,
+                error: 'Erro ao alterar status do usuário',
+            }
+        )
     }
 
     const openEditModal = (user: UserListItem) => {

@@ -72,9 +72,7 @@ const NotificationsPage = () => {
                 success: 'Notificação marcada como lida!',
                 error: 'Erro ao marcar notificação como lida',
             }
-        ).catch((err) => {
-            setError('Erro ao marcar notificação como lida.')
-        })
+        )
     }
 
     const handleMarkAllAsRead = async () => {
@@ -87,9 +85,7 @@ const NotificationsPage = () => {
                 success: `${unreadNotifications.length} notificações marcadas como lidas!`,
                 error: 'Erro ao marcar todas as notificações',
             }
-        ).catch((err) => {
-            setError('Erro ao marcar todas as notificações como lidas.')
-        })
+        )
     }
 
     const handleDelete = async (id: string) => {
@@ -100,9 +96,7 @@ const NotificationsPage = () => {
                 success: 'Notificação excluída com sucesso!',
                 error: 'Erro ao excluir notificação',
             }
-        ).catch((err) => {
-            setError('Erro ao excluir notificação.')
-        })
+        )
     }
 
     return (

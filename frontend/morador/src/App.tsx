@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/contexts'
 import { PrivateRoute } from '@/components'
 import { LoginPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage, ProfilePage } from '@/pages'

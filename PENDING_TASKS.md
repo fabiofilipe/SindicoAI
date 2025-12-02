@@ -1,386 +1,273 @@
-#  SindicoAI - Tarefas Pendentes
+# 📋 SindicoAI - Roadmap & Status
 
 **Última Atualização:** 01/12/2024
-**Status Atual:** Frontend Morador ✅ + Frontend Funcionário ✅ + Frontend Admin 95% ✅
+**Progresso Geral:** ~87% do projeto completo
 
 ---
 
-##  O QUE JÁ FOI IMPLEMENTADO (100%)
+## ✅ NÚCLEO DO SISTEMA (100% COMPLETO)
 
-### 1. Frontend Morador (Resident Portal) - Port 3000
-- ✅ 6 Páginas completas (Login, Home, Reservas, IA, Notificações, Perfil)
-- ✅ CRUD completo de Reservas
-- ✅ CRUD completo de Notificações
-- ✅ Edição de Perfil funcional
-- ✅ Chat IA com RAG integrado
-- ✅ Autenticação OAuth2 + JWT
-- ✅ Design Industrial Tech Premium
+### **Frontend Morador** (Port 3000)
+- Login, Home, Reservas, Chat IA, Notificações, Perfil
+- CRUD completo de Reservas e Notificações
+- Alteração de própria senha
+- Chat IA com RAG integrado
+- Design Industrial Tech Premium
 
-### 2. Frontend Funcionário (Employee Portal) - Port 3001
-- ✅ 5 Páginas completas (Login, Dashboard, Agenda, Notificações, Perfil)
-- ✅ **Gestão de Reservas** (start, complete, report issue) ⭐ NEW
-- ✅ Timeline de reservas do dia
-- ✅ Notificações com ações
-- ✅ Design Terminal-Minimal
-- ✅ **ReservationDetailsPage** com botões de ação  
-- ✅ **Modal para reportar problemas**  
+### **Frontend Funcionário** (Port 3001)
+- Login, Dashboard, Agenda, Notificações, Perfil
+- Gestão de Reservas (iniciar, concluir, reportar problemas)
+- Timeline de reservas do dia
+- Design Terminal-Minimal
 
-### 3. Backend API
-- ✅ Autenticação (OAuth2 + JWT + Refresh)
-- ✅ Reservas CRUD
-- ✅ **Reservation Management** (start, complete, report-issue)
-- ✅ Notificações CRUD
-- ✅ Áreas Comuns
-- ✅ Unidades CRUD + CSV Import
-- ✅ Relatórios (uso de áreas + reservas + CSV export)
-- ✅ **Configurações (Settings)** - Tenant settings com JSON ⭐ NEW
-- ✅ AI/RAG Chat
-- ✅ Upload de Documentos
+### **Frontend Admin** (Port 3002)
+- Login, Dashboard com métricas em tempo real
+- Gestão de Usuários (CRUD + reset senha + ativar/desativar)
+- Gestão de Unidades (CRUD + importação CSV + associação com moradores)
+- Gestão de Áreas Comuns (CRUD completo)
+- Visualização de Reservas (calendário + filtros)
+- Notificações em Massa (todos/unidades/usuários específicos)
+- Relatórios (uso de áreas + reservas por período + exportação CSV)
+- Configurações do Sistema (dados do condomínio + regras + notificações)
 
-### 4. DevOps
-- ✅ Docker Compose (Backend + 2 Frontends + DB + Redis)
-- ✅ Database Seed Scripts
-- ✅ Nginx configurado
+### **Backend API**
+- Autenticação (OAuth2 + JWT + Refresh Token)
+- CRUD completo: Usuários, Unidades, Áreas Comuns, Reservas, Notificações
+- Gestão de Reservas (iniciar, concluir, reportar problemas)
+- Alteração de senha (`PUT /users/me/change-password`)
+- Relatórios e Analytics (uso de áreas + reservas + exportação CSV)
+- Configurações do Tenant (settings com JSON)
+- AI/RAG Chat
+- Upload de Documentos
+- Importação CSV de Unidades
 
----
-
-##  O QUE FALTA IMPLEMENTAR
-
-### 1. Frontend Admin (Priority: HIGH)
-**Tempo Estimado:** 4-5 dias
-
-```
-✅ INICIADO - 22/11/2024
-✅ LoginPage, Dashboard e Gestão de Usuários COMPLETOS
-
-Estrutura base funcionando! Porta 3002
-- Autenticação com validação de role admin
-- Dashboard com métricas em tempo real
-- CRUD completo de usuários
-- Tailwind + Design System industrial tech
-```
-
-**Páginas Necessárias:**
-- [x] LoginPage (admin) 
-- [x] Dashboard (métricas e overview) 
-- [x] Gestão de Usuários 
-  - [x] Listar usuários (moradores, funcionários, admins) 
-  - [x] Criar novo usuário 
-  - [x] Editar usuário 
-  - [x] Ativar/Desativar usuário 
-  - [x] Reset de senha 
-- [x] Gestão de Unidades (Apartamentos) 
-  - [x] Listar unidades 
-  - [x] Criar unidade 
-  - [x] Editar unidade 
-  - [x] Associar morador à unidade  (backend pronto)
-  - [x] Importação CSV de unidades 
-- [x] Gestão de Áreas Comuns ✅
-  - [x] Listar áreas ✅
-  - [x] Criar/Editar área ✅
-  - [x] Definir horários e capacidade ✅
-  - [x] Definir preços (se aplicável) ✅
-- [x] Visualização de Reservas
-  - [x] Calendário geral de todas reservas
-  - [x] Filtros avançados
-  - [ ] Aprovar/Rejeitar reservas (se houver moderação) (Pensando sobre ainda)
-- [x] Notificações em Massa ✅
-  - [x] Enviar notificação para todos ✅
-  - [x] Enviar para unidades específicas ✅
-  - [x] Enviar para usuários específicos ✅
-  - [ ] Agendar notificações
-- [x] Relatórios ✅
-  - [x] Uso de áreas comuns ✅
-  - [x] Reservas por período ✅
-  - [x] Exportar para CSV ✅
-- [x] Configurações do Sistema ✅
-  - [x] Dados do condomínio ✅
-  - [x] Regras de reserva ✅
-  - [x] Configurações de notificação ✅
-
-**Tecnologias:**
-- React + TypeScript + Vite
-- TailwindCSS (mesmo design system dos outros frontends)
-- React Router, Axios, Zustand
-- Reusár componentes do morador/funcionário
-
-**Endpoints Backend Implementados:**
-```typescript
-// Usuários ✅
-GET    /api/v1/users                 // Listar todos
-POST   /api/v1/users                 // Criar usuário
-PUT    /api/v1/users/{id}            // Editar
-DELETE /api/v1/users/{id}            // Desativar
-PUT    /api/v1/users/{id}/reset-password
-
-// Unidades ✅
-GET    /api/v1/units
-POST   /api/v1/units
-PUT    /api/v1/units/{id}
-DELETE /api/v1/units/{id}
-POST   /api/v1/imports/units         // CSV import
-
-// Relatórios ✅
-GET    /api/v1/reports/common-areas-usage
-GET    /api/v1/reports/reservations
-GET    /api/v1/reports/common-areas-usage/export
-GET    /api/v1/reports/reservations/export
-
-// Configurações ✅ NEW
-GET    /api/v1/settings              // Buscar configurações do tenant
-PUT    /api/v1/settings              // Atualizar configurações
-```
+### **DevOps**
+- Docker Compose (3 Frontends + Backend + PostgreSQL + Redis)
+- Database migrations (Alembic)
+- Nginx configurado
+- Scripts de seed para dados iniciais
 
 ---
 
-### 2. Backend - Funcionalidades Adicionais (Priority: MEDIUM)
-**Tempo Estimado:** 2-3 dias
+## 🔧 MELHORIAS DE UX (Prioridade: Alta)
 
-**Endpoints Faltantes:**
+### **Toast Notifications Global**
+- [ ] Implementar react-hot-toast ou sonner
+- [ ] Substituir alerts por toasts em:
+  - Frontend Morador (reservas, notificações, perfil)
+  - Frontend Funcionário (agenda, reservas)
+  - Frontend Admin (todas operações CRUD)
+- [ ] Mensagens de sucesso/erro/info/warning com auto-dismiss
 
-**a) Unidades (Units)** ✅ COMPLETO
-- [x] Criar tabela `units` no banco ✅
-- [x] CRUD completo de unidades ✅
-- [x] Associação user ↔ unit ✅
-- [x] Importação CSV de unidades ✅
+### **Error Boundary Component**
+- [ ] Criar ErrorBoundary.tsx para cada frontend
+- [ ] Página de erro amigável com design cyberpunk
+- [ ] Log de erros detalhado no console
+- [ ] Botão "Tentar novamente"
 
-**b) Alteração de Senha**
-- [ ] Endpoint para morador alterar própria senha
-  ```
-  PUT /api/v1/users/me/change-password
-  Body: { current_password, new_password }
-  ```
+### **Skeleton Loading States**
+- [ ] Substituir spinners por skeleton screens
+- [ ] Implementar em:
+  - Listagens (reservas, notificações, usuários)
+  - Dashboards
+  - Cards de informação
 
-**c) Upload de Documentos**
+---
+
+## ⚙️ FUNCIONALIDADES OPCIONAIS (Prioridade: Média)
+
+### **Frontend Funcionário**
+- [ ] Alteração de senha (backend já existe)
+- [ ] Filtros avançados na agenda
+- [ ] Histórico de reservas concluídas
+- [ ] Exportar relatório do dia
+
+### **Frontend Admin**
+- [ ] Agendar notificações (envio futuro)
+- [ ] Sistema de moderação: aprovar/rejeitar reservas
+
+### **Upload de Documentos**
 - [ ] Melhorar endpoint de upload
 - [ ] Suporte para múltiplos arquivos
 - [ ] Validação de tipos (PDF, imagens)
 - [ ] Armazenamento em S3/MinIO (opcional)
 
-**d) Relatórios** ✅ COMPLETO
-- [x] Endpoint de analytics/reservations ✅
-- [x] Endpoint de usage por área comum ✅
-- [x] Exportação para CSV ✅
-
-**e) WebSocket (Opcional)**
-- [ ] Real-time notifications
-- [ ] Socket.IO ou similar
-- [ ] Integrar com frontend
-
-**f) Audit Log**
-- [ ] Registrar ações administrativas
-- [ ] Endpoint para visualizar logs
-- [ ] Filtros por usuário, ação, data
-
----
-
-### 3. Melhorias nos Frontends Existentes (Priority: MEDIUM)
-**Tempo Estimado:** 1-2 dias
-
-**a) Frontend Morador:**
-- [ ] Toast notifications global
-- [ ] Error boundary component
-- [ ] Skeleton loading states
-- [ ] Virtual scrolling em listas grandes
-- [ ] Upload de documentos (se backend tiver)
-- [ ] Dark mode toggle (já está dark, mas criar light)
+### **Features Avançadas**
 - [ ] Recuperação de senha (forgot password)
-
-**b) Frontend Funcionário:**
-- [ ] Implementar alteração de senha
-- [ ] Adicionar filtros na agenda
-- [ ] Histórico de reservas concluídas
-- [ ] Exportar relatório do dia
-
-**c) Ambos:**
+- [ ] Dark mode toggle (criar versão light)
 - [ ] PWA (Progressive Web App)
-- [ ] Service Worker para cache
+- [ ] Service Worker para cache offline
 - [ ] Instalável no desktop/mobile
 
 ---
 
-### 4. Testes Automatizados (Priority: LOW)
-**Tempo Estimado:** 3-4 dias
+## 🔐 AUDITORIA E SEGURANÇA (Prioridade: Média)
 
-**Backend:**
-- [ ] Unit tests para services
-- [ ] Integration tests para endpoints
-- [ ] Test coverage > 70%
+### **Audit Log**
+- [ ] Registrar ações administrativas (criar, editar, deletar)
+- [ ] Endpoint para visualizar logs
+- [ ] Filtros por usuário, ação, data
+- [ ] Tabela de auditoria no banco
 
-**Frontend:**
-- [ ] Vitest para unit tests
-- [ ] React Testing Library para componentes
-- [ ] Cypress/Playwright para E2E
-- [ ] Testes críticos:
-  - Login flow
-  - Criar reserva
-  - Cancelar reserva
-  - Marcar notificação como lida
+### **WebSocket (Opcional)**
+- [ ] Notificações em tempo real
+- [ ] Socket.IO ou similar
+- [ ] Integração com os 3 frontends
 
 ---
 
-### 5. DevOps & Deploy (Priority: MEDIUM)
-**Tempo Estimado:** 2-3 dias
+## 🚀 DEPLOY & PRODUÇÃO (Prioridade: Alta)
 
-**CI/CD:**
+### **CI/CD**
 - [ ] GitHub Actions workflow
-- [ ] Automated tests on PR
-- [ ] Automated build on merge
+- [ ] Testes automáticos em PRs
+- [ ] Build automático em merge
 - [ ] Deploy automático (staging + production)
 
-**Infraestrutura:**
-- [ ] Production docker-compose
-- [ ] SSL/HTTPS setup (nginx + Let's Encrypt)
-- [ ] Environment variables management (.env.production)
-- [ ] Backup automatizado do banco (cron job)
-- [ ] Monitoring (Prometheus + Grafana ou similar)
-- [ ] Logs centralizados (ELK stack ou similar)
+### **Infraestrutura**
+- [ ] Production docker-compose otimizado
+- [ ] SSL/HTTPS (nginx + Let's Encrypt)
+- [ ] Gestão de variáveis de ambiente (.env.production)
+- [ ] Backup automatizado do PostgreSQL (cron job)
+- [ ] Monitoring (Prometheus + Grafana)
+- [ ] Logs centralizados (ELK stack)
 
-**Deploy:**
+### **Deploy**
 - [ ] Servidor VPS/Cloud configurado
 - [ ] Domain name configurado
 - [ ] HTTPS funcionando
 - [ ] Containers rodando em produção
+- [ ] Health checks configurados
 
 ---
 
-### 6. Mobile Apps - Fase 4B (Priority: LOW - FUTURO)
-**Tempo Estimado:** 4-6 semanas
+## 🧪 TESTES (Prioridade: Baixa)
 
-**Morador App (React Native + Expo):**
-- [ ] Setup projeto
-- [ ] Autenticação
-- [ ] Home screen
-- [ ] Reservas (criar, cancelar)
-- [ ] Notificações
+### **Backend**
+- [ ] Unit tests para services
+- [ ] Integration tests para endpoints
+- [ ] Test coverage > 70%
+
+### **Frontend**
+- [ ] Vitest para unit tests
+- [ ] React Testing Library para componentes
+- [ ] Cypress ou Playwright para E2E
+- [ ] Testes críticos:
+  - Login flow
+  - Criar/cancelar reserva
+  - Enviar notificação
+  - Gestão de usuários (admin)
+
+---
+
+## 📱 MOBILE APPS (Prioridade: Futura)
+
+### **App Morador (React Native + Expo)**
+- [ ] Setup e configuração
+- [ ] Autenticação e perfil
+- [ ] Reservas (criar, cancelar, visualizar)
+- [ ] Notificações push
 - [ ] Chat IA
-- [ ] Perfil
-- [ ] Push notifications
 - [ ] Biometria para login
-- [ ] Offline-first
+- [ ] Modo offline-first
 
-**Funcionário App (React Native + Expo):**
-- [ ] Setup projeto
+### **App Funcionário (React Native + Expo)**
+- [ ] Setup e configuração
 - [ ] Autenticação
-- [ ] Dashboard operacional
-- [ ] Agenda do dia
-- [ ] Marcar início/fim de reserva
-- [ ] Scanner QR Code (futuro)
+- [ ] Dashboard e agenda do dia
+- [ ] Marcar início/fim de reservas
+- [ ] Scanner QR Code
 - [ ] Sync offline
 
 ---
 
-##  PRÓXIMOS PASSOS RECOMENDADOS
-
-### Ordem de Prioridade:
-
-1. **Frontend Admin** (CRÍTICO)
-   - Criar todo o portal administrativo
-   - Isso completa a "tríade" de frontends (Morador, Funcionário, Admin)
-
-2. **Backend - Unidades** (IMPORTANTE)
-   - unit_id está null em todos os lugares
-   - Precisa criar tabela e CRUD
-   - Muito código depende disso
-
-3. **Backend - Endpoints Faltantes** (IMPORTANTE)
-   - Alteração de senha
-   - Relatórios
-   - Melhorias em uploads
-
-4. **Melhorias nos Frontends** (OPCIONAL)
-   - Toast global, Error boundary, etc.
-   - Pode fazer em paralelo com desenvolvimento do Admin
-
-5. **DevOps** (MÉDIO PRAZO)
-   - CI/CD e deploy em produção
-   - Pode deixar para quando estiver mais estável
-
-6. **Testes** (MÉDIO PRAZO)
-   - Começar com testes críticos
-   - Expandir cobertura gradualmente
-
-7. **Mobile** (FUTURO)
-   - Apenas após web estar 100% estável
-
----
-
-##  MÉTRICAS ATUAIS
+## 📊 MÉTRICAS ATUAIS
 
 | Componente | Status | Percentual |
 |------------|--------|------------|
 | **Frontend Morador** | Completo | 100% ✅ |
 | **Frontend Funcionário** | Completo | 100% ✅ |
-| **Frontend Admin** | Usuários + Unidades + Áreas + Notificações + Relatórios + Configurações | 95% ✅ |
-| **Backend API Core** | Completo | 100% ✅ |
-| **Backend Units** | Completo | 100% ✅ |
-| **Backend Settings** | Completo | 100% ✅ |
-| **Backend Reports** | Completo | 100% ✅ |
-| **Testes** | Básico | 10% ⏸️ |
-| **DevOps** | Docker local | 40% ⏸️ |
+| **Frontend Admin** | Completo | 95% ✅ |
+| **Backend API** | Completo | 100% ✅ |
+| **UX/Polish** | Básico | 40% ⏸️ |
+| **Testes** | Mínimo | 10% ⏸️ |
+| **DevOps** | Local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
 
-**Progresso Geral:** ~85% do projeto total
+---
 
-**Última atualização:** Configurações do Sistema implementada (dados do condomínio + regras de reserva + notificações)
+## 📝 LISTA RESUMIDA - O QUE FALTA
+
+### **🎯 Prioridade ALTA (Para Produção)**
+1. Toast Notifications Global
+2. Error Boundary Component
+3. Deploy em servidor (SSL + Domain + Backups)
+4. CI/CD básico (GitHub Actions)
+
+### **🔧 Prioridade MÉDIA (Polish e Features)**
+5. Skeleton Loading States
+6. Alteração de senha para Funcionário
+7. Agendar notificações
+8. Audit Log
+9. Melhorias no upload de documentos
+
+### **📱 Prioridade BAIXA (Futuro)**
+10. Testes automatizados (coverage > 70%)
+11. PWA e Service Workers
+12. WebSocket para notificações em tempo real
+13. Recuperação de senha
+14. Apps Mobile (React Native)
 
 ---
 
-##  ISSUES CONHECIDOS
+## 🎯 PRÓXIMOS PASSOS RECOMENDADOS
 
-1. **~~unit_id está null~~** ✅ RESOLVIDO
-   - ~~Tabela units não existe~~
-   - ✅ Backend completo com CRUD de unidades
-   - ✅ Frontend admin com gestão de unidades
-   - ✅ Associação user ↔ unit funcionando
+**Fase 1 - UX Polish (Essencial para Produção):**
+1. Toast Notifications Global → Melhora dramática na UX
+2. Error Boundary Component → Previne crashes
+3. Skeleton Loading States → Feedback visual profissional
 
-2. **Falta alteração de senha para morador**
-   - Endpoint existe apenas para admin
-   - Morador precisa poder mudar própria senha
+**Fase 2 - Deploy (Colocar em Produção):**
+4. Configurar servidor VPS/Cloud
+5. SSL/HTTPS com Let's Encrypt
+6. Backups automatizados
+7. CI/CD com GitHub Actions
 
-3. **~~Sem portal admin~~** ✅ RESOLVIDO
-   - ✅ Portal admin completo e funcional
-   - ✅ Gestão de usuários, unidades, áreas comuns
-   - ✅ Notificações em massa
-   - ✅ Relatórios e exportação CSV
-   - ✅ Configurações do sistema
+**Fase 3 - Features Opcionais:**
+8. Alteração de senha para Funcionário
+9. Agendar notificações
+10. Audit Log
+
+**Fase 4 - Qualidade (Médio/Longo Prazo):**
+11. Testes automatizados
+12. Monitoring e logs centralizados
+13. PWA
+14. Apps Mobile
 
 ---
 
-##  DOCUMENTAÇÃO
+## 📚 DOCUMENTAÇÃO
 
-- **Walkthrough Completo:** `.gemini/antigravity/brain/.../walkthrough.md`
 - **API Docs:** http://localhost:8000/docs
 - **Seed Scripts:** `backend/scripts/README.md`
+- **Repositório:** (adicionar link)
 
 ---
 
-##  CONCLUSÃO
+## ✨ CONCLUSÃO
 
-**Sistema atual está funcional para demonstração!**
+**O sistema está 87% completo e FUNCIONAL para demonstração!**
 
-✅ **Pronto:**
-- Morador pode fazer login, reservar áreas, ver notificações, usar IA
-- Funcionário pode gerenciar agenda, iniciar/concluir reservas, reportar problemas
-- **Admin pode gerenciar:**
-  - Usuários (CRUD completo + reset senha)
-  - Unidades/Apartamentos (CRUD + importação CSV)
-  - Áreas Comuns (CRUD completo)
-  - Reservas (visualização + calendário)
-  - Notificações em massa (todos/unidades/usuários específicos)
-  - Relatórios (uso de áreas + reservas + exportação CSV)
-  - **Configurações do Sistema (dados do condomínio + regras + notificações)** ✅ NEW
+**✅ Pronto para uso:**
+- Morador: login, reservas, notificações, IA, alterar senha
+- Funcionário: gestão de agenda e reservas
+- Admin: gestão completa (usuários, unidades, áreas, relatórios, configurações)
 - Backend robusto com todos os endpoints necessários
 - Docker funcionando perfeitamente
-- Database com migrations controladas
 
-❌ **Falta para produção:**
-- Funcionalidades opcionais:
-  - Agendar notificações
-  - Aprovar/Rejeitar reservas (moderação)
-  - Alteração de senha pelo morador
-  - Melhorias de UX (toast, error boundary, skeleton loading)
-- Deploy em servidor real (IMPORTANTE)
-- Testes automatizados (RECOMENDADO)
+**🚀 Para PRODUÇÃO, falta apenas:**
+- Polish de UX (toasts, error boundaries, skeleton)
+- Deploy em servidor real com HTTPS
+- Backups e monitoring
 
-**Próximo passo:** Melhorias opcionais do Frontend ou preparar para Deploy! 🚀
+**Sistema pronto para evoluir para produção com as melhorias de UX e infraestrutura! 🎉**

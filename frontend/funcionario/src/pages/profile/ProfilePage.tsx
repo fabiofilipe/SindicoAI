@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { User, Lock, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { Card, Input, Button } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -14,7 +15,7 @@ const ProfilePage = () => {
     const handleChangePassword = (e: React.FormEvent) => {
         e.preventDefault()
         // TODO: Implement password change
-        alert('Alteração de senha em desenvolvimento')
+        toast('Alteração de senha em desenvolvimento', { icon: 'ℹ️' })
     }
 
     const handleLogout = () => {

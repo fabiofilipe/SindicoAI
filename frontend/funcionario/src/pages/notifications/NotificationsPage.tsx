@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Bell, Loader2, Check, Trash2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Card, Badge } from '@/components'
 import { listNotifications, markAsRead, deleteNotification } from '@/services/notificationService'
 import type { Notification } from '@/types/models'
@@ -25,22 +26,25 @@ const NotificationsPage = () => {
     }, [])
 
     const handleMarkAsRead = async (id: string) => {
-        try {
-            await markAsRead(id)
-            await fetchNotifications()
-        } catch (error) {
-            console.error('Erro ao marcar como lida:', error)
-        }
+        toast.promise(
+            markAsRead(id).then(() => fetchNotifications()),
+            {
+                loading: 'Marcando como lida...',
+                success: 'Notificação marcada como lida!',
+                error: 'Erro ao marcar notificação como lida',
+            }
+        )
     }
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Deletar esta notificação?')) return
-        try {
-            await deleteNotification(id)
-            await fetchNotifications()
-        } catch (error) {
-            console.error('Erro ao deletar:', error)
-        }
+        toast.promise(
+            deleteNotification(id).then(() => fetchNotifications()),
+            {
+                loading: 'Excluindo notificação...',
+                success: 'Notificação excluída com sucesso!',
+                error: 'Erro ao excluir notificação',
+            }
+        )
     }
 
     const filteredNotifications = filter === 'unread'

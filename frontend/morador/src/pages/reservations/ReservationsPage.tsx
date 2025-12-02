@@ -8,6 +8,7 @@ import {
     ChevronRight,
     Loader2,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { MainLayout, HologramCard, Button, Modal, Input } from '@/components'
 import { listCommonAreas } from '@/services/commonAreaService'
 import {
@@ -52,8 +53,9 @@ const ReservationsPage = () => {
             setCommonAreas(areasData)
             setMyReservations(reservationsData)
         } catch (err) {
-            console.error('Erro ao carregar dados:', err)
-            setError('Erro ao carregar dados. Tente novamente.')
+            const errorMessage = 'Erro ao carregar dados. Tente novamente.'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }
@@ -134,31 +136,30 @@ const ReservationsPage = () => {
             // Atualizar lista de reservas
             await fetchData()
 
+            toast.success('Reserva criada com sucesso!')
             // Fechar modal após sucesso
             handleCloseModal()
         } catch (err: any) {
-            console.error('Erro ao criar reserva:', err)
-            setError(err.response?.data?.detail || 'Erro ao criar reserva. Tente novamente.')
+            const errorMessage = err.response?.data?.detail || 'Erro ao criar reserva. Tente novamente.'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsSubmitting(false)
         }
     }
 
     const handleCancelReservation = async (reservationId: string) => {
-        if (!confirm('Tem certeza que deseja cancelar esta reserva?')) {
-            return
-        }
-
-        try {
-            setError(null)
-            await cancelReservation(reservationId)
-
-            // Atualizar lista de reservas
-            await fetchData()
-        } catch (err: any) {
-            console.error('Erro ao cancelar reserva:', err)
+        // Usando toast.promise para melhor UX
+        toast.promise(
+            cancelReservation(reservationId).then(() => fetchData()),
+            {
+                loading: 'Cancelando reserva...',
+                success: 'Reserva cancelada com sucesso!',
+                error: (err) => err.response?.data?.detail || 'Erro ao cancelar reserva',
+            }
+        ).catch((err: any) => {
             setError(err.response?.data?.detail || 'Erro ao cancelar reserva. Tente novamente.')
-        }
+        })
     }
 
 

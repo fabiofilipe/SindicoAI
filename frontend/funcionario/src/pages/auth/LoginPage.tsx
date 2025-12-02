@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Briefcase, Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Button, Input, HologramCard } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -65,12 +66,12 @@ const LoginPage = () => {
 
         try {
             await login(formData.email, formData.password)
+            toast.success('Login realizado com sucesso!')
         } catch (error: any) {
-            console.error('Erro ao fazer login:', error)
-
             const errorMessage =
                 error.response?.data?.detail || 'Email ou senha incorretos'
 
+            toast.error(errorMessage)
             setErrors({
                 email: '',
                 password: errorMessage,

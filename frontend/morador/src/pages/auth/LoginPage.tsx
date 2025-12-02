@@ -66,14 +66,14 @@ const LoginPage = () => {
 
         try {
             await login(formData.email, formData.password)
+            toast.success('Login realizado com sucesso!')
             // O navigate será feito automaticamente pelo useEffect quando isAuthenticated mudar
         } catch (error: any) {
-            console.error('Erro ao fazer login:', error)
-
             // Trata mensagens de erro da API
             const errorMessage =
                 error.response?.data?.detail || 'Email ou senha incorretos'
 
+            toast.error(errorMessage)
             setErrors({
                 email: '',
                 password: errorMessage,

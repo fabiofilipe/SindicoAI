@@ -11,6 +11,7 @@ import {
     EyeOff,
     Loader2,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { MainLayout, HologramCard, Button, Input } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 import { updateUserProfile, changePassword } from '@/services/authService'
@@ -83,14 +84,17 @@ const ProfilePage = () => {
             // Atualizar o contexto com os novos dados
             await refreshUser()
 
-            setSuccess('Perfil atualizado com sucesso!')
+            const successMessage = 'Perfil atualizado com sucesso!'
+            setSuccess(successMessage)
+            toast.success(successMessage)
             setIsEditingProfile(false)
 
             // Limpar mensagem de sucesso após 3s
             setTimeout(() => setSuccess(null), 3000)
         } catch (err: any) {
-            console.error('Erro ao salvar perfil:', err)
-            setError(err.response?.data?.detail || 'Erro ao atualizar perfil. Tente novamente.')
+            const errorMessage = err.response?.data?.detail || 'Erro ao atualizar perfil. Tente novamente.'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }
@@ -113,7 +117,9 @@ const ProfilePage = () => {
         e.preventDefault()
 
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setError('As senhas não coincidem!')
+            const errorMessage = 'As senhas não coincidem!'
+            setError(errorMessage)
+            toast.error(errorMessage)
             return
         }
 
@@ -127,7 +133,9 @@ const ProfilePage = () => {
                 new_password: passwordData.newPassword,
             })
 
-            setSuccess('Senha alterada com sucesso!')
+            const successMessage = 'Senha alterada com sucesso!'
+            setSuccess(successMessage)
+            toast.success(successMessage)
 
             // Limpar formulário
             setPasswordData({
@@ -140,9 +148,9 @@ const ProfilePage = () => {
             // Limpar mensagem de sucesso após 3s
             setTimeout(() => setSuccess(null), 3000)
         } catch (err: any) {
-            console.error('Erro ao alterar senha:', err)
             const errorMessage = err.response?.data?.detail || 'Erro ao alterar senha. Tente novamente.'
             setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }

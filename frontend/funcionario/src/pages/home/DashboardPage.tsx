@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Bell, FileText, User, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Card } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 import { listReservations } from '@/services/reservationService'
@@ -71,7 +72,7 @@ const DashboardPage = () => {
             icon: <FileText size={48} className="text-terminal-green" />,
             title: 'RELATÓRIO',
             description: 'Resumo rápido',
-            onClick: () => alert('Em breve'),
+            onClick: () => toast('Em breve', { icon: 'ℹ️' }),
         },
         {
             icon: <User size={48} className="text-tech-blue" />,

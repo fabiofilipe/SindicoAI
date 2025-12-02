@@ -7,6 +7,7 @@ import {
     Filter,
     Loader2,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { MainLayout, HologramCard, Button } from '@/components'
 import {
     listNotifications,
@@ -33,8 +34,9 @@ const NotificationsPage = () => {
             const data = await listNotifications()
             setNotifications(data)
         } catch (err) {
-            console.error('Erro ao carregar notificações:', err)
-            setError('Erro ao carregar notificações. Tente novamente.')
+            const errorMessage = 'Erro ao carregar notificações. Tente novamente.'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }
@@ -63,39 +65,44 @@ const NotificationsPage = () => {
     }
 
     const handleMarkAsRead = async (id: string) => {
-        try {
-            await markAsRead(id)
-            await fetchNotifications() // Refresh list
-        } catch (err) {
-            console.error('Erro ao marcar como lida:', err)
+        toast.promise(
+            markAsRead(id).then(() => fetchNotifications()),
+            {
+                loading: 'Marcando como lida...',
+                success: 'Notificação marcada como lida!',
+                error: 'Erro ao marcar notificação como lida',
+            }
+        ).catch((err) => {
             setError('Erro ao marcar notificação como lida.')
-        }
+        })
     }
 
     const handleMarkAllAsRead = async () => {
-        try {
-            // Marcar todas as não lidas
-            const unreadNotifications = notifications.filter(n => !n.is_read)
-            await Promise.all(unreadNotifications.map(n => markAsRead(n.id)))
-            await fetchNotifications() // Refresh list
-        } catch (err) {
-            console.error('Erro ao marcar todas como lidas:', err)
+        const unreadNotifications = notifications.filter(n => !n.is_read)
+
+        toast.promise(
+            Promise.all(unreadNotifications.map(n => markAsRead(n.id))).then(() => fetchNotifications()),
+            {
+                loading: 'Marcando todas como lidas...',
+                success: `${unreadNotifications.length} notificações marcadas como lidas!`,
+                error: 'Erro ao marcar todas as notificações',
+            }
+        ).catch((err) => {
             setError('Erro ao marcar todas as notificações como lidas.')
-        }
+        })
     }
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Tem certeza que deseja excluir esta notificação?')) {
-            return
-        }
-
-        try {
-            await deleteNotification(id)
-            await fetchNotifications() // Refresh list
-        } catch (err) {
-            console.error('Erro ao excluir notificação:', err)
+        toast.promise(
+            deleteNotification(id).then(() => fetchNotifications()),
+            {
+                loading: 'Excluindo notificação...',
+                success: 'Notificação excluída com sucesso!',
+                error: 'Erro ao excluir notificação',
+            }
+        ).catch((err) => {
             setError('Erro ao excluir notificação.')
-        }
+        })
     }
 
     return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Clock, User, MapPin, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Card, Badge } from '@/components'
 import { listReservations } from '@/services/reservationService'
 import { listCommonAreas } from '@/services/commonAreaService'
@@ -36,7 +37,7 @@ const SchedulePage = () => {
                 setReservations(todayRes)
 
             } catch (error) {
-                console.error('Erro ao carregar agenda:', error)
+                toast.error('Erro ao carregar agenda. Tente novamente.')
             } finally {
                 setIsLoading(false)
             }

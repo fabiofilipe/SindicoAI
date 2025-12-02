@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Clock, User, MapPin, Loader2, CheckCircle, PlayCircle, AlertTriangle, ArrowLeft } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Card, Badge, Button, Modal } from '@/components'
 import { listCommonAreas } from '@/services/commonAreaService'
 import {
@@ -46,8 +47,9 @@ const ReservationDetailsPage = () => {
             setCommonArea(area || null)
 
         } catch (err) {
-            setError('Erro ao carregar detalhes da reserva')
-            console.error(err)
+            const errorMessage = 'Erro ao carregar detalhes da reserva'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }
@@ -60,11 +62,15 @@ const ReservationDetailsPage = () => {
             setActionLoading(true)
             setError('')
             await startReservation(id)
-            setSuccess('Reserva iniciada com sucesso!')
+            const successMessage = 'Reserva iniciada com sucesso!'
+            setSuccess(successMessage)
+            toast.success(successMessage)
             await fetchReservationDetails()
             setTimeout(() => setSuccess(''), 3000)
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao iniciar reserva')
+            const errorMessage = err.response?.data?.detail || 'Erro ao iniciar reserva'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setActionLoading(false)
         }
@@ -77,11 +83,15 @@ const ReservationDetailsPage = () => {
             setActionLoading(true)
             setError('')
             await completeReservation(id)
-            setSuccess('Reserva concluída com sucesso!')
+            const successMessage = 'Reserva concluída com sucesso!'
+            setSuccess(successMessage)
+            toast.success(successMessage)
             await fetchReservationDetails()
             setTimeout(() => setSuccess(''), 3000)
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao concluir reserva')
+            const errorMessage = err.response?.data?.detail || 'Erro ao concluir reserva'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setActionLoading(false)
         }
@@ -98,13 +108,17 @@ const ReservationDetailsPage = () => {
                 description: issueDescription,
                 severity: issueSeverity
             })
-            setSuccess('Problema reportado com sucesso!')
+            const successMessage = 'Problema reportado com sucesso!'
+            setSuccess(successMessage)
+            toast.success(successMessage)
             setIsReportModalOpen(false)
             setIssueDescription('')
             setIssueSeverity('normal')
             setTimeout(() => setSuccess(''), 3000)
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Erro ao reportar problema')
+            const errorMessage = err.response?.data?.detail || 'Erro ao reportar problema'
+            setError(errorMessage)
+            toast.error(errorMessage)
         } finally {
             setActionLoading(false)
         }

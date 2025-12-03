@@ -82,15 +82,17 @@
 
 ## ⚙️ FUNCIONALIDADES OPCIONAIS (Prioridade: Média)
 
-### **Frontend Funcionário**
-- [ ] Alteração de senha (backend já existe)
-- [ ] Filtros avançados na agenda
-- [ ] Histórico de reservas concluídas
-- [ ] Exportar relatório do dia
-
-### **Frontend Admin**
-- [ ] Agendar notificações (envio futuro)
-- [ ] Sistema de moderação: aprovar/rejeitar reservas
+### **Frontend Funcionário** ✅
+- [x] Alteração de senha (backend já existe)
+- [x] Filtros avançados na agenda
+- [x] Histórico de reservas concluídas
+- [x] Exportar relatório do dia
+- **Implementações:**
+  - userService com changePassword conectado ao backend
+  - Histórico em tab separada com ordenação descendente
+  - ReservationFilters com date range, status multi-select, e área dropdown
+  - Export CSV com UTF-8 BOM para Excel
+  - Botão de export no Dashboard
 
 ### **Upload de Documentos**
 - [ ] Melhorar endpoint de upload

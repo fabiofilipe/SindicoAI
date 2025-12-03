@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Modal from '@/components/ui/Modal'
+import SkeletonTable from '@/components/ui/SkeletonTable'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
 import * as userService from '@/services/userService'
 import type { UserListItem, CreateUserRequest, UpdateUserRequest } from '@/types/user'
@@ -222,7 +223,7 @@ const UsersPage = () => {
 
                 {/* Table */}
                 {isLoading ? (
-                    <div className="text-center py-12 text-metal-silver">Carregando...</div>
+                    <SkeletonTable columns={6} rows={8} />
                 ) : (
                     <div className="bg-coal-light/80 border border-cyan-glow/30 rounded-xl overflow-hidden">
                         <Table>
@@ -296,9 +297,8 @@ const UsersPage = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => handleToggleStatus(user)}
-                                                        className={`p-2 hover:bg-coal rounded-lg transition-colors ${
-                                                            user.is_active ? 'text-alertorange' : 'text-terminalgreen'
-                                                        }`}
+                                                        className={`p-2 hover:bg-coal rounded-lg transition-colors ${user.is_active ? 'text-alertorange' : 'text-terminalgreen'
+                                                            }`}
                                                         title={user.is_active ? 'Desativar' : 'Ativar'}
                                                     >
                                                         <Power className="w-4 h-4" />

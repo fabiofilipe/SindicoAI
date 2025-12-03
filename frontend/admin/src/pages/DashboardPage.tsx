@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Users, UserCheck, Briefcase, Shield, Calendar, Building2, Activity, TrendingUp } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import Card from '@/components/ui/Card'
+import SkeletonMetric from '@/components/ui/SkeletonMetric'
 import { getDashboardMetrics } from '@/services/dashboardService'
 import type { DashboardMetrics } from '@/types/dashboard'
 
@@ -102,9 +103,7 @@ const DashboardPage = () => {
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[...Array(8)].map((_, i) => (
-                            <Card key={i} className="animate-pulse">
-                                <div className="h-24 bg-coal/50 rounded" />
-                            </Card>
+                            <SkeletonMetric key={i} />
                         ))}
                     </div>
                 ) : (

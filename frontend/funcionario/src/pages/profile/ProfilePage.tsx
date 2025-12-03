@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Card, Input, Button } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
+import { changePassword } from '@/services/userService'
 
 const ProfilePage = () => {
     const { user, logout } = useAuth()
@@ -11,11 +12,58 @@ const ProfilePage = () => {
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [changingPassword, setChangingPassword] = useState(false)
 
-    const handleChangePassword = (e: React.FormEvent) => {
+    const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault()
-        // TODO: Implement password change
-        toast('Alteração de senha em desenvolvimento', { icon: 'ℹ️' })
+
+        // Validations
+        if (newPassword.length < 6) {
+            toast.error('A nova senha deve ter no mínimo 6 caracteres', {
+                icon: '⚠️'
+            })
+            return
+        }
+
+        if (newPassword !== confirmPassword) {
+            toast.error('As senhas não coincidem', {
+                icon: '⚠️'
+            })
+            return
+        }
+
+        try {
+            setChangingPassword(true)
+
+            await changePassword({
+                current_password: currentPassword,
+                new_password: newPassword
+            })
+
+            toast.success('Senha alterada com sucesso!', {
+                icon: '✅',
+                duration: 4000
+            })
+
+            // Clear form
+            setCurrentPassword('')
+            setNewPassword('')
+            setConfirmPassword('')
+        } catch (error: any) {
+            console.error('Error changing password:', error)
+
+            if (error.response?.status === 401) {
+                toast.error('Senha atual incorreta', {
+                    icon: '❌'
+                })
+            } else {
+                toast.error('Erro ao alterar senha. Tente novamente.', {
+                    icon: '❌'
+                })
+            }
+        } finally {
+            setChangingPassword(false)
+        }
     }
 
     const handleLogout = () => {
@@ -66,6 +114,7 @@ const ProfilePage = () => {
                         value={currentPassword}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentPassword(e.target.value)}
                         required
+                        disabled={changingPassword}
                     />
                     <Input
                         type="password"
@@ -73,6 +122,8 @@ const ProfilePage = () => {
                         value={newPassword}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
                         required
+                        disabled={changingPassword}
+                        helperText="Mínimo de 6 caracteres"
                     />
                     <Input
                         type="password"
@@ -80,9 +131,16 @@ const ProfilePage = () => {
                         value={confirmPassword}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                         required
+                        disabled={changingPassword}
                     />
-                    <Button type="submit" variant="primary" size="md" className="w-full">
-                        Alterar Senha
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        size="md"
+                        className="w-full"
+                        disabled={changingPassword}
+                    >
+                        {changingPassword ? 'ALTERANDO...' : 'ALTERAR SENHA'}
                     </Button>
                 </form>
             </Card>

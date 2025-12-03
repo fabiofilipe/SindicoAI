@@ -4,6 +4,7 @@ import { getSettings, updateSettings } from '../services/settingsService'
 import type { SettingsUpdate, ReservationSettings, NotificationSettings } from '../types/settings'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
+import SkeletonCard from '../components/ui/SkeletonCard'
 import Input from '../components/ui/Input'
 import MainLayout from '../components/layout/MainLayout'
 
@@ -98,8 +99,11 @@ export default function SettingsPage() {
     if (loading) {
         return (
             <MainLayout>
-                <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan"></div>
+                <div className="space-y-6">
+                    <div className="h-16 bg-coal-light/80 rounded-xl animate-pulse" />
+                    <SkeletonCard rows={8} height="300px" />
+                    <SkeletonCard rows={6} height="200px" />
+                    <SkeletonCard rows={10} height="350px" />
                 </div>
             </MainLayout>
         )

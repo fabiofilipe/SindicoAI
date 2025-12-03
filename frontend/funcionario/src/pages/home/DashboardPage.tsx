@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Bell, FileText, User, Loader2 } from 'lucide-react'
+import { Calendar, Bell, User, Loader2, Download } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Card } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
 import { listReservations } from '@/services/reservationService'
+import { listCommonAreas } from '@/services/commonAreaService'
 import { listNotifications } from '@/services/notificationService'
-import type { Reservation, Notification } from '@/types/models'
+import { exportDailyReport } from '@/utils/exportUtils'
+import type { Reservation, Notification, CommonArea } from '@/types/models'
 
 const DashboardPage = () => {
     const { user } = useAuth()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
+    const [allReservations, setAllReservations] = useState<Reservation[]>([])
+    const [commonAreas, setCommonAreas] = useState<Record<string, CommonArea>>({})
     const [todayReservations, setTodayReservations] = useState<Reservation[]>([])
     const [upcomingReservations, setUpcomingReservations] = useState<Reservation[]>([])
     const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([])
@@ -22,8 +26,21 @@ const DashboardPage = () => {
                 const now = new Date()
                 const today = now.toISOString().split('T')[0]
 
-                // Fetch reservations
-                const reservations = await listReservations()
+                // Fetch reservations and common areas in parallel
+                const [reservations, areasData] = await Promise.all([
+                    listReservations(),
+                    listCommonAreas()
+                ])
+
+                // Store all reservations
+                setAllReservations(reservations)
+
+                // Create areas map
+                const areasMap = areasData.reduce((acc: Record<string, CommonArea>, area: CommonArea) => {
+                    acc[area.id] = area
+                    return acc
+                }, {})
+                setCommonAreas(areasMap)
 
                 // Filter today's reservations
                 const todayRes = reservations.filter((r: Reservation) =>
@@ -55,6 +72,15 @@ const DashboardPage = () => {
         fetchData()
     }, [])
 
+    const handleExportReport = () => {
+        const result = exportDailyReport(allReservations, commonAreas)
+        if (result.success) {
+            toast.success(result.message, { icon: '📊' })
+        } else {
+            toast.error(result.message, { icon: '❌' })
+        }
+    }
+
     const quickActions = [
         {
             icon: <Calendar size={48} className="text-neon-cyan" />,
@@ -69,10 +95,10 @@ const DashboardPage = () => {
             onClick: () => navigate('/notifications'),
         },
         {
-            icon: <FileText size={48} className="text-terminal-green" />,
-            title: 'RELATÓRIO',
-            description: 'Resumo rápido',
-            onClick: () => toast('Em breve', { icon: 'ℹ️' }),
+            icon: <Download size={48} className="text-terminal-green" />,
+            title: 'EXPORTAR',
+            description: 'Relatório do dia',
+            onClick: handleExportReport,
         },
         {
             icon: <User size={48} className="text-tech-blue" />,

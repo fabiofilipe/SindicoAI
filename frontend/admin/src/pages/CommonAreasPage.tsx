@@ -5,6 +5,7 @@ import { listCommonAreas, deleteCommonArea } from '../services/commonAreaService
 import type { CommonArea } from '../types/commonArea'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
+import SkeletonTable from '../components/ui/SkeletonTable'
 import CommonAreaFormModal from '../components/common-areas/CommonAreaFormModal'
 import MainLayout from '../components/layout/MainLayout'
 
@@ -140,8 +141,8 @@ export default function CommonAreasPage() {
                             <button
                                 onClick={() => setFilter('all')}
                                 className={`px-4 py-2 rounded-lg transition-colors ${filter === 'all'
-                                        ? 'bg-cyan text-coal font-medium'
-                                        : 'bg-coal-light text-metal-silver hover:bg-coal'
+                                    ? 'bg-cyan text-coal font-medium'
+                                    : 'bg-coal-light text-metal-silver hover:bg-coal'
                                     }`}
                             >
                                 Todas ({totalAreas})
@@ -149,8 +150,8 @@ export default function CommonAreasPage() {
                             <button
                                 onClick={() => setFilter('active')}
                                 className={`px-4 py-2 rounded-lg transition-colors ${filter === 'active'
-                                        ? 'bg-terminalgreen text-coal font-medium'
-                                        : 'bg-coal-light text-metal-silver hover:bg-coal'
+                                    ? 'bg-terminalgreen text-coal font-medium'
+                                    : 'bg-coal-light text-metal-silver hover:bg-coal'
                                     }`}
                             >
                                 Ativas ({activeAreas})
@@ -158,8 +159,8 @@ export default function CommonAreasPage() {
                             <button
                                 onClick={() => setFilter('inactive')}
                                 className={`px-4 py-2 rounded-lg transition-colors ${filter === 'inactive'
-                                        ? 'bg-alertorange text-coal font-medium'
-                                        : 'bg-coal-light text-metal-silver hover:bg-coal'
+                                    ? 'bg-alertorange text-coal font-medium'
+                                    : 'bg-coal-light text-metal-silver hover:bg-coal'
                                     }`}
                             >
                                 Inativas ({inactiveAreas})
@@ -179,7 +180,7 @@ export default function CommonAreasPage() {
                         <h2 className="text-xl font-semibold text-cyan mb-4">Áreas Cadastradas</h2>
 
                         {loading ? (
-                            <div className="text-center py-8 text-metal-silver">Carregando...</div>
+                            <SkeletonTable columns={5} rows={6} />
                         ) : filteredAreas.length === 0 ? (
                             <div className="text-center py-8 text-metal-silver">
                                 {filter === 'all'
@@ -221,8 +222,8 @@ export default function CommonAreasPage() {
                                                 </td>
                                                 <td className="py-3 px-4">
                                                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${area.is_active
-                                                            ? 'bg-terminalgreen/20 text-terminalgreen border border-terminalgreen/30'
-                                                            : 'bg-alertorange/20 text-alertorange border border-alertorange/30'
+                                                        ? 'bg-terminalgreen/20 text-terminalgreen border border-terminalgreen/30'
+                                                        : 'bg-alertorange/20 text-alertorange border border-alertorange/30'
                                                         }`}>
                                                         {area.is_active ? (
                                                             <>

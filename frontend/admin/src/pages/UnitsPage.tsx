@@ -5,6 +5,7 @@ import { listUnits, deleteUnit } from '../services/unitService'
 import type { Unit } from '../types/unit'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
+import SkeletonTable from '../components/ui/SkeletonTable'
 import UnitFormModal from '../components/units/UnitFormModal'
 import CSVUploadModal from '../components/units/CSVUploadModal'
 import MainLayout from '../components/layout/MainLayout'
@@ -149,7 +150,7 @@ export default function UnitsPage() {
                         <h2 className="text-xl font-semibold text-white mb-4">Unidades Cadastradas</h2>
 
                         {loading ? (
-                            <div className="text-center py-8 text-gray-400">Carregando...</div>
+                            <SkeletonTable columns={5} rows={6} />
                         ) : units.length === 0 ? (
                             <div className="text-center py-8 text-gray-400">
                                 Nenhuma unidade cadastrada. Clique em "Nova Unidade" para começar.

@@ -13,6 +13,7 @@ const SchedulePage = () => {
     const [reservations, setReservations] = useState<Reservation[]>([])
     const [commonAreas, setCommonAreas] = useState<Record<string, CommonArea>>({})
     const [filter, setFilter] = useState<'all' | 'next3h' | 'in-progress'>('all')
+    const [activeTab, setActiveTab] = useState<'agenda' | 'history'>('agenda')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,12 +30,8 @@ const SchedulePage = () => {
                 }, {})
                 setCommonAreas(areasMap)
 
-                // Filter today's reservations
-                const today = new Date().toISOString().split('T')[0]
-                const todayRes = resData.filter((r: Reservation) =>
-                    r.start_time.startsWith(today)
-                )
-                setReservations(todayRes)
+                // Store all reservations (not just today's)
+                setReservations(resData)
 
             } catch (error) {
                 toast.error('Erro ao carregar agenda. Tente novamente.')
@@ -46,29 +43,39 @@ const SchedulePage = () => {
         fetchData()
     }, [])
 
+    const getAgendaReservations = () => {
+        const today = new Date().toISOString().split('T')[0]
+        return reservations.filter(r =>
+            r.start_time.startsWith(today) && r.status !== 'completed'
+        )
+    }
+
+    const getHistoryReservations = () => {
+        return reservations
+            .filter(r => r.status === 'completed')
+            .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
+    }
+
     const getFilteredReservations = () => {
+        const agendaRes = getAgendaReservations()
         const now = new Date()
 
         switch (filter) {
             case 'next3h':
                 const threeHoursLater = new Date(now.getTime() + 3 * 60 * 60 * 1000)
-                return reservations.filter(r => {
+                return agendaRes.filter(r => {
                     const start = new Date(r.start_time)
                     return start > now && start < threeHoursLater
                 })
             case 'in-progress':
-                return reservations.filter(r => {
+                return agendaRes.filter(r => {
                     const start = new Date(r.start_time)
                     const end = new Date(r.end_time)
                     return start <= now && end >= now
                 })
             default:
-                return reservations
+                return agendaRes
         }
-    }
-
-    const getAreaName = (areaId: string) => {
-        return commonAreas[areaId]?.name || 'Área Comum'
     }
 
     const formatTime = (datetime: string) => {
@@ -78,7 +85,17 @@ const SchedulePage = () => {
         })
     }
 
-    const filteredReservations = getFilteredReservations()
+    const formatDate = (datetime: string) => {
+        return new Date(datetime).toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+    }
+
+    const filteredReservations = activeTab === 'agenda' ? getFilteredReservations() : getHistoryReservations()
+    const agendaCount = getAgendaReservations().length
+    const historyCount = getHistoryReservations().length
 
     if (isLoading) {
         return (
@@ -91,53 +108,88 @@ const SchedulePage = () => {
     return (
         <div className="p-6 space-y-6">
             <div>
-                <h1 className="text-4xl font-bold mb-4">AGENDA DO DIA</h1>
+                <h1 className="text-4xl font-bold mb-4">
+                    {activeTab === 'agenda' ? 'AGENDA DO DIA' : 'HISTÓRICO'}
+                </h1>
                 <p className="text-xl text-metal-silver">
-                    {new Date().toLocaleDateString('pt-BR', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long'
-                    })}
+                    {activeTab === 'agenda' ? (
+                        new Date().toLocaleDateString('pt-BR', {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'long'
+                        })
+                    ) : (
+                        'Reservas concluídas'
+                    )}
                 </p>
             </div>
 
-            {/* Filters */}
-            <div className="flex gap-4 flex-wrap">
+            {/* Tabs */}
+            <div className="flex gap-4 border-b-2 border-charcoal pb-2">
                 <button
-                    onClick={() => setFilter('all')}
-                    className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'all'
-                            ? 'bg-neon-cyan text-coal'
-                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
+                    onClick={() => {
+                        setActiveTab('agenda')
+                        setFilter('all')
+                    }}
+                    className={`px-6 py-3 text-xl font-bold transition-all ${activeTab === 'agenda'
+                        ? 'text-neon-cyan border-b-4 border-neon-cyan'
+                        : 'text-metal-silver hover:text-neon-cyan'
                         }`}
                 >
-                    Todas
+                    AGENDA ({agendaCount})
                 </button>
                 <button
-                    onClick={() => setFilter('next3h')}
-                    className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'next3h'
-                            ? 'bg-neon-cyan text-coal'
-                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
+                    onClick={() => setActiveTab('history')}
+                    className={`px-6 py-3 text-xl font-bold transition-all ${activeTab === 'history'
+                        ? 'text-neon-cyan border-b-4 border-neon-cyan'
+                        : 'text-metal-silver hover:text-neon-cyan'
                         }`}
                 >
-                    Próximas 3h
-                </button>
-                <button
-                    onClick={() => setFilter('in-progress')}
-                    className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'in-progress'
-                            ? 'bg-neon-cyan text-coal'
-                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
-                        }`}
-                >
-                    Em Andamento
+                    HISTÓRICO ({historyCount})
                 </button>
             </div>
+
+            {/* Filters - Only show for agenda tab */}
+            {activeTab === 'agenda' && (
+                <div className="flex gap-4 flex-wrap">
+                    <button
+                        onClick={() => setFilter('all')}
+                        className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'all'
+                            ? 'bg-neon-cyan text-coal'
+                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
+                            }`}
+                    >
+                        Todas
+                    </button>
+                    <button
+                        onClick={() => setFilter('next3h')}
+                        className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'next3h'
+                            ? 'bg-neon-cyan text-coal'
+                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
+                            }`}
+                    >
+                        Próximas 3h
+                    </button>
+                    <button
+                        onClick={() => setFilter('in-progress')}
+                        className={`px-6 py-3 rounded-lg text-base font-semibold transition-all ${filter === 'in-progress'
+                            ? 'bg-neon-cyan text-coal'
+                            : 'bg-charcoal text-metal-silver hover:text-neon-cyan'
+                            }`}
+                    >
+                        Em Andamento
+                    </button>
+                </div>
+            )}
 
             {/* Reservations Timeline */}
             <div className="space-y-4">
                 {filteredReservations.length === 0 ? (
                     <Card className="text-center py-12">
                         <p className="text-2xl text-metal-silver">
-                            Nenhuma reserva para exibir
+                            {activeTab === 'agenda'
+                                ? 'Nenhuma reserva para hoje'
+                                : 'Nenhuma reserva concluída'}
                         </p>
                     </Card>
                 ) : (
@@ -146,7 +198,7 @@ const SchedulePage = () => {
                             key={reservation.id}
                             hover
                             onClick={() => navigate(`/reservations/${reservation.id}`)}
-                            className="cursor-pointer"
+                            className={`cursor-pointer ${activeTab === 'history' ? 'opacity-75' : ''}`}
                         >
                             <div className="flex flex-col md:flex-row md:items-center gap-4">
                                 <div className="flex-shrink-0">
@@ -154,12 +206,17 @@ const SchedulePage = () => {
                                         <Clock className="inline mr-2" size={32} />
                                         {formatTime(reservation.start_time)} - {formatTime(reservation.end_time)}
                                     </div>
+                                    {activeTab === 'history' && (
+                                        <div className="text-sm text-metal-silver/70 mt-1">
+                                            {formatDate(reservation.start_time)}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex-grow space-y-2">
                                     <div className="flex items-center gap-4">
                                         <MapPin className="text-tech-blue" size={24} />
-                                        <h3 className="text-2xl font-bold">{getAreaName(reservation.common_area_id)}</h3>
+                                        <h3 className="text-2xl font-bold">{commonAreas[reservation.common_area_id]?.name || 'Área Comum'}</h3>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <User className="text-terminal-green" size={24} />

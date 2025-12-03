@@ -59,11 +59,12 @@
   - Frontend Admin (todas operações CRUD)
 - [x] Mensagens de sucesso/erro/info/warning com auto-dismiss
 
-### **Error Boundary Component**
-- [ ] Criar ErrorBoundary.tsx para cada frontend
-- [ ] Página de erro amigável com design cyberpunk
-- [ ] Log de erros detalhado no console
-- [ ] Botão "Tentar novamente"
+### **Error Boundary Component** ✅
+- [x] Criar ErrorBoundary.tsx para cada frontend
+- [x] Página de erro amigável com design cyberpunk/tech/terminal
+- [x] Log de erros detalhado no console
+- [x] Botão "Tentar novamente"
+- [x] Integrado nos 3 frontends (Admin, Morador, Funcionário)
 
 ### **Skeleton Loading States**
 - [ ] Substituir spinners por skeleton screens
@@ -189,7 +190,7 @@
 | **Frontend Funcionário** | Completo | 100% ✅ |
 | **Frontend Admin** | Completo | 95% ✅ |
 | **Backend API** | Completo | 100% ✅ |
-| **UX/Polish** | Avançado | 55% 🚀 |
+| **UX/Polish** | Avançado | 70% 🚀 |
 | **Testes** | Mínimo | 10% ⏸️ |
 | **DevOps** | Local | 40% ⏸️ |
 | **Mobile** | Não iniciado | 0% ❌ |
@@ -200,7 +201,7 @@
 
 ### **🎯 Prioridade ALTA (Para Produção)**
 1. ~~Toast Notifications Global~~ ✅ **CONCLUÍDO**
-2. Error Boundary Component
+2. ~~Error Boundary Component~~ ✅ **CONCLUÍDO**
 3. Skeleton Loading States
 4. Deploy em servidor (SSL + Domain + Backups)
 5. CI/CD básico (GitHub Actions)
@@ -224,7 +225,7 @@
 
 **Fase 1 - UX Polish (Essencial para Produção):**
 1. ~~Toast Notifications Global~~ ✅ **CONCLUÍDO**
-2. Error Boundary Component → Previne crashes
+2. ~~Error Boundary Component~~ ✅ **CONCLUÍDO**
 3. Skeleton Loading States → Feedback visual profissional
 
 **Fase 2 - Deploy (Colocar em Produção):**

@@ -2,90 +2,93 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/contexts'
 import { PrivateRoute } from '@/components'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { LoginPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage, ProfilePage } from '@/pages'
 
 function App() {
     return (
-        <AuthProvider>
-            <Toaster
-                position="top-right"
-                toastOptions={{
-                    duration: 4000,
-                    style: {
-                        background: '#0a0e27',
-                        color: '#00f0ff',
-                        border: '1px solid #00f0ff',
-                        fontFamily: 'monospace',
-                    },
-                    success: {
-                        iconTheme: {
-                            primary: '#00f0ff',
-                            secondary: '#0a0e27',
+        <ErrorBoundary>
+            <AuthProvider>
+                <Toaster
+                    position="top-right"
+                    toastOptions={{
+                        duration: 4000,
+                        style: {
+                            background: '#0a0e27',
+                            color: '#00f0ff',
+                            border: '1px solid #00f0ff',
+                            fontFamily: 'monospace',
                         },
-                    },
-                    error: {
-                        iconTheme: {
-                            primary: '#ff0055',
-                            secondary: '#0a0e27',
+                        success: {
+                            iconTheme: {
+                                primary: '#00f0ff',
+                                secondary: '#0a0e27',
+                            },
                         },
-                    },
-                }}
-            />
-            <BrowserRouter>
-                <Routes>
-                    {/* Rota padrão redireciona para login */}
-                    <Route path="/" element={<Navigate to="/login" replace />} />
+                        error: {
+                            iconTheme: {
+                                primary: '#ff0055',
+                                secondary: '#0a0e27',
+                            },
+                        },
+                    }}
+                />
+                <BrowserRouter>
+                    <Routes>
+                        {/* Rota padrão redireciona para login */}
+                        <Route path="/" element={<Navigate to="/login" replace />} />
 
-                    {/* Autenticação */}
-                    <Route path="/login" element={<LoginPage />} />
+                        {/* Autenticação */}
+                        <Route path="/login" element={<LoginPage />} />
 
-                    {/* Rotas protegidas */}
-                    <Route
-                        path="/home"
-                        element={
-                            <PrivateRoute>
-                                <HomePage />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/reservations"
-                        element={
-                            <PrivateRoute>
-                                <ReservationsPage />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/assistant"
-                        element={
-                            <PrivateRoute>
-                                <AssistantPage />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/notifications"
-                        element={
-                            <PrivateRoute>
-                                <NotificationsPage />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/profile"
-                        element={
-                            <PrivateRoute>
-                                <ProfilePage />
-                            </PrivateRoute>
-                        }
-                    />
+                        {/* Rotas protegidas */}
+                        <Route
+                            path="/home"
+                            element={
+                                <PrivateRoute>
+                                    <HomePage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/reservations"
+                            element={
+                                <PrivateRoute>
+                                    <ReservationsPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/assistant"
+                            element={
+                                <PrivateRoute>
+                                    <AssistantPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/notifications"
+                            element={
+                                <PrivateRoute>
+                                    <NotificationsPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <ProfilePage />
+                                </PrivateRoute>
+                            }
+                        />
 
-                    {/* 404 - Rota não encontrada */}
-                    <Route path="*" element={<Navigate to="/login" replace />} />
-                </Routes>
-            </BrowserRouter>
-        </AuthProvider>
+                        {/* 404 - Rota não encontrada */}
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                    </Routes>
+                </BrowserRouter>
+            </AuthProvider>
+        </ErrorBoundary>
     )
 }
 

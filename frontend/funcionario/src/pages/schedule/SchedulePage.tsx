@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Clock, User, MapPin, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Card, Badge } from '@/components'
+import ReservationFilters from '@/components/schedule/ReservationFilters'
 import { listReservations } from '@/services/reservationService'
 import { listCommonAreas } from '@/services/commonAreaService'
 import type { Reservation, CommonArea } from '@/types/models'
@@ -12,8 +13,15 @@ const SchedulePage = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [reservations, setReservations] = useState<Reservation[]>([])
     const [commonAreas, setCommonAreas] = useState<Record<string, CommonArea>>({})
+    const [commonAreasList, setCommonAreasList] = useState<CommonArea[]>([])
     const [filter, setFilter] = useState<'all' | 'next3h' | 'in-progress'>('all')
     const [activeTab, setActiveTab] = useState<'agenda' | 'history'>('agenda')
+
+    // Advanced filters
+    const [dateStart, setDateStart] = useState('')
+    const [dateEnd, setDateEnd] = useState('')
+    const [selectedStatuses, setSelectedStatuses] = useState<string[]>([])
+    const [selectedAreaId, setSelectedAreaId] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +37,7 @@ const SchedulePage = () => {
                     return acc
                 }, {})
                 setCommonAreas(areasMap)
+                setCommonAreasList(areasData)
 
                 // Store all reservations (not just today's)
                 setReservations(resData)
@@ -43,17 +52,62 @@ const SchedulePage = () => {
         fetchData()
     }, [])
 
-    const getAgendaReservations = () => {
-        const today = new Date().toISOString().split('T')[0]
-        return reservations.filter(r =>
-            r.start_time.startsWith(today) && r.status !== 'completed'
+    // Filter handlers
+    const handleStatusToggle = (status: string) => {
+        setSelectedStatuses(prev =>
+            prev.includes(status)
+                ? prev.filter(s => s !== status)
+                : [...prev, status]
         )
     }
 
+    const handleClearFilters = () => {
+        setDateStart('')
+        setDateEnd('')
+        setSelectedStatuses([])
+        setSelectedAreaId('')
+    }
+
+    // Apply advanced filters to reservations
+    const applyAdvancedFilters = (reservations: Reservation[]) => {
+        let filtered = reservations
+
+        // Date range filter
+        if (dateStart) {
+            filtered = filtered.filter(r => r.start_time >= dateStart)
+        }
+        if (dateEnd) {
+            const endDatePlusOne = new Date(dateEnd)
+            endDatePlusOne.setDate(endDatePlusOne.getDate() + 1)
+            filtered = filtered.filter(r => r.start_time < endDatePlusOne.toISOString())
+        }
+
+        // Status filter
+        if (selectedStatuses.length > 0) {
+            filtered = filtered.filter(r => selectedStatuses.includes(r.status))
+        }
+
+        // Area filter
+        if (selectedAreaId) {
+            filtered = filtered.filter(r => r.common_area_id === selectedAreaId)
+        }
+
+        return filtered
+    }
+
+    const getAgendaReservations = () => {
+        const today = new Date().toISOString().split('T')[0]
+        let agendaRes = reservations.filter(r =>
+            r.start_time.startsWith(today) && r.status !== 'completed'
+        )
+        return applyAdvancedFilters(agendaRes)
+    }
+
     const getHistoryReservations = () => {
-        return reservations
+        let historyRes = reservations
             .filter(r => r.status === 'completed')
             .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
+        return applyAdvancedFilters(historyRes)
     }
 
     const getFilteredReservations = () => {
@@ -181,6 +235,20 @@ const SchedulePage = () => {
                     </button>
                 </div>
             )}
+
+            {/* Advanced Filters */}
+            <ReservationFilters
+                dateStart={dateStart}
+                dateEnd={dateEnd}
+                selectedStatuses={selectedStatuses}
+                selectedAreaId={selectedAreaId}
+                commonAreas={commonAreasList}
+                onDateStartChange={setDateStart}
+                onDateEndChange={setDateEnd}
+                onStatusToggle={handleStatusToggle}
+                onAreaChange={setSelectedAreaId}
+                onClearFilters={handleClearFilters}
+            />
 
             {/* Reservations Timeline */}
             <div className="space-y-4">

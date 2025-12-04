@@ -16,8 +16,7 @@ async def test_login_success(client: AsyncClient, db_session: AsyncSession):
     # Create tenant first
     tenant = Tenant(
         id="test-tenant-1",
-        name="Test Condominium",
-        is_active=True
+        name="Test Condominium"
     )
     db_session.add(tenant)
     
@@ -29,7 +28,7 @@ async def test_login_success(client: AsyncClient, db_session: AsyncSession):
         full_name="Test User",
         role="morador",
         tenant_id="test-tenant-1",
-        is_active=True
+        
     )
     db_session.add(user)
     await db_session.commit()
@@ -72,7 +71,7 @@ async def test_login_invalid_password(client: AsyncClient, db_session: AsyncSess
     tenant = Tenant(
         id="test-tenant-2",
         name="Test Condo",
-        is_active=True
+        
     )
     user = User(
         id="test-user-2",
@@ -81,7 +80,7 @@ async def test_login_invalid_password(client: AsyncClient, db_session: AsyncSess
         full_name="User",
         role="morador",
         tenant_id="test-tenant-2",
-        is_active=True
+        
     )
     db_session.add_all([tenant, user])
     await db_session.commit()
@@ -104,7 +103,7 @@ async def test_login_inactive_user(client: AsyncClient, db_session: AsyncSession
     tenant = Tenant(
         id="test-tenant-3",
         name="Test Condo",
-        is_active=True
+        
     )
     user = User(
         id="test-user-3",
@@ -140,7 +139,7 @@ async def test_token_refresh_success(client: AsyncClient, db_session: AsyncSessi
     tenant = Tenant(
         id="test-tenant-4",
         name="Test Condo",
-        is_active=True
+        
     )
     user = User(
         id="test-user-4",
@@ -149,7 +148,7 @@ async def test_token_refresh_success(client: AsyncClient, db_session: AsyncSessi
         full_name="Refresh User",
         role="morador",
         tenant_id="test-tenant-4",
-        is_active=True
+        
     )
     db_session.add_all([tenant, user])
     await db_session.commit()
@@ -203,7 +202,7 @@ async def test_protected_endpoint_with_token(client: AsyncClient, db_session: As
     tenant = Tenant(
         id="test-tenant-5",
         name="Test Condo",
-        is_active=True
+        
     )
     user = User(
         id="test-user-5",
@@ -212,7 +211,7 @@ async def test_protected_endpoint_with_token(client: AsyncClient, db_session: As
         full_name="Protected User",
         role="morador",
         tenant_id="test-tenant-5",
-        is_active=True
+        
     )
     db_session.add_all([tenant, user])
     await db_session.commit()

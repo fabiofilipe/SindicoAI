@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 
 from app.core.config import settings
 from app.core import security
-from app.core.database import get_db
+from app.core.database import get_db, set_tenant_context
 from app.models.base import User
 from app.schemas.token import TokenPayload
 
@@ -38,6 +38,10 @@ async def get_current_user(
         raise HTTPException(status_code=404, detail="User not found")
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    
+    # Set RLS context for this session
+    await set_tenant_context(db, user.tenant_id)
+    
     return user
 
 
@@ -51,3 +55,16 @@ async def require_admin(
             detail="Only admins can perform this action"
         )
     return current_user
+
+
+async def require_staff(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """Dependency that requires the current user to be staff"""
+    if current_user.role != "staff":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only staff can perform this action"
+        )
+    return current_user
+

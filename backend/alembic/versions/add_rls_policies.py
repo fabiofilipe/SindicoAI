@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'add_rls_policies'
-down_revision = '6a1b2c3d4e5f_add_settings_to_tenant'
+down_revision = '6a1b2c3d4e5f'
 branch_labels = None
 depends_on = None
 

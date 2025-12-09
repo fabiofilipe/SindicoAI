@@ -132,21 +132,39 @@ class DocumentProcessor:
         self,
         db: AsyncSession,
         document: Document,
-        pdf_path: str
+        file_path: str
     ):
-        """Pipeline completo de processamento"""
+        """
+        Pipeline completo de processamento para PDFs e Excel.
+
+        Args:
+            db: Sessão do banco de dados
+            document: Modelo do documento
+            file_path: Caminho do arquivo salvo
+        """
         try:
-            # 1. Extrair texto
+            # 1. Extrair texto baseado no tipo de arquivo
             document.status = "extracting"
             await db.commit()
 
-            text_by_page = await self.extract_text_from_pdf(pdf_path)
+            if document.file_type == "pdf":
+                text_by_section = await self.extract_text_from_pdf(file_path)
+                section_type = "page"
+                logger.info(f"Processing PDF: {document.filename}")
+
+            elif document.file_type in ["xlsx", "xls"]:
+                text_by_section = await self.extract_text_from_excel(file_path)
+                section_type = "sheet"
+                logger.info(f"Processing Excel: {document.filename}")
+
+            else:
+                raise ValueError(f"Tipo de arquivo não suportado: {document.file_type}")
 
             # 2. Chunking
             document.status = "chunking"
             await db.commit()
 
-            chunks = self.chunk_text(text_by_page)
+            chunks = self.chunk_text(text_by_section, section_type)
 
             # 3. Gerar embeddings e salvar chunks
             document.status = "embedding"

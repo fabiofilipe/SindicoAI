@@ -1,15 +1,30 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
+from enum import Enum
 
-class DocumentUploadResponse(BaseModel):
-    id: str
+class DocumentCategory(str, Enum):
+    """Categorias de documentos do condomínio"""
+    REGIMENTOS = "regimentos"
+    ATAS = "atas"
+    COMUNICADOS = "comunicados"
+    RELATORIOS = "relatorios"
+    OUTROS = "outros"
+
+class FileUploadResult(BaseModel):
+    """Resultado do upload de um arquivo individual"""
     filename: str
-    status: str
+    status: str  # 'success' | 'failed'
+    document_id: Optional[str] = None
+    error: Optional[str] = None
     message: str
 
-    class Config:
-        from_attributes = True
+class DocumentUploadResponse(BaseModel):
+    """Resposta do upload de múltiplos arquivos"""
+    total_files: int
+    successful: int
+    failed: int
+    results: List[FileUploadResult]
 
 
 class DocumentResponse(BaseModel):
@@ -19,6 +34,7 @@ class DocumentResponse(BaseModel):
     file_size: int
     upload_date: datetime
     status: str
+    category: DocumentCategory
     tenant_id: str
 
     class Config:

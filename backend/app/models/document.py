@@ -8,6 +8,14 @@ import enum
 def generate_uuid():
     return str(uuid.uuid4())
 
+class DocumentCategory(str, enum.Enum):
+    """Categorias de documentos do condomínio"""
+    REGIMENTOS = "regimentos"
+    ATAS = "atas"
+    COMUNICADOS = "comunicados"
+    RELATORIOS = "relatorios"
+    OUTROS = "outros"
+
 class Document(Base):
     __tablename__ = "documents"
 
@@ -17,6 +25,7 @@ class Document(Base):
     file_size = Column(Integer)  # bytes
     upload_date = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="processing")  # processing, completed, failed
+    category = Column(Enum(DocumentCategory), nullable=False, default=DocumentCategory.OUTROS)
 
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant")

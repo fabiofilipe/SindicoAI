@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Save, Building2, Clock, Bell } from 'lucide-react'
+import { Save, Building2, Clock, Bell, FileText } from 'lucide-react'
 import { getSettings, updateSettings } from '../services/settingsService'
+import { listDocuments } from '../services/documentService'
 import type { SettingsUpdate, ReservationSettings, NotificationSettings } from '../types/settings'
+import type { Document } from '../types/document'
+import { CATEGORY_LABELS, STATUS_LABELS, STATUS_COLORS } from '../types/document'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import SkeletonCard from '../components/ui/SkeletonCard'
 import Input from '../components/ui/Input'
 import MainLayout from '../components/layout/MainLayout'
+import DocumentUploadModal from '../components/documents/DocumentUploadModal'
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(true)
@@ -41,6 +45,23 @@ export default function SettingsPage() {
         quiet_hours_end: '08:00'
     })
 
+    // Document states
+    const [showUploadModal, setShowUploadModal] = useState(false)
+    const [documents, setDocuments] = useState<Document[]>([])
+    const [documentsLoading, setDocumentsLoading] = useState(false)
+
+    const loadDocuments = async () => {
+        try {
+            setDocumentsLoading(true)
+            const data = await listDocuments()
+            setDocuments(data.documents)
+        } catch (err: any) {
+            console.error('Error loading documents:', err)
+        } finally {
+            setDocumentsLoading(false)
+        }
+    }
+
     const loadSettings = async () => {
         try {
             setLoading(true)
@@ -69,6 +90,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         loadSettings()
+        loadDocuments()
     }, [])
 
     const handleSave = async () => {
@@ -370,6 +392,83 @@ export default function SettingsPage() {
                     </div>
                 </Card>
 
+                {/* Section 4: Documentos do Condomínio */}
+                <Card>
+                    <div className="p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-cyan/10 border border-cyan/30 rounded-lg">
+                                    <FileText className="w-6 h-6 text-cyan" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-bold text-cyan">Documentos do Condomínio</h2>
+                                    <p className="text-sm text-metal-silver/70">
+                                        Gerencie regimentos, atas e outros documentos
+                                    </p>
+                                </div>
+                            </div>
+                            <Button
+                                onClick={() => setShowUploadModal(true)}
+                                variant="outline"
+                            >
+                                <FileText className="w-4 h-4 mr-2" />
+                                Upload de Documentos
+                            </Button>
+                        </div>
+
+                        {/* Documents list */}
+                        <div className="space-y-2">
+                            {documentsLoading ? (
+                                <p className="text-metal-silver/60 text-sm">Carregando documentos...</p>
+                            ) : documents.length === 0 ? (
+                                <div className="text-center py-8 border border-dashed border-gray-600 rounded-lg">
+                                    <FileText className="w-12 h-12 mx-auto mb-3 text-gray-500" />
+                                    <p className="text-metal-silver/60">
+                                        Nenhum documento cadastrado
+                                    </p>
+                                    <p className="text-sm text-metal-silver/40 mt-1">
+                                        Clique em "Upload de Documentos" para começar
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 gap-2">
+                                    {documents.slice(0, 5).map(doc => (
+                                        <div
+                                            key={doc.id}
+                                            className="flex items-center justify-between p-3 bg-coal-light border border-cyan/20 rounded-lg hover:border-cyan/40 transition-colors"
+                                        >
+                                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                <FileText className="w-5 h-5 text-cyan flex-shrink-0" />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm text-metal-silver truncate">
+                                                        {doc.filename}
+                                                    </p>
+                                                    <p className="text-xs text-metal-silver/60">
+                                                        {CATEGORY_LABELS[doc.category]} • {(doc.file_size / 1024).toFixed(1)} KB
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <span className={`text-xs px-2 py-1 rounded flex-shrink-0 ${doc.status === 'completed'
+                                                    ? 'bg-green-500/10 text-green-500'
+                                                    : doc.status === 'processing' || doc.status === 'uploading'
+                                                        ? 'bg-yellow-500/10 text-yellow-500'
+                                                        : 'bg-red-500/10 text-red-500'
+                                                }`}>
+                                                {STATUS_LABELS[doc.status]}
+                                            </span>
+                                        </div>
+                                    ))}
+                                    {documents.length > 5 && (
+                                        <p className="text-xs text-metal-silver/60 text-center mt-2">
+                                            E mais {documents.length - 5} documento(s)...
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Card>
+
                 {/* Bottom Save Button */}
                 <div className="flex justify-end">
                     <Button onClick={handleSave} isLoading={saving}>
@@ -378,6 +477,17 @@ export default function SettingsPage() {
                     </Button>
                 </div>
             </div>
+
+            {/* Upload Modal */}
+            {showUploadModal && (
+                <DocumentUploadModal
+                    onClose={() => setShowUploadModal(false)}
+                    onSuccess={() => {
+                        setShowUploadModal(false)
+                        loadDocuments()
+                    }}
+                />
+            )}
         </MainLayout>
     )
 }

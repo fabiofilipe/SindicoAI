@@ -25,7 +25,7 @@ class Document(Base):
     file_size = Column(Integer)  # bytes
     upload_date = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="processing")  # processing, completed, failed
-    category = Column(Enum(DocumentCategory), nullable=False, default=DocumentCategory.OUTROS)
+    category = Column(Enum(DocumentCategory, name='document_category', values_callable=lambda x: [e.value for e in x]), nullable=False, default=DocumentCategory.OUTROS)
 
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant")

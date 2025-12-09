@@ -1,8 +1,9 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, func
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, func, Enum
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
 from app.core.database import Base
 import uuid
+import enum
 
 def generate_uuid():
     return str(uuid.uuid4())

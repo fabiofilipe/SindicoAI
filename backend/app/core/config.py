@@ -23,6 +23,18 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://redis:6379/0"
 
+    # Upload Configuration
+    MAX_UPLOAD_SIZE_MB: int = 10
+    MAX_UPLOAD_SIZE_BYTES: int = 10 * 1024 * 1024
+
+    ALLOWED_MIME_TYPES: dict = {
+        "application/pdf": [".pdf"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "application/vnd.ms-excel": [".xls"]
+    }
+
+    ALLOWED_EXTENSIONS: list = [".pdf", ".xlsx", ".xls"]
+
     class Config:
         env_file = ".env"
         case_sensitive = True

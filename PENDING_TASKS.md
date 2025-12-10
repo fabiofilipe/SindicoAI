@@ -1,7 +1,7 @@
 # 📋 SindicoAI - Roadmap & Status
 
-**Última Atualização:** 01/12/2024
-**Progresso Geral:** ~89% do projeto completo
+**Última Atualização:** 09/12/2024
+**Progresso Geral:** ~92% do projeto completo
 
 ---
 
@@ -37,8 +37,8 @@
 - Alteração de senha (`PUT /users/me/change-password`)
 - Relatórios e Analytics (uso de áreas + reservas + exportação CSV)
 - Configurações do Tenant (settings com JSON)
-- AI/RAG Chat
-- Upload de Documentos
+- AI/RAG Chat com formatação profissional + fontes separadas
+- Upload de Documentos com múltiplos arquivos + validação + categorias
 - Importação CSV de Unidades
 
 ### **DevOps**
@@ -94,10 +94,22 @@
   - Export CSV com UTF-8 BOM para Excel
   - Botão de export no Dashboard
 
-### **Upload de Documentos**
-- [ ] Melhorar endpoint de upload
-- [ ] Suporte para múltiplos arquivos
-- [ ] Validação de tipos (PDF, imagens)
+### **Upload de Documentos** ✅
+- [x] Melhorar endpoint de upload
+- [x] Suporte para múltiplos arquivos
+- [x] Validação de tipos (PDF, XLSX, XLS)
+- [x] Validação de tamanho (máx 10MB)
+- [x] Validação de integridade (anti-spoofing)
+- [x] Categorização de documentos (regimentos, atas, comunicados, relatórios, outros)
+- [x] Processamento em background (extração + chunking + embeddings)
+- [x] Modal de upload com drag & drop no Admin
+
+### **Chat IA / RAG** ✅
+- [x] Respostas formatadas profissionalmente
+- [x] Fontes exibidas separadamente (não inline)
+- [x] Remoção de duplicatas nas fontes
+- [x] Rate limiting (50 req/dia por usuário)
+- [x] Cache de respostas (1 hora)
 
 
 ### **Features Avançadas**
@@ -214,10 +226,10 @@
 5. CI/CD básico (GitHub Actions)
 
 ### **🔧 Prioridade MÉDIA (Polish e Features)**
-6. Alteração de senha para Funcionário
+6. ~~Alteração de senha para Funcionário~~ ✅ **CONCLUÍDO**
 7. Agendar notificações
 8. Audit Log
-9. Melhorias no upload de documentos
+9. ~~Melhorias no upload de documentos~~ ✅ **CONCLUÍDO**
 
 ### **📱 Prioridade BAIXA (Futuro)**
 10. Testes automatizados (coverage > 70%)
@@ -242,7 +254,7 @@
 7. CI/CD com GitHub Actions
 
 **Fase 3 - Features Opcionais:**
-8. Alteração de senha para Funcionário
+8. ~~Alteração de senha para Funcionário~~ ✅ **CONCLUÍDO**
 9. Agendar notificações
 10. Audit Log
 

@@ -73,7 +73,7 @@ class RAGService:
         ])
 
         # Prompt engineering
-        prompt = f"""Você é um assistente virtual de um condomínio. Sua função é responder perguntas sobre o regimento interno e documentos do condomínio.
+        prompt = f"""Você é o assistente virtual oficial do condomínio, especializado em responder dúvidas sobre regimentos, atas e documentos internos.
 
 CONTEXTO DOS DOCUMENTOS:
 {context}
@@ -81,27 +81,33 @@ CONTEXTO DOS DOCUMENTOS:
 PERGUNTA DO USUÁRIO:
 {question}
 
-INSTRUÇÕES:
-1. Responda APENAS com base no contexto fornecido
-2. Se a informação não estiver no contexto, diga "Não encontrei essa informação nos documentos disponíveis"
-3. Cite sempre o documento e a página de onde tirou a informação
-4. Seja claro, objetivo e educado
-5. Use linguagem acessível
+INSTRUÇÕES PARA A RESPOSTA:
+1. Responda EXCLUSIVAMENTE com base no contexto fornecido acima
+2. Se a informação não estiver disponível, diga: "Não encontrei essa informação nos documentos do condomínio. Entre em contato com o Sindico para mais informações."
+3. NÃO inclua referências, citações ou nomes de arquivos na resposta - as fontes serão exibidas automaticamente em uma seção separada
+4. Formate a resposta de forma profissional e organizada:
+   - Use parágrafos curtos e claros
+   - Para listas, use marcadores (•) ou numeração
+   - Destaque informações importantes quando necessário
+5. Seja direto, educado e use linguagem acessível
+6. Mantenha um tom profissional e prestativo
 
 RESPOSTA:"""
 
         try:
             response = self.model.generate_content(prompt)
 
-            # Extrair fontes
-            sources = [
-                {
-                    "document": chunk.filename,
-                    "page": chunk.page_number,
-                    "similarity": float(chunk.similarity)
-                }
-                for chunk in context_chunks
-            ]
+            # Extrair fontes (removendo duplicatas por filename)
+            seen_files = set()
+            sources = []
+            for chunk in context_chunks:
+                if chunk.filename not in seen_files:
+                    seen_files.add(chunk.filename)
+                    sources.append({
+                        "filename": chunk.filename,
+                        "page": chunk.page_number,
+                        "similarity": float(chunk.similarity)
+                    })
 
             return {
                 "answer": response.text,

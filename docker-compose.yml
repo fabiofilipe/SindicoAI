@@ -58,6 +58,17 @@ services:
     networks:
       - sindicoai-network
 
+  frontend-landing:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: landing
+    ports:
+      - "3003:80"
+    networks:
+      - sindicoai-network
+
   db:
     image: ankane/pgvector:latest
     ports:

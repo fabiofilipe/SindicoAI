@@ -16,7 +16,7 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <section className="relative flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20 md:py-32 lg:py-40">
       <motion.div
         variants={staggerContainer}
         initial="hidden"

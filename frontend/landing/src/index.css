@@ -3,17 +3,27 @@
 @tailwind utilities;
 
 @layer base {
-  html,
-  body {
-    @apply bg-coal text-metal-silver;
-    font-feature-settings: "rlig" 1, "calt" 1;
+  * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply bg-coal text-metal-silver;
+    scroll-behavior: smooth;
     overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
   }
 
   body {
-    min-height: 100vh;
+    @apply bg-coal text-metal-silver;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+    overflow-y: visible;
+    min-height: 100%;
+    height: auto;
   }
 
   /* Scrollbar Styling */
@@ -33,15 +43,27 @@
     @apply bg-cyan/50;
   }
 
-  /* Smooth Scroll */
-  html {
-    scroll-behavior: smooth;
-  }
-
   /* Fix para evitar double scrollbar */
   #root {
+    width: 100%;
     min-height: 100vh;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Garantir que nenhum container interno crie scroll */
+  #root > * {
+    flex: 1 0 auto;
+  }
+}
+
+/* Remover qualquer overflow de containers do React Router e Framer Motion */
+@layer utilities {
+  [data-rr-ui-event-boundary],
+  [data-framer-component-type],
+  .framer-motion-wrapper {
+    overflow: visible !important;
+    height: auto !important;
   }
 }
 

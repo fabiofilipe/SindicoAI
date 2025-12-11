@@ -41,7 +41,6 @@ const AboutSection = () => {
                     <div className="w-full h-full border-4 border-cyan-glow/30 border-t-cyan rounded-full" />
                   </motion.div>
                   <p className="text-4xl font-bold text-gradient-cyber">SindicoAI</p>
-                  <p className="text-cyan-glow text-sm mt-2">Powered by AI</p>
                 </div>
               </motion.div>
             </div>

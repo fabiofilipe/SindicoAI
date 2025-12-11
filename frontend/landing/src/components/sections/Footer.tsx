@@ -90,14 +90,9 @@ const Footer = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-cyan-glow/20 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-metal-silver text-sm">
+          <div className="border-t border-cyan-glow/20 pt-8">
+            <p className="text-metal-silver text-sm text-center">
               {copy.footer.copyright}
-            </p>
-            <p className="text-cyan-glow text-sm flex items-center gap-2">
-              <span className="text-xs bg-gradient-cyber text-coal px-3 py-1 rounded-full font-bold">
-                {copy.footer.poweredBy}
-              </span>
             </p>
           </div>
         </div>

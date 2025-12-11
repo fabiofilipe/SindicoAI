@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  html,
   body {
     @apply bg-coal text-metal-silver;
     font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100vh;
   }
 
   /* Scrollbar Styling */
@@ -28,6 +36,12 @@
   /* Smooth Scroll */
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Fix para evitar double scrollbar */
+  #root {
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 }
 

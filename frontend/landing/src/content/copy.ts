@@ -92,7 +92,6 @@ export const copy = {
       email: 'contato@sindicoai.com.br',
       phone: '(11) 1234-5678'
     },
-    copyright: '© 2025 SindicoAI. Todos os direitos reservados.',
-    poweredBy: 'Powered by AI'
+    copyright: '© 2025 SindicoAI. Todos os direitos reservados.'
   }
 }

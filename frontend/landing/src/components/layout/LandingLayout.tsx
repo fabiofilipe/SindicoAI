@@ -7,7 +7,7 @@ interface LandingLayoutProps {
 
 const LandingLayout = ({ children }: LandingLayoutProps) => {
   return (
-    <div className="relative min-h-screen bg-tech-grid overflow-x-hidden">
+    <div className="relative bg-tech-grid">
       {/* Ambient Glow Orbs */}
       <GlowOrb color="cyan" size={400} top="-10%" left="-10%" delay={0} />
       <GlowOrb color="blue" size={350} top="30%" right="-15%" delay={1} />

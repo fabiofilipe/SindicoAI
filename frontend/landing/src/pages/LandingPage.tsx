@@ -1,14 +1,19 @@
+import LandingLayout from '@/components/layout/LandingLayout'
+import HeroSection from '@/components/sections/HeroSection'
+import UserTypeSection from '@/components/sections/UserTypeSection'
+import FeaturesSection from '@/components/sections/FeaturesSection'
+import AboutSection from '@/components/sections/AboutSection'
+import Footer from '@/components/sections/Footer'
+
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-tech-grid flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="hero-title">SindicoAI</h1>
-        <p className="text-xl text-metal-silver mt-4">
-          Gestão Inteligente para Condomínios
-        </p>
-        <p className="text-cyan mt-2">Landing page em construção...</p>
-      </div>
-    </div>
+    <LandingLayout>
+      <HeroSection />
+      <UserTypeSection />
+      <FeaturesSection />
+      <AboutSection />
+      <Footer />
+    </LandingLayout>
   )
 }
 

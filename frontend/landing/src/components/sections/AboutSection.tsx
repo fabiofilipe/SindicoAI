@@ -21,26 +21,27 @@ const AboutSection = () => {
             <div className="relative">
               <div className="aspect-square rounded-2xl bg-gradient-cyber opacity-20 blur-3xl absolute inset-0" />
               <motion.div
-                className="relative bg-coal-light/80 backdrop-blur-md border border-cyan-glow/30 rounded-2xl p-12 aspect-square flex items-center justify-center"
+                className="relative rounded-2xl overflow-hidden border border-cyan-glow/30 group"
                 whileHover={{
-                  boxShadow: '0 0 40px rgba(0, 255, 240, 0.4)'
+                  boxShadow: '0 0 40px rgba(0, 255, 240, 0.4)',
+                  scale: 1.02
                 }}
+                transition={{ duration: 0.3 }}
               >
-                <div className="text-center">
-                  <motion.div
-                    animate={{
-                      rotate: [0, 360]
-                    }}
-                    transition={{
-                      duration: 20,
-                      repeat: Infinity,
-                      ease: 'linear'
-                    }}
-                    className="w-48 h-48 mx-auto mb-6"
-                  >
-                    <div className="w-full h-full border-4 border-cyan-glow/30 border-t-cyan rounded-full" />
-                  </motion.div>
-                  <p className="text-4xl font-bold text-gradient-cyber">SindicoAI</p>
+                <div className="relative aspect-square">
+                  <img
+                    src="/assets/pexels-photo-323705.jpeg"
+                    alt="Gestão de Condomínios"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-coal via-coal/50 to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-cyan/5 group-hover:bg-cyan/10 transition-colors duration-300" />
+                  <div className="absolute bottom-0 left-0 right-0 p-8">
+                    <p className="text-3xl md:text-4xl font-bold text-gradient-cyber drop-shadow-lg">
+                      SindicoAI
+                    </p>
+                    <p className="text-cyan-glow text-sm mt-2">Tecnologia que transforma</p>
+                  </div>
                 </div>
               </motion.div>
             </div>

@@ -129,37 +129,49 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
 **Objetivo:** Criar interfaces deslumbrantes, dinâmicas e responsivas que encantem o usuário ("Wow Effect").
 
 ### 4.1 Design System & UX
-- [ ] **Estética:** Glassmorphism, gradientes sutis, Dark Mode nativo e tipografia moderna.
+- [x] **Estética:** Glassmorphism, gradientes sutis, Dark Mode nativo e tipografia moderna.
 - [ ] **Interatividade:** Micro-interações em todos os botões e cards (Framer Motion/Reanimated).
-- [ ] **Performance:** Carregamento instantâneo (Skeleton screens, Lazy loading, Otimização de assets).
+- [x] **Performance:** Carregamento instantâneo (Skeleton screens, Lazy loading, Otimização de assets).
 
 ### 4.2 Web Admin (React)
-- [ ] **Setup:** Vite + React + TailwindCSS + Framer Motion.
-- [ ] **Dashboard Futurista:** Gráficos em tempo real, widgets arrastáveis, visualização de dados imersiva.
-- [ ] **Gestão de Documentos:** Interface drag-and-drop com preview instantâneo e animações de upload.
+- [x] **Setup:** Vite + React + TailwindCSS (Framer Motion pendente).
+- [x] **Dashboard Futurista:** Gráficos em tempo real, widgets, visualização de dados.
+- [x] **Gestão de Documentos:** Interface drag-and-drop com preview instantâneo.
 
-### 4.3 App do Morador (Mobile)
-- [ ] **Setup:** React Native (Expo) com Reanimated.
-- [ ] **Chat Imersivo:** Interface estilo "WhatsApp Premium", com respostas em streaming e feedback tátil.
-- [ ] **Reservas Visual:** Seleção de áreas com mapas interativos ou carrosséis 3D.
+### 4.3 App do Morador (Web)
+- [x] **Setup:** React + Vite funcionando.
+- [x] **Chat IA:** Interface de chat com RAG integrado.
+- [x] **Reservas:** Sistema completo de reservas de áreas comuns.
 
-### 4.4 App do Funcionário (Offline-First)
-- [ ] **Arquitetura Offline:** Configurar banco local (WatermelonDB ou SQLite).
-- [ ] **Sincronização:** Implementar lógica de *sync* transparente e robusta.
-- [ ] **UX Focada:** Botões grandes, alto contraste, feedback sonoro/visual para confirmações rápidas.
+### 4.4 App do Funcionário (Web)
+- [x] **Setup:** React + Vite funcionando.
+- [x] **Dashboard:** Agenda do dia com timeline de reservas.
+- [x] **Gestão de Reservas:** Iniciar, concluir, reportar problemas.
+
+### 4.5 Apps Mobile (React Native) - FUTURO
+- [ ] **App Morador Mobile:** React Native (Expo) com Reanimated.
+- [ ] **App Funcionário Mobile:** Offline-First com sincronização.
+- [ ] **Features Mobile:** Biometria, notificações push, scanner QR.
 
 ---
 
 ##  Fase 5: Qualidade e Refinamento 
 **Objetivo:** Garantir que o sistema aguente o tranco.
 
-### 5.1 Testes de Carga
+### 5.1 Testes Unitários e Integração
+- [x] **Setup de Testes:** Pytest configurado com fixtures e conftest.
+- [x] **Testes Básicos:** Testes de checklist final implementados.
+- [ ] **Cobertura Completa:** Aumentar coverage para >70% em services e rotas.
+- [ ] **Testes E2E:** Cypress ou Playwright para fluxos críticos.
+
+### 5.2 Testes de Carga
 - [ ] **Locust/k6:** Criar scripts para simular 1000 usuários simultâneos fazendo reservas e perguntas à IA.
 - [ ] **Otimização:** Ajustar índices do banco e réplicas do Docker baseado nos resultados.
 
-### 5.2 Segurança
+### 5.3 Segurança
 - [ ] **Pentest Básico:** Rodar ferramentas (ex: OWASP ZAP) para identificar vulnerabilidades comuns.
 - [ ] **Auditoria de Dados:** Verificar se o isolamento entre condomínios está 100% funcional.
+- [ ] **Audit Log:** Sistema de auditoria de ações administrativas.
 
 ---
 
@@ -167,9 +179,15 @@ Este plano detalha a construção do **SindicoAI** com foco em robustez, escalab
 **Objetivo:** Colocar em produção e monitorar.
 
 ### 6.1 Deploy Produção
-- [ ] **Executar Terraform:** Provisionar ambiente de Prod.
+- [ ] **SSL/HTTPS:** Configurar certificados SSL (Let's Encrypt).
+- [ ] **Variáveis de Ambiente:** Configurar .env.production com segredos.
+- [ ] **Executar Terraform:** Provisionar ambiente de Prod (VPS/Cloud).
 - [ ] **Deploy:** Rodar pipeline de CI/CD para deploy final.
+- [ ] **Domain:** Configurar DNS e domínio personalizado.
+- [ ] **Backups:** Automatizar backups do PostgreSQL.
 
 ### 6.2 Observabilidade
 - [ ] **Monitoramento:** Configurar Prometheus + Grafana para métricas (CPU, Memória, Latência da IA).
-- [ ] **Logs:** Centralizar logs para debug rápido.
+- [ ] **Logs:** Centralizar logs para debug rápido (ELK Stack ou similar).
+- [ ] **Alertas:** Configurar alertas para erros críticos e uso de recursos.
+- [ ] **Health Checks:** Endpoints de health check em todos os serviços.

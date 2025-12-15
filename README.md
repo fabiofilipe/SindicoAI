@@ -215,6 +215,7 @@ SindicoAI/
 │   │   │   │   └── UsersPage.tsx
 │   │   │   ├── services/        # API clients
 │   │   │   ├── types/           # TypeScript types
+
 │   │   │   └── App.tsx
 │   │   ├── Dockerfile
 │   │   └── package.json

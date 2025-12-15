@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/contexts'
 import { PrivateRoute } from '@/components'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import { LoginPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage, ProfilePage } from '@/pages'
+import { LoginPage, ForgotPasswordPage, ResetPasswordPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage, ProfilePage } from '@/pages'
 
 function App() {
     return (
@@ -40,6 +40,8 @@ function App() {
 
                         {/* Autenticação */}
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                         {/* Rotas protegidas */}
                         <Route

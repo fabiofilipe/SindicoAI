@@ -1,5 +1,7 @@
 // Auth Pages
 export { default as LoginPage } from './auth/LoginPage'
+export { default as ForgotPasswordPage } from './ForgotPasswordPage'
+export { default as ResetPasswordPage } from './ResetPasswordPage'
 
 // Main Pages
 export { default as HomePage } from './home/HomePage'

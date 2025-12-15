@@ -36,3 +36,10 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
+def get_db_session():
+    """
+    Get a database session for background tasks (context manager)
+    Usage: async with get_db_session() as db: ...
+    """
+    return AsyncSessionLocal()
+

@@ -1,8 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import api_router
+from app.services.scheduler import start_scheduler, shutdown_scheduler
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="SindicoAI API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    start_scheduler()
+    yield
+    # Shutdown
+    shutdown_scheduler()
+
+app = FastAPI(
+    title="SindicoAI API",
+    version="0.1.0",
+    lifespan=lifespan
+)
 
 # Configuração CORS
 app.add_middleware(

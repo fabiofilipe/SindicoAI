@@ -128,7 +128,9 @@ class Notification(Base):
     message = Column(String, nullable=False)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+    scheduled_for = Column(DateTime(timezone=True), nullable=True)  # When to send notification
+    sent_at = Column(DateTime(timezone=True), nullable=True)  # When notification was actually sent
+
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
     user = relationship("User")
     

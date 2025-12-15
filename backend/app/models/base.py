@@ -55,7 +55,11 @@ class User(Base):
     full_name = Column(String)
     role = Column(String, default="resident") # resident, admin, staff
     is_active = Column(Boolean, default=True)
-    
+
+    # Password reset fields
+    reset_token = Column(String, nullable=True)
+    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
+
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="users")
     

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Briefcase, Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button, Input, HologramCard } from '@/components'
@@ -184,6 +184,16 @@ const LoginPage = () => {
                     >
                         {isLoading ? 'Entrando...' : 'Entrar'}
                     </Button>
+
+                    {/* Forgot Password Link */}
+                    <div className="text-center mt-4">
+                        <Link
+                            to="/forgot-password"
+                            className="text-sm text-cyan hover:text-cyan-400 transition-colors"
+                        >
+                            Esqueci minha senha
+                        </Link>
+                    </div>
                 </form>
 
                 {/* Divider */}

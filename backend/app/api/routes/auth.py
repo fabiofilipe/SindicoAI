@@ -12,6 +12,7 @@ from app.core.database import get_db
 from app.models.base import User
 from app.schemas.token import Token, TokenRefreshRequest, TokenPayload
 from app.schemas.user import ForgotPasswordRequest, ResetPasswordRequest
+from app.utils.email import send_password_reset_email
 from jose import jwt, JWTError
 from pydantic import ValidationError
 
@@ -120,9 +121,8 @@ async def forgot_password(
 
     await db.commit()
 
-    # TODO: Send email with reset link
-    # For now, we'll just return the token (in production, only send via email)
-    # Email should contain: https://yourapp.com/reset-password?token={reset_token}
+    # Send email with reset link
+    await send_password_reset_email(user.email, reset_token)
 
     return {
         "message": "If the email exists, a reset link has been sent",

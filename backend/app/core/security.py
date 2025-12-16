@@ -33,3 +33,21 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+def decode_token(token: str) -> dict:
+    """
+    Decode and validate JWT token
+
+    Returns:
+        Token payload dictionary
+
+    Raises:
+        Exception if token is invalid or expired
+    """
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise Exception("Token has expired")
+    except jwt.JWTError:
+        raise Exception("Invalid token")

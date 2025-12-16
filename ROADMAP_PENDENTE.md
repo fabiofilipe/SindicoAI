@@ -16,8 +16,6 @@
 - 🟡 **Fase 4:** Frontend e Mobile (85% - Web completo, Mobile pendente)
 - 🟡 **Fase 5:** Qualidade e Refinamento (40% - Testes básicos, falta carga e segurança)
 
-### ❌ Fases Não Iniciadas (0%)
-- ❌ **Fase 6:** Lançamento e Deploy em Produção
 
 ---
 
@@ -44,7 +42,7 @@
   - Animação suave de transição entre temas
 
 ### 2. Deploy em Produção (BLOQUEADOR)
-**Status:** 0% | **Prioridade:** 🔴 CRÍTICA
+**Status:** 0% | **Prioridade:** 
 
 #### 2.1 Infraestrutura Base
 - [ ] **Escolher e Configurar VPS/Cloud**

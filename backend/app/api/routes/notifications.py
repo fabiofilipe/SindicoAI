@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.base import Notification, User
 from app.schemas.notification import NotificationCreate, NotificationResponse
+from app.services.websocket import manager
 
 router = APIRouter()
 
@@ -129,9 +130,24 @@ async def create_notification(
         created_notifications.append(db_notification)
     
     await db.commit()
-    
+
     # Refresh all notifications
     for notif in created_notifications:
         await db.refresh(notif)
-    
+
+    # Broadcast to all connected clients in tenant via WebSocket
+    for notif in created_notifications:
+        await manager.broadcast_to_tenant(
+            {
+                "type": "notification",
+                "data": {
+                    "id": notif.id,
+                    "title": notif.title,
+                    "message": notif.message,
+                    "created_at": notif.created_at.isoformat() if notif.created_at else None,
+                }
+            },
+            current_user.tenant_id
+        )
+
     return created_notifications

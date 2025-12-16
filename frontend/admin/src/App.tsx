@@ -13,6 +13,7 @@ import CommonAreasPage from '@/pages/CommonAreasPage'
 import NotificationsPage from '@/pages/NotificationsPage'
 import ReportsPage from '@/pages/ReportsPage'
 import SettingsPage from '@/pages/SettingsPage'
+import AuditLogsPage from '@/pages/AuditLogsPage'
 
 function App() {
   return (
@@ -103,6 +104,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <SettingsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/audit-logs"
+              element={
+                <PrivateRoute>
+                  <AuditLogsPage />
                 </PrivateRoute>
               }
             />

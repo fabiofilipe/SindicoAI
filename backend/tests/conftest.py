@@ -119,3 +119,120 @@ def auth_headers_funcionario(funcionario_token: str) -> dict:
     Authorization headers for funcionario user
     """
     return {"Authorization": f"Bearer {funcionario_token}"}
+
+
+@pytest_asyncio.fixture
+async def test_tenant(db_session: AsyncSession):
+    """
+    Create a test tenant
+    """
+    from app.models.base import Tenant
+    tenant = Tenant(
+        id="test-tenant-123",
+        name="Test Condominium",
+        domain="test.condominium.com"
+    )
+    db_session.add(tenant)
+    await db_session.commit()
+    await db_session.refresh(tenant)
+    return {"id": tenant.id, "name": tenant.name}
+
+
+@pytest_asyncio.fixture
+async def test_user(db_session: AsyncSession, test_tenant):
+    """
+    Create a test user
+    """
+    from app.models.base import User
+    from app.core.security import get_password_hash
+
+    user = User(
+        id="test-user-123",
+        email="test@example.com",
+        hashed_password=get_password_hash("TestPassword123!"),
+        full_name="Test User",
+        role="admin",
+        tenant_id=test_tenant["id"]
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return {
+        "id": user.id,
+        "email": user.email,
+        "tenant_id": user.tenant_id
+    }
+
+
+@pytest_asyncio.fixture
+async def test_user_with_reset_token(db_session: AsyncSession, test_tenant):
+    """
+    Create a test user with a valid reset token
+    """
+    from app.models.base import User
+    from app.core.security import get_password_hash
+    from datetime import datetime, timedelta
+    import secrets
+
+    reset_token = secrets.token_urlsafe(32)
+
+    user = User(
+        id="test-user-with-token",
+        email="reset@example.com",
+        hashed_password=get_password_hash("OldPassword123!"),
+        full_name="Reset User",
+        role="resident",
+        tenant_id=test_tenant["id"],
+        reset_token=reset_token,
+        reset_token_expires=datetime.utcnow() + timedelta(hours=1)
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return {
+        "id": user.id,
+        "email": user.email,
+        "reset_token": reset_token,
+        "tenant_id": user.tenant_id
+    }
+
+
+@pytest_asyncio.fixture
+async def test_user_with_expired_token(db_session: AsyncSession, test_tenant):
+    """
+    Create a test user with an expired reset token
+    """
+    from app.models.base import User
+    from app.core.security import get_password_hash
+    from datetime import datetime, timedelta
+    import secrets
+
+    reset_token = secrets.token_urlsafe(32)
+
+    user = User(
+        id="test-user-expired-token",
+        email="expired@example.com",
+        hashed_password=get_password_hash("OldPassword123!"),
+        full_name="Expired User",
+        role="resident",
+        tenant_id=test_tenant["id"],
+        reset_token=reset_token,
+        reset_token_expires=datetime.utcnow() - timedelta(hours=1)  # Expired
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return {
+        "id": user.id,
+        "email": user.email,
+        "reset_token": reset_token,
+        "tenant_id": user.tenant_id
+    }
+
+
+@pytest_asyncio.fixture
+async def async_client(client):
+    """
+    Alias for client fixture for better naming
+    """
+    return client

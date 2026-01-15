@@ -1,8 +1,9 @@
 import { forwardRef } from 'react'
 import type { ButtonHTMLAttributes } from 'react'
+import { motion, type HTMLMotionProps } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof HTMLMotionProps<'button'>> {
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
     size?: 'sm' | 'md' | 'lg'
     isLoading?: boolean
@@ -24,11 +25,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref
     ) => {
         const variants = {
-            primary: 'bg-gradient-cyber text-coal font-bold shadow-glow hover:shadow-glow-lg active:scale-95',
-            secondary: 'bg-coal-light text-cyan border border-cyan-glow/30 hover:border-cyan active:scale-95',
-            outline: 'bg-transparent text-cyan border border-cyan hover:bg-cyan/10 active:scale-95',
-            ghost: 'bg-transparent text-metal-silver hover:bg-coal-light hover:text-cyan active:scale-95',
-            danger: 'bg-gradient-alert text-white font-bold shadow-[0_0_20px_rgba(255,69,58,0.3)] active:scale-95',
+            primary: 'bg-gradient-cyber text-coal font-bold shadow-glow',
+            secondary: 'bg-coal-light text-cyan border border-cyan-glow/30',
+            outline: 'bg-transparent text-cyan border border-cyan',
+            ghost: 'bg-transparent text-metal-silver',
+            danger: 'bg-gradient-alert text-white font-bold shadow-[0_0_20px_rgba(255,69,58,0.3)]',
         }
 
         const sizes = {
@@ -38,24 +39,56 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
 
         return (
-            <button
+            <motion.button
                 ref={ref}
                 className={`
                     ${variants[variant]}
                     ${sizes[size]}
                     ${fullWidth ? 'w-full' : ''}
                     rounded-lg
-                    transition-all duration-300
                     disabled:opacity-50 disabled:cursor-not-allowed
                     flex items-center justify-center gap-2
                     ${className}
                 `}
                 disabled={disabled || isLoading}
+                whileHover={
+                    !disabled && !isLoading
+                        ? {
+                              scale: 1.02,
+                              boxShadow:
+                                  variant === 'primary'
+                                      ? '0 0 30px rgba(0, 255, 240, 0.5)'
+                                      : variant === 'danger'
+                                        ? '0 0 30px rgba(255, 69, 58, 0.5)'
+                                        : '0 0 20px rgba(0, 255, 240, 0.3)',
+                          }
+                        : {}
+                }
+                whileTap={
+                    !disabled && !isLoading
+                        ? {
+                              scale: 0.98,
+                          }
+                        : {}
+                }
+                transition={{
+                    type: 'spring',
+                    stiffness: 400,
+                    damping: 17,
+                }}
                 {...props}
             >
-                {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
+                {isLoading && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                    </motion.div>
+                )}
                 {children}
-            </button>
+            </motion.button>
         )
     }
 )

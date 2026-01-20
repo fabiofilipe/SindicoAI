@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { motion } from 'framer-motion'
 
 interface CardProps {
     children: ReactNode
@@ -7,34 +6,45 @@ interface CardProps {
     hover?: boolean
     animate?: boolean
     delay?: number
+    variant?: 'default' | 'signature'
 }
 
-const Card = ({ children, className = '', hover = false, animate = true, delay = 0 }: CardProps) => {
+const Card = ({
+    children,
+    className = '',
+    hover = false,
+    animate = true,
+    delay = 0,
+    variant = 'default'
+}: CardProps) => {
+    const variants = {
+        default: 'bg-cream border border-border-light shadow-soft',
+        signature: 'bg-cream border border-border-brass shadow-soft-md',
+    }
+
+    const hoverClasses = hover
+        ? variant === 'signature'
+            ? 'hover:border-brass-light hover:shadow-brass hover:-translate-y-0.5 transition-all duration-200'
+            : 'hover:border-border-medium hover:shadow-soft-md hover:-translate-y-0.5 transition-all duration-200'
+        : ''
+
+    const animateClasses = animate
+        ? `animate-in fade-in slide-in-from-bottom-5 duration-400`
+        : ''
+
     return (
-        <motion.div
+        <div
             className={`
-                bg-coal-light/80 backdrop-blur-md border border-cyan-glow/30 rounded-xl p-6
+                ${variants[variant]}
+                rounded-lg p-6
+                ${hoverClasses}
+                ${animateClasses}
                 ${className}
             `}
-            initial={animate ? { opacity: 0, y: 20 } : false}
-            animate={animate ? { opacity: 1, y: 0 } : {}}
-            transition={{
-                duration: 0.5,
-                delay: delay,
-                ease: 'easeOut',
-            }}
-            whileHover={
-                hover
-                    ? {
-                          borderColor: 'rgba(0, 255, 240, 0.5)',
-                          boxShadow: '0 0 20px rgba(0, 255, 240, 0.2)',
-                          y: -4,
-                      }
-                    : {}
-            }
+            style={animate ? { animationDelay: `${delay * 1000}ms` } : undefined}
         >
             {children}
-        </motion.div>
+        </div>
     )
 }
 

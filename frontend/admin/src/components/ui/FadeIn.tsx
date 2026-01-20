@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { motion } from 'framer-motion'
 
 interface FadeInProps {
     children: ReactNode
@@ -16,34 +15,24 @@ const FadeIn = ({
     direction = 'up',
     className = '',
 }: FadeInProps) => {
-    const directionOffset = {
-        up: { y: 40 },
-        down: { y: -40 },
-        left: { x: 40 },
-        right: { x: -40 },
-        none: {},
+    const directionClasses = {
+        up: 'slide-in-from-bottom-10',
+        down: 'slide-in-from-top-10',
+        left: 'slide-in-from-right-10',
+        right: 'slide-in-from-left-10',
+        none: '',
     }
 
     return (
-        <motion.div
-            className={className}
-            initial={{
-                opacity: 0,
-                ...directionOffset[direction],
-            }}
-            animate={{
-                opacity: 1,
-                x: 0,
-                y: 0,
-            }}
-            transition={{
-                duration,
-                delay,
-                ease: 'easeOut',
+        <div
+            className={`animate-in fade-in ${directionClasses[direction]} ${className}`}
+            style={{
+                animationDuration: `${duration}s`,
+                animationDelay: `${delay}s`,
             }}
         >
             {children}
-        </motion.div>
+        </div>
     )
 }
 

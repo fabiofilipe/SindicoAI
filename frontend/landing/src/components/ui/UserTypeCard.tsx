@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
-import HologramCard from './HologramCard'
+import { ArrowRight } from 'lucide-react'
 import { redirectToPortal, type PortalType } from '@/utils/navigation'
 
 interface UserTypeCardProps {
@@ -23,62 +23,39 @@ const UserTypeCard = ({
   return (
     <motion.div
       whileHover={{
-        scale: 1.05,
-        boxShadow: '0 0 40px rgba(0, 255, 240, 0.6)'
+        y: -8,
+        boxShadow: '0 8px 24px rgba(184, 134, 11, 0.2)'
       }}
       whileTap={{ scale: 0.98 }}
       onClick={handleClick}
-      className="cursor-pointer"
+      className="user-type-card group"
     >
-      <HologramCard className="p-8 h-full flex flex-col items-center text-center group">
-        {/* Floating Icon */}
-        <motion.div
-          className="mb-6"
-          animate={{
-            y: [0, -10, 0]
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: 'easeInOut'
-          }}
-        >
-          <div className="relative">
-            <Icon className="w-20 h-20 text-cyan drop-shadow-[0_0_15px_rgba(0,255,240,0.7)]" />
-            <motion.div
-              className="absolute inset-0 bg-cyan rounded-full blur-xl opacity-50"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.7, 0.5]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            />
-          </div>
-        </motion.div>
+      {/* Icon */}
+      <motion.div
+        className="mb-6"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="icon-container-lg mx-auto user-icon transition-all duration-300">
+          <Icon className="w-8 h-8" strokeWidth={1.5} />
+        </div>
+      </motion.div>
 
-        {/* Title */}
-        <h3 className="text-2xl font-bold text-cyan mb-3 text-glow-cyan group-hover:text-white transition-colors">
-          {title}
-        </h3>
+      {/* Title */}
+      <h3 className="text-2xl font-display font-semibold text-ink mb-3 group-hover:text-brass transition-colors duration-300">
+        {title}
+      </h3>
 
-        {/* Description */}
-        <p className="text-metal-silver group-hover:text-white transition-colors">
-          {description}
-        </p>
+      {/* Description */}
+      <p className="text-stone mb-6 leading-relaxed">
+        {description}
+      </p>
 
-        {/* Hover indicator */}
-        <motion.div
-          className="mt-6 text-cyan-glow text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-        >
-          Clique para acessar →
-        </motion.div>
-      </HologramCard>
+      {/* Hover indicator */}
+      <div className="flex items-center justify-center gap-2 text-brass opacity-0 group-hover:opacity-100 transition-all duration-300">
+        <span className="text-sm font-medium">Acessar portal</span>
+        <ArrowRight className="w-4 h-4" />
+      </div>
     </motion.div>
   )
 }

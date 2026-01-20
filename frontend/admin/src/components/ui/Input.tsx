@@ -21,36 +21,36 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         return (
             <div className="w-full">
                 {label && (
-                    <label className="block text-sm font-medium text-metal-silver mb-2">
+                    <label className="block text-sm font-medium text-graphite mb-2">
                         {label}
-                        {props.required && <span className="text-criticalred ml-1">*</span>}
+                        {props.required && <span className="text-burgundy ml-1">*</span>}
                     </label>
                 )}
 
                 <input
                     ref={ref}
                     className={`
-                        bg-coal-light border-cyan-glow/50 text-metal-silver
-                        ${error ? 'border-criticalred focus:border-criticalred' : 'focus:border-cyan focus:shadow-glow'}
-                        w-full px-4 py-3 rounded-lg border
-                        focus:outline-none
-                        transition-all duration-300
-                        placeholder:text-metal-silver/40
-                        disabled:opacity-50 disabled:cursor-not-allowed
+                        bg-marble border text-ink
+                        ${error ? 'border-burgundy focus:border-burgundy focus:ring-burgundy/20' : 'border-border-medium focus:border-brass focus:ring-brass/20'}
+                        w-full px-4 py-3 rounded border
+                        focus:outline-none focus:ring-1
+                        transition-all duration-200
+                        placeholder:text-silver
+                        disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-parchment
                         ${className}
                     `}
                     {...props}
                 />
 
                 {error && (
-                    <p className="mt-1 text-sm text-criticalred flex items-center gap-1">
-                        <span className="inline-block w-1 h-1 rounded-full bg-criticalred animate-pulse" />
+                    <p className="mt-2 text-sm text-burgundy flex items-center gap-1.5">
+                        <span className="inline-block w-1 h-1 rounded-full bg-burgundy" />
                         {error}
                     </p>
                 )}
 
                 {helperText && !error && (
-                    <p className="mt-1 text-sm text-metal-silver/60">{helperText}</p>
+                    <p className="mt-2 text-sm text-stone">{helperText}</p>
                 )}
             </div>
         )

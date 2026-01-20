@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,40 +12,41 @@
   }
 
   html {
-    @apply bg-coal text-metal-silver;
+    @apply bg-marble text-ink antialiased;
     scroll-behavior: smooth;
     overflow-x: hidden;
-    overflow-y: auto;
     height: 100%;
   }
 
   body {
-    @apply bg-coal text-metal-silver;
+    @apply bg-marble text-ink;
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow-x: hidden;
-    overflow-y: visible;
     min-height: 100%;
-    height: auto;
   }
 
-  /* Scrollbar Styling */
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-ink;
+  }
+
+  /* Scrollbar - Luxo Discreto */
   ::-webkit-scrollbar {
     @apply w-2;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-coal-light;
+    @apply bg-champagne;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-cyan/30 rounded-full;
+    @apply bg-brass/30 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-cyan/50;
+    @apply bg-brass/50;
   }
 
-  /* Fix para evitar double scrollbar */
   #root {
     width: 100%;
     min-height: 100vh;
@@ -51,15 +54,12 @@
     flex-direction: column;
   }
 
-  /* Garantir que nenhum container interno crie scroll */
   #root > * {
     flex: 1 0 auto;
   }
 }
 
-/* Remover qualquer overflow de containers do React Router e Framer Motion */
 @layer utilities {
-  [data-rr-ui-event-boundary],
   [data-framer-component-type],
   .framer-motion-wrapper {
     overflow: visible !important;
@@ -68,92 +68,145 @@
 }
 
 @layer components {
-  /* Neon Text Glow */
-  .text-glow-cyan {
-    text-shadow: 0 0 10px rgba(0, 255, 240, 0.5);
-  }
-
-  .text-glow-blue {
-    text-shadow: 0 0 10px rgba(10, 132, 255, 0.5);
-  }
-
-  /* Button Glow */
-  .btn-glow {
-    @apply bg-gradient-cyber text-coal font-bold px-6 py-3 rounded-lg transition-all duration-300;
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.3);
-  }
-
-  .btn-glow:hover {
-    box-shadow: 0 0 30px rgba(0, 255, 240, 0.6);
-    transform: translateY(-2px);
-  }
-
-  /* Input Neon */
-  .input-neon {
-    @apply bg-coal-light border border-cyan-glow/50 text-metal-silver px-4 py-3 rounded-lg w-full;
-    @apply focus:outline-none focus:border-cyan focus:shadow-glow transition-all duration-300;
-  }
-
-  .input-neon::placeholder {
-    @apply text-metal-silver/40;
-  }
-
-  /* Card Holographic */
-  .card-holographic {
-    @apply bg-coal-light/80 backdrop-blur-md border border-cyan-glow/30 rounded-xl p-6;
-    box-shadow: inset 0 0 20px rgba(0, 255, 240, 0.05);
-  }
-
-  .card-holographic:hover {
-    @apply border-cyan/50;
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.2), inset 0 0 20px rgba(0, 255, 240, 0.1);
-  }
-
-  /* Hero Title - Landing Page Specific */
+  /* Hero Title - Landing Page */
   .hero-title {
-    @apply text-6xl md:text-7xl lg:text-8xl font-bold;
-    background: linear-gradient(135deg, #00FFF0 0%, #0A84FF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 40px rgba(0, 255, 240, 0.5);
+    @apply text-5xl md:text-6xl lg:text-7xl font-display font-bold text-ink;
+    letter-spacing: -0.02em;
+  }
+
+  /* Hero Subtitle */
+  .hero-subtitle {
+    @apply text-xl md:text-2xl text-graphite font-light max-w-2xl;
+    line-height: 1.6;
+  }
+
+  /* Section Title */
+  .section-title {
+    @apply text-3xl md:text-4xl font-display font-bold text-ink;
+    letter-spacing: -0.01em;
+  }
+
+  /* Card Luxo Landing */
+  .card-luxury {
+    @apply bg-cream border border-border-light rounded-xl p-8 shadow-soft;
+    transition: all 0.3s ease-out;
+  }
+
+  .card-luxury:hover {
+    @apply shadow-soft-lg border-border-medium;
+    transform: translateY(-4px);
+  }
+
+  /* Card Signature (destaque com latão) */
+  .card-signature {
+    @apply bg-cream border border-border-brass rounded-xl p-8 shadow-soft-md;
+    transition: all 0.3s ease-out;
+  }
+
+  .card-signature:hover {
+    @apply shadow-brass-lg;
+    transform: translateY(-4px);
+  }
+
+  /* Feature Card */
+  .feature-card {
+    @apply bg-cream/80 border border-border-light rounded-lg p-6;
+    @apply transition-all duration-300;
+  }
+
+  .feature-card:hover {
+    @apply bg-cream border-border-brass shadow-soft-md;
+  }
+
+  .feature-card:hover .feature-icon {
+    @apply text-brass;
+  }
+
+  /* User Type Card */
+  .user-type-card {
+    @apply bg-cream border border-border-light rounded-xl p-8 text-center;
+    @apply transition-all duration-300 cursor-pointer;
+  }
+
+  .user-type-card:hover {
+    @apply border-border-brass shadow-brass;
+    transform: translateY(-6px);
+  }
+
+  .user-type-card:hover .user-icon {
+    @apply text-brass scale-110;
+  }
+
+  /* Button Primary Landing */
+  .btn-primary {
+    @apply bg-brass text-cream font-medium px-8 py-4 rounded-lg;
+    @apply transition-all duration-300;
+    @apply hover:bg-brass-light hover:shadow-brass-lg;
+    @apply active:scale-[0.98];
+  }
+
+  /* Button Secondary Landing */
+  .btn-secondary {
+    @apply bg-transparent border-2 border-brass text-brass font-medium px-8 py-4 rounded-lg;
+    @apply transition-all duration-300;
+    @apply hover:bg-brass hover:text-cream;
+    @apply active:scale-[0.98];
+  }
+
+  /* Button Ghost */
+  .btn-ghost {
+    @apply text-graphite font-medium px-4 py-2 rounded;
+    @apply transition-all duration-200;
+    @apply hover:text-brass hover:bg-champagne;
+  }
+
+  /* Decorative Line */
+  .line-brass {
+    @apply w-16 h-0.5 bg-brass rounded-full;
+  }
+
+  /* Stats/Metrics */
+  .stat-number {
+    @apply text-4xl md:text-5xl font-display font-bold text-brass;
+  }
+
+  .stat-label {
+    @apply text-sm text-stone uppercase tracking-wider mt-2;
   }
 }
 
 @layer utilities {
-  /* Tech Background */
-  .bg-tech-grid {
-    background-color: #0B0C10;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300FFF0' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  /* Shadow Glow */
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.5);
-  }
-
-  .shadow-glow-sm {
-    box-shadow: 0 0 10px rgba(0, 255, 240, 0.3);
-  }
-
-  .shadow-glow-lg {
-    box-shadow: 0 0 40px rgba(0, 255, 240, 0.6);
-  }
-
-  /* Gradient Text */
-  .text-gradient-cyber {
-    background: linear-gradient(135deg, #00FFF0 0%, #0A84FF 100%);
+  /* Text gradient brass */
+  .text-gradient-brass {
+    background: linear-gradient(135deg, #B8860B 0%, #D4A84B 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Parallax Utilities */
-  .parallax-slow {
-    transform: translateY(var(--scroll-parallax-slow, 0));
+  /* Underline decorativo */
+  .underline-brass {
+    @apply relative inline-block;
   }
 
-  .parallax-fast {
-    transform: translateY(var(--scroll-parallax-fast, 0));
+  .underline-brass::after {
+    content: '';
+    @apply absolute -bottom-2 left-0 w-full h-0.5 bg-brass rounded-full;
+  }
+
+  /* Background patterns */
+  .bg-pattern-subtle {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B8860B' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Icon container */
+  .icon-container {
+    @apply w-12 h-12 rounded-lg bg-champagne flex items-center justify-center;
+    @apply text-brass transition-all duration-300;
+  }
+
+  .icon-container-lg {
+    @apply w-16 h-16 rounded-xl bg-champagne flex items-center justify-center;
+    @apply text-brass transition-all duration-300;
   }
 }

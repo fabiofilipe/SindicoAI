@@ -26,37 +26,20 @@ const FeatureCard = ({
         duration: 0.5,
         delay: index * 0.1
       }}
-      whileHover={{
-        y: -10,
-        boxShadow: '0 0 30px rgba(0, 255, 240, 0.4)'
-      }}
-      className="bg-coal-light/80 backdrop-blur-md border border-cyan-glow/30 rounded-xl p-6 transition-all duration-300 hover:border-cyan/50"
+      className="feature-card group"
     >
-      {/* Icon with rotating glow */}
-      <div className="relative mb-4 w-fit">
-        <motion.div
-          className="absolute inset-0 bg-gradient-cyber rounded-lg blur-md opacity-50"
-          animate={{
-            rotate: 360
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'linear'
-          }}
-        />
-        <div className="relative bg-coal-light/90 p-3 rounded-lg border border-cyan-glow/50">
-          <Icon className="w-8 h-8 text-cyan" />
-        </div>
+      {/* Icon container */}
+      <div className="icon-container mb-4 group-hover:bg-brass/10 group-hover:scale-105 transition-all duration-300">
+        <Icon className="w-6 h-6 feature-icon transition-colors duration-300" strokeWidth={1.5} />
       </div>
 
       {/* Title */}
-      <h3 className="text-xl font-bold text-cyan mb-2 text-glow-cyan">
+      <h3 className="text-lg font-semibold text-ink mb-2 group-hover:text-brass transition-colors duration-300">
         {title}
       </h3>
 
       {/* Description */}
-      <p className="text-metal-silver text-sm">
+      <p className="text-stone text-sm leading-relaxed">
         {description}
       </p>
     </motion.div>

@@ -1,75 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply bg-marble text-ink antialiased;
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-coal text-metal-silver;
+    @apply bg-marble text-ink;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Scrollbar Styling */
+  /* Typography defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-ink;
+  }
+
+  /* Scrollbar - Luxo Discreto */
   ::-webkit-scrollbar {
     @apply w-2;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-coal-light;
+    @apply bg-champagne;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-cyan/30 rounded-full;
+    @apply bg-brass/30 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-cyan/50;
+    @apply bg-brass/50;
+  }
+
+  /* Focus states */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brass/30 ring-offset-2 ring-offset-marble;
   }
 }
 
 @layer components {
-  /* Neon Text Glow */
-  .text-glow-cyan {
-    text-shadow: 0 0 10px rgba(0, 255, 240, 0.5);
+  /* Card Luxo */
+  .card-luxury {
+    @apply bg-cream border border-border-light rounded-lg p-6 shadow-soft;
+    transition: all 0.2s ease-out;
   }
 
-  .text-glow-blue {
-    text-shadow: 0 0 10px rgba(10, 132, 255, 0.5);
+  .card-luxury:hover {
+    @apply shadow-soft-md border-border-medium;
   }
 
-  /* Button Glow */
-  .btn-glow {
-    @apply bg-gradient-cyber text-coal font-bold px-6 py-3 rounded-lg transition-all duration-300;
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.3);
+  /* Card com Signature (borda latão) */
+  .card-signature {
+    @apply bg-cream border border-border-brass rounded-lg p-6 shadow-soft-md;
+    transition: all 0.2s ease-out;
   }
 
-  .btn-glow:hover {
-    box-shadow: 0 0 30px rgba(0, 255, 240, 0.6);
-    transform: translateY(-2px);
+  .card-signature:hover {
+    @apply shadow-brass;
   }
 
-  /* Card Holographic */
-  .card-holographic {
-    @apply bg-coal-light/80 backdrop-blur-md border border-cyan-glow/30 rounded-xl p-6;
-    box-shadow: inset 0 0 20px rgba(0, 255, 240, 0.05);
+  /* Button Primary */
+  .btn-primary {
+    @apply bg-brass text-cream font-medium px-6 py-3 rounded transition-all duration-200;
+    @apply hover:bg-brass-light hover:shadow-brass;
+    @apply active:bg-brass-dark active:scale-[0.98];
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .card-holographic:hover {
-    @apply border-cyan/50;
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.2), inset 0 0 20px rgba(0, 255, 240, 0.1);
+  /* Button Secondary */
+  .btn-secondary {
+    @apply bg-transparent border border-border-medium text-ink font-medium px-6 py-3 rounded transition-all duration-200;
+    @apply hover:bg-champagne hover:border-border-brass;
+    @apply active:scale-[0.98];
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Button Ghost */
+  .btn-ghost {
+    @apply bg-transparent text-graphite font-medium px-4 py-2 rounded transition-all duration-200;
+    @apply hover:bg-parchment hover:text-ink;
+    @apply active:scale-[0.98];
+  }
+
+  /* Input Luxo */
+  .input-luxury {
+    @apply bg-marble border border-border-medium text-ink px-4 py-3 rounded w-full;
+    @apply placeholder:text-silver;
+    @apply focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass/20;
+    @apply transition-all duration-200;
+  }
+
+  /* Select Luxo */
+  .select-luxury {
+    @apply bg-marble border border-border-medium text-ink px-4 py-3 rounded w-full appearance-none;
+    @apply focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass/20;
+    @apply transition-all duration-200;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378716C'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-garden/10 text-garden border border-garden/20;
+  }
+
+  .badge-warning {
+    @apply bg-cognac/10 text-cognac border border-cognac/20;
+  }
+
+  .badge-error {
+    @apply bg-burgundy/10 text-burgundy border border-burgundy/20;
+  }
+
+  .badge-info {
+    @apply bg-sapphire/10 text-sapphire border border-sapphire/20;
+  }
+
+  /* Table */
+  .table-luxury {
+    @apply w-full;
+  }
+
+  .table-luxury thead {
+    @apply bg-champagne;
+  }
+
+  .table-luxury th {
+    @apply px-4 py-3 text-left text-xs font-semibold text-graphite uppercase tracking-wider border-b border-border-light;
+  }
+
+  .table-luxury td {
+    @apply px-4 py-4 text-sm text-ink border-b border-border-light;
+  }
+
+  .table-luxury tbody tr {
+    @apply transition-colors duration-150;
+  }
+
+  .table-luxury tbody tr:hover {
+    @apply bg-parchment;
+  }
+
+  /* Divider com detalhe latão */
+  .divider-brass {
+    @apply relative h-px bg-border-light my-6;
+  }
+
+  .divider-brass::after {
+    content: '';
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-0.5 bg-brass rounded-full;
   }
 }
 
 @layer utilities {
-  /* Shadow Glow */
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(0, 255, 240, 0.5);
+  /* Text gradient brass */
+  .text-gradient-brass {
+    background: linear-gradient(135deg, #B8860B 0%, #D4A84B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .shadow-glow-sm {
-    box-shadow: 0 0 10px rgba(0, 255, 240, 0.3);
+  /* Underline decorativo */
+  .underline-brass {
+    @apply relative;
   }
 
-  .shadow-glow-lg {
-    box-shadow: 0 0 40px rgba(0, 255, 240, 0.6);
+  .underline-brass::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-12 h-0.5 bg-brass rounded-full;
   }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Shield, Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { Building2, Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -82,37 +82,37 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coal via-coal-light to-coal p-4">
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 bg-tech-grid opacity-30" />
-
-            {/* Glowing Orbs */}
-            <div className="absolute top-20 left-20 w-96 h-96 bg-cyan/20 rounded-full blur-3xl animate-pulse-glow" />
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple/20 rounded-full blur-3xl animate-pulse-glow delay-1000" />
+        <div className="min-h-screen flex items-center justify-center bg-gradient-warm p-4">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 border-l-2 border-t-2 border-brass/20 rounded-tl-3xl" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 border-r-2 border-b-2 border-brass/20 rounded-br-3xl" />
 
             {/* Login Card */}
-            <Card className="w-full max-w-md relative z-10">
+            <Card variant="signature" className="w-full max-w-md relative z-10 !p-8" animate={true}>
                 {/* Logo e Título */}
                 <div className="text-center mb-8">
-                    <div className="flex justify-center mb-4">
-                        <div className="p-4 bg-gradient-cyber rounded-2xl shadow-glow">
-                            <Shield className="w-12 h-12 text-coal" />
+                    <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 bg-brass rounded-2xl flex items-center justify-center shadow-brass">
+                            <Building2 className="w-8 h-8 text-cream" strokeWidth={1.5} />
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold text-cyan text-glow-cyan mb-2">
-                        SindicoAI Admin
+                    <h1 className="text-3xl font-display font-bold text-ink mb-2">
+                        SindicoAI
                     </h1>
-                    <p className="text-metal-silver/80 text-sm">
+                    <p className="text-stone text-sm">
                         Painel Administrativo
                     </p>
                 </div>
+
+                {/* Decorative line */}
+                <div className="w-12 h-0.5 bg-brass mx-auto mb-8 rounded-full" />
 
                 {/* Formulário */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Email Input */}
                     <div className="relative">
                         <div className="absolute left-3 top-[52px] transform -translate-y-1/2 z-10">
-                            <Mail className="w-5 h-5 text-cyan/50" />
+                            <Mail className="w-5 h-5 text-stone" strokeWidth={1.5} />
                         </div>
                         <Input
                             label="Email"
@@ -131,7 +131,7 @@ const LoginPage = () => {
                     {/* Password Input */}
                     <div className="relative">
                         <div className="absolute left-3 top-[52px] transform -translate-y-1/2 z-10">
-                            <Lock className="w-5 h-5 text-cyan/50" />
+                            <Lock className="w-5 h-5 text-stone" strokeWidth={1.5} />
                         </div>
                         <Input
                             label="Senha"
@@ -148,13 +148,13 @@ const LoginPage = () => {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-[52px] transform -translate-y-1/2 text-metal-silver hover:text-cyan transition-colors"
+                            className="absolute right-3 top-[52px] transform -translate-y-1/2 text-stone hover:text-brass transition-colors"
                             tabIndex={-1}
                         >
                             {showPassword ? (
-                                <EyeOff className="w-5 h-5" />
+                                <EyeOff className="w-5 h-5" strokeWidth={1.5} />
                             ) : (
-                                <Eye className="w-5 h-5" />
+                                <Eye className="w-5 h-5" strokeWidth={1.5} />
                             )}
                         </button>
                     </div>
@@ -175,7 +175,7 @@ const LoginPage = () => {
                     <div className="text-center mt-4">
                         <Link
                             to="/forgot-password"
-                            className="text-sm text-cyan hover:text-cyan-400 transition-colors"
+                            className="text-sm text-brass hover:text-brass-light transition-colors"
                         >
                             Esqueci minha senha
                         </Link>
@@ -184,7 +184,7 @@ const LoginPage = () => {
 
                 {/* Footer */}
                 <div className="mt-8 text-center">
-                    <p className="text-xs text-metal-silver/60">
+                    <p className="text-xs text-stone">
                         Acesso restrito a administradores
                     </p>
                 </div>

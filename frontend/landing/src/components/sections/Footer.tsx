@@ -5,29 +5,31 @@ import { redirectToPortal } from '@/utils/navigation'
 
 const Footer = () => {
   return (
-    <footer className="bg-coal-light/50 border-t border-cyan-glow/20 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-walnut text-cream py-16 px-4 sm:px-6 lg:px-8">
       <ScrollReveal direction="up">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             {/* Column 1 - About */}
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <Building2 className="w-8 h-8 text-cyan drop-shadow-[0_0_10px_rgba(0,255,240,0.7)]" />
-                <span className="text-2xl font-bold text-gradient-cyber">SindicoAI</span>
+                <div className="w-10 h-10 rounded-lg bg-brass/20 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-brass" strokeWidth={1.5} />
+                </div>
+                <span className="text-2xl font-display font-bold text-cream">SindicoAI</span>
               </div>
-              <p className="text-metal-silver text-sm">
+              <p className="text-cream/70 text-sm leading-relaxed">
                 {copy.footer.tagline}
               </p>
             </div>
 
             {/* Column 2 - Quick Links */}
             <div>
-              <h3 className="text-cyan font-bold mb-4 text-glow-cyan">Acesso Rápido</h3>
-              <ul className="space-y-2">
+              <h3 className="text-brass font-semibold mb-4">Acesso Rápido</h3>
+              <ul className="space-y-3">
                 <li>
                   <button
                     onClick={() => redirectToPortal('morador')}
-                    className="text-metal-silver hover:text-cyan transition-colors hover:underline"
+                    className="text-cream/70 hover:text-brass transition-colors text-sm"
                   >
                     {copy.footer.links.morador}
                   </button>
@@ -35,7 +37,7 @@ const Footer = () => {
                 <li>
                   <button
                     onClick={() => redirectToPortal('sindico')}
-                    className="text-metal-silver hover:text-cyan transition-colors hover:underline"
+                    className="text-cream/70 hover:text-brass transition-colors text-sm"
                   >
                     {copy.footer.links.sindico}
                   </button>
@@ -43,7 +45,7 @@ const Footer = () => {
                 <li>
                   <button
                     onClick={() => redirectToPortal('funcionario')}
-                    className="text-metal-silver hover:text-cyan transition-colors hover:underline"
+                    className="text-cream/70 hover:text-brass transition-colors text-sm"
                   >
                     {copy.footer.links.funcionario}
                   </button>
@@ -53,12 +55,12 @@ const Footer = () => {
 
             {/* Column 3 - Contact */}
             <div>
-              <h3 className="text-cyan font-bold mb-4 text-glow-cyan">Contato</h3>
-              <ul className="space-y-2 mb-4">
-                <li className="text-metal-silver text-sm">
+              <h3 className="text-brass font-semibold mb-4">Contato</h3>
+              <ul className="space-y-2 mb-6">
+                <li className="text-cream/70 text-sm">
                   {copy.footer.contact.email}
                 </li>
-                <li className="text-metal-silver text-sm">
+                <li className="text-cream/70 text-sm">
                   {copy.footer.contact.phone}
                 </li>
               </ul>
@@ -66,32 +68,32 @@ const Footer = () => {
               <div className="flex gap-4">
                 <a
                   href="#"
-                  className="text-metal-silver hover:text-cyan transition-colors hover:drop-shadow-[0_0_10px_rgba(0,255,240,0.7)]"
+                  className="w-9 h-9 rounded-lg bg-cream/10 flex items-center justify-center text-cream/70 hover:bg-brass hover:text-cream transition-all"
                   aria-label="GitHub"
                 >
-                  <Github className="w-5 h-5" />
+                  <Github className="w-4 h-4" strokeWidth={1.5} />
                 </a>
                 <a
                   href="#"
-                  className="text-metal-silver hover:text-cyan transition-colors hover:drop-shadow-[0_0_10px_rgba(0,255,240,0.7)]"
+                  className="w-9 h-9 rounded-lg bg-cream/10 flex items-center justify-center text-cream/70 hover:bg-brass hover:text-cream transition-all"
                   aria-label="LinkedIn"
                 >
-                  <Linkedin className="w-5 h-5" />
+                  <Linkedin className="w-4 h-4" strokeWidth={1.5} />
                 </a>
                 <a
                   href="#"
-                  className="text-metal-silver hover:text-cyan transition-colors hover:drop-shadow-[0_0_10px_rgba(0,255,240,0.7)]"
+                  className="w-9 h-9 rounded-lg bg-cream/10 flex items-center justify-center text-cream/70 hover:bg-brass hover:text-cream transition-all"
                   aria-label="Twitter"
                 >
-                  <Twitter className="w-5 h-5" />
+                  <Twitter className="w-4 h-4" strokeWidth={1.5} />
                 </a>
               </div>
             </div>
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-cyan-glow/20 pt-8">
-            <p className="text-metal-silver text-sm text-center">
+          <div className="border-t border-cream/10 pt-8">
+            <p className="text-cream/50 text-sm text-center">
               {copy.footer.copyright}
             </p>
           </div>

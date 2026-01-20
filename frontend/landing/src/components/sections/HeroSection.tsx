@@ -16,50 +16,46 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20 md:py-32 lg:py-40">
+    <section className="relative flex items-center justify-center px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40 min-h-screen">
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="max-w-5xl mx-auto text-center"
+        className="max-w-4xl mx-auto text-center"
       >
         {/* Logo */}
         <motion.div
           variants={scaleIn}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          className="mb-8 inline-block"
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="mb-10 inline-block"
         >
-          <div className="relative">
-            <Building2 className="w-24 h-24 text-cyan drop-shadow-[0_0_30px_rgba(0,255,240,0.8)] mx-auto" />
-            <motion.div
-              className="absolute inset-0 bg-cyan rounded-full blur-2xl opacity-50"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.7, 0.5]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            />
+          <div className="icon-container-lg !w-24 !h-24 !rounded-2xl mx-auto">
+            <Building2 className="w-12 h-12" strokeWidth={1.5} />
           </div>
         </motion.div>
+
+        {/* Decorative line */}
+        <motion.div
+          className="line-brass mx-auto mb-8"
+          initial={{ width: 0 }}
+          animate={{ width: 80 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        />
 
         {/* Title */}
         <motion.h1
           variants={fadeInUp}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6"
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="hero-title mb-6"
         >
-          <span className="hero-title">{copy.hero.title}</span>
+          {copy.hero.title}
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
           variants={fadeInUp}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="text-lg sm:text-xl md:text-2xl text-metal-silver mb-12 max-w-3xl mx-auto"
+          transition={{ delay: 0.7, duration: 0.6 }}
+          className="hero-subtitle mx-auto mb-12"
         >
           {copy.hero.subtitle}
         </motion.p>
@@ -67,7 +63,7 @@ const HeroSection = () => {
         {/* CTAs */}
         <motion.div
           variants={fadeInUp}
-          transition={{ delay: 1.1, duration: 0.8 }}
+          transition={{ delay: 0.9, duration: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <Button
@@ -79,7 +75,7 @@ const HeroSection = () => {
             {copy.hero.cta.primary}
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="lg"
             onClick={scrollToUserTypes}
             className="min-w-[200px]"
@@ -92,12 +88,12 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 1 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
           className="mt-20"
         >
           <motion.div
             animate={{
-              y: [0, 10, 0]
+              y: [0, 8, 0]
             }}
             transition={{
               duration: 2,
@@ -106,7 +102,7 @@ const HeroSection = () => {
             }}
             className="inline-block"
           >
-            <ChevronDown className="w-8 h-8 text-cyan opacity-70" />
+            <ChevronDown className="w-6 h-6 text-brass opacity-60" strokeWidth={1.5} />
           </motion.div>
         </motion.div>
       </motion.div>

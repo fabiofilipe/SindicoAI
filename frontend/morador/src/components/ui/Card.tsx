@@ -7,15 +7,13 @@ interface CardProps {
     animate?: boolean
     delay?: number
     variant?: 'default' | 'signature'
-    onClick?: () => void
 }
 
 const Card = ({
     children,
     className = '',
     hover = false,
-    variant = 'default',
-    onClick
+    variant = 'default'
 }: CardProps) => {
     const variants = {
         default: 'bg-cream border border-border-light shadow-soft',
@@ -35,10 +33,8 @@ const Card = ({
                 ${hoverStyles}
                 rounded-lg p-6
                 transition-all duration-300
-                ${onClick ? 'cursor-pointer' : ''}
                 ${className}
             `}
-            onClick={onClick}
         >
             {children}
         </div>

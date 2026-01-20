@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes } from 'react'
 import { Loader2 } from 'lucide-react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
     size?: 'sm' | 'md' | 'lg'
     isLoading?: boolean
     fullWidth?: boolean
@@ -24,11 +24,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref
     ) => {
         const variants = {
-            primary: 'bg-gradient-cyber text-coal font-bold shadow-glow hover:shadow-glow-lg active:scale-95',
-            secondary: 'bg-coal-light text-cyan border border-cyan-glow/30 hover:border-cyan active:scale-95',
-            outline: 'bg-transparent text-cyan border border-cyan hover:bg-cyan/10 active:scale-95',
-            ghost: 'bg-transparent text-metal-silver hover:bg-coal-light hover:text-cyan active:scale-95',
-            danger: 'bg-gradient-alert text-white font-bold shadow-[0_0_20px_rgba(255,69,58,0.3)] active:scale-95',
+            primary: 'bg-brass text-cream font-medium hover:bg-brass-light hover:shadow-brass-lg active:scale-[0.98]',
+            secondary: 'bg-transparent border-2 border-brass text-brass font-medium hover:bg-brass hover:text-cream active:scale-[0.98]',
+            outline: 'bg-transparent text-graphite border border-border-medium hover:border-brass hover:text-brass active:scale-[0.98]',
+            ghost: 'bg-transparent text-graphite hover:bg-champagne hover:text-ink active:scale-[0.98]',
         }
 
         const sizes = {

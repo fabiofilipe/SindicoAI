@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ChangeEvent } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Lock, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Building2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -61,30 +61,38 @@ const ResetPasswordPage = () => {
         }
     }
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coal via-coal-light to-coal p-4">
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 bg-tech-grid opacity-30" />
+    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value)
+    }
 
-            {/* Glowing Orbs */}
-            <div className="absolute top-20 left-20 w-96 h-96 bg-cyan/20 rounded-full blur-3xl animate-pulse-glow" />
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple/20 rounded-full blur-3xl animate-pulse-glow delay-1000" />
+    const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value)
+    }
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-warm p-4">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 border-l-2 border-t-2 border-brass/20 rounded-tl-3xl" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 border-r-2 border-b-2 border-brass/20 rounded-br-3xl" />
 
             {/* Reset Password Card */}
-            <Card className="w-full max-w-md relative z-10">
+            <Card variant="signature" className="w-full max-w-md relative z-10 !p-8">
                 <div className="text-center mb-8">
-                    <div className="flex justify-center mb-4">
-                        <div className="p-4 bg-gradient-cyber rounded-2xl shadow-glow">
-                            <Lock className="w-12 h-12 text-coal" />
+                    <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 bg-brass rounded-2xl flex items-center justify-center shadow-brass">
+                            <Building2 className="w-8 h-8 text-cream" strokeWidth={1.5} />
                         </div>
                     </div>
-                    <h1 className="text-3xl font-bold mb-2 text-gradient-cyber">
+                    <h1 className="text-3xl font-display font-bold text-ink mb-2">
                         Redefinir Senha
                     </h1>
-                    <p className="text-gray-400">
+                    <p className="text-stone">
                         Digite sua nova senha abaixo
                     </p>
                 </div>
+
+                {/* Decorative line */}
+                <div className="w-12 h-0.5 bg-brass mx-auto mb-8 rounded-full" />
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="relative">
@@ -93,20 +101,19 @@ const ResetPasswordPage = () => {
                             label="Nova Senha"
                             name="password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={handlePasswordChange}
                             placeholder="••••••••"
                             required
-                            icon={<Lock className="w-5 h-5 text-gray-400" />}
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-[42px] text-gray-400 hover:text-white transition-colors"
+                            className="absolute right-3 top-[42px] text-stone hover:text-brass transition-colors"
                         >
                             {showPassword ? (
-                                <EyeOff className="w-5 h-5" />
+                                <EyeOff className="w-5 h-5" strokeWidth={1.5} />
                             ) : (
-                                <Eye className="w-5 h-5" />
+                                <Eye className="w-5 h-5" strokeWidth={1.5} />
                             )}
                         </button>
                     </div>
@@ -117,20 +124,19 @@ const ResetPasswordPage = () => {
                             label="Confirmar Nova Senha"
                             name="confirmPassword"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={handleConfirmPasswordChange}
                             placeholder="••••••••"
                             required
-                            icon={<Lock className="w-5 h-5 text-gray-400" />}
                         />
                         <button
                             type="button"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute right-3 top-[42px] text-gray-400 hover:text-white transition-colors"
+                            className="absolute right-3 top-[42px] text-stone hover:text-brass transition-colors"
                         >
                             {showConfirmPassword ? (
-                                <EyeOff className="w-5 h-5" />
+                                <EyeOff className="w-5 h-5" strokeWidth={1.5} />
                             ) : (
-                                <Eye className="w-5 h-5" />
+                                <Eye className="w-5 h-5" strokeWidth={1.5} />
                             )}
                         </button>
                     </div>
@@ -139,6 +145,7 @@ const ResetPasswordPage = () => {
                         type="submit"
                         variant="primary"
                         fullWidth
+                        isLoading={isLoading}
                         disabled={isLoading}
                     >
                         {isLoading ? 'Redefinindo...' : 'Redefinir Senha'}

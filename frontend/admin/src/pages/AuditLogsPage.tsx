@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { FileText, Filter, Download } from 'lucide-react'
+import { FileText, Filter } from 'lucide-react'
 import toast from 'react-hot-toast'
-import Layout from '@/components/layout/Layout'
+import MainLayout from '@/components/layout/MainLayout'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import api from '@/services/api'
@@ -45,15 +45,7 @@ const AuditLogsPage = () => {
         }
     }
 
-    const getActionColor = (action: string) => {
-        switch (action) {
-            case 'CREATE': return 'text-green-400'
-            case 'UPDATE': return 'text-yellow-400'
-            case 'DELETE': return 'text-red-400'
-            case 'LOGIN': return 'text-blue-400'
-            default: return 'text-gray-400'
-        }
-    }
+
 
     const getActionBadge = (action: string) => {
         const colors = {
@@ -75,7 +67,7 @@ const AuditLogsPage = () => {
     }
 
     return (
-        <Layout>
+        <MainLayout>
             <div className="p-6 space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -189,7 +181,7 @@ const AuditLogsPage = () => {
                     Total: {logs.length} registros
                 </div>
             </div>
-        </Layout>
+        </MainLayout>
     )
 }
 

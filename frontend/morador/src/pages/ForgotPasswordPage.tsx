@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { Mail, ArrowLeft } from 'lucide-react'
+import { Mail, ArrowLeft, Building2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -38,32 +38,36 @@ const ForgotPasswordPage = () => {
         }
     }
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-coal via-coal-light to-coal p-4">
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 bg-tech-grid opacity-30" />
+    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value)
+    }
 
-            {/* Glowing Orbs */}
-            <div className="absolute top-20 left-20 w-96 h-96 bg-cyan/20 rounded-full blur-3xl animate-pulse-glow" />
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple/20 rounded-full blur-3xl animate-pulse-glow delay-1000" />
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-warm p-4">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 border-l-2 border-t-2 border-brass/20 rounded-tl-3xl" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 border-r-2 border-b-2 border-brass/20 rounded-br-3xl" />
 
             {/* Forgot Password Card */}
-            <Card className="w-full max-w-md relative z-10">
+            <Card variant="signature" className="w-full max-w-md relative z-10 !p-8">
                 {!emailSent ? (
                     <>
                         <div className="text-center mb-8">
-                            <div className="flex justify-center mb-4">
-                                <div className="p-4 bg-gradient-cyber rounded-2xl shadow-glow">
-                                    <Mail className="w-12 h-12 text-coal" />
+                            <div className="flex justify-center mb-6">
+                                <div className="w-16 h-16 bg-brass rounded-2xl flex items-center justify-center shadow-brass">
+                                    <Building2 className="w-8 h-8 text-cream" strokeWidth={1.5} />
                                 </div>
                             </div>
-                            <h1 className="text-3xl font-bold mb-2 text-gradient-cyber">
+                            <h1 className="text-3xl font-display font-bold text-ink mb-2">
                                 Recuperar Senha
                             </h1>
-                            <p className="text-gray-400">
+                            <p className="text-stone">
                                 Digite seu email para receber o link de recuperação
                             </p>
                         </div>
+
+                        {/* Decorative line */}
+                        <div className="w-12 h-0.5 bg-brass mx-auto mb-8 rounded-full" />
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <Input
@@ -71,16 +75,17 @@ const ForgotPasswordPage = () => {
                                 label="Email"
                                 name="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={handleEmailChange}
                                 placeholder="seu@email.com"
                                 required
-                                icon={<Mail className="w-5 h-5 text-gray-400" />}
+                                icon={<Mail className="w-5 h-5" strokeWidth={1.5} />}
                             />
 
                             <Button
                                 type="submit"
                                 variant="primary"
                                 fullWidth
+                                isLoading={isLoading}
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Enviando...' : 'Enviar Link de Recuperação'}
@@ -89,9 +94,9 @@ const ForgotPasswordPage = () => {
                             <div className="text-center mt-4">
                                 <Link
                                     to="/login"
-                                    className="text-cyan hover:text-cyan-400 transition-colors inline-flex items-center gap-2"
+                                    className="text-brass hover:text-brass-light transition-colors inline-flex items-center gap-2"
                                 >
-                                    <ArrowLeft className="w-4 h-4" />
+                                    <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
                                     Voltar para Login
                                 </Link>
                             </div>
@@ -99,19 +104,19 @@ const ForgotPasswordPage = () => {
                     </>
                 ) : (
                     <div className="text-center">
-                        <div className="flex justify-center mb-4">
-                            <div className="p-4 bg-green-500/20 rounded-2xl">
-                                <Mail className="w-12 h-12 text-green-400" />
+                        <div className="flex justify-center mb-6">
+                            <div className="w-16 h-16 bg-garden/20 rounded-2xl flex items-center justify-center">
+                                <Mail className="w-8 h-8 text-garden" strokeWidth={1.5} />
                             </div>
                         </div>
-                        <h2 className="text-2xl font-bold mb-4 text-gradient-cyber">
+                        <h2 className="text-2xl font-display font-bold text-ink mb-4">
                             Email Enviado!
                         </h2>
-                        <p className="text-gray-400 mb-6">
-                            Se o email <strong className="text-white">{email}</strong> estiver cadastrado,
+                        <p className="text-stone mb-6">
+                            Se o email <strong className="text-ink">{email}</strong> estiver cadastrado,
                             você receberá um link para redefinir sua senha.
                         </p>
-                        <p className="text-gray-500 text-sm mb-6">
+                        <p className="text-silver text-sm mb-6">
                             Verifique sua caixa de entrada e spam.
                         </p>
                         <Link to="/login">

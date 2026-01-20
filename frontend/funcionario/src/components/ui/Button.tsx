@@ -2,11 +2,11 @@ import React from 'react'
 import { Loader2 } from 'lucide-react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'danger'
-    size?: 'md' | 'lg'
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+    size?: 'sm' | 'md' | 'lg'
     isLoading?: boolean
     fullWidth?: boolean
-    children: React.ReactNode
+    children?: React.ReactNode
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -19,17 +19,20 @@ const Button: React.FC<ButtonProps> = ({
     className = '',
     ...props
 }) => {
-    const baseStyles = 'font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+    const baseStyles = 'font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
     const sizeStyles = {
+        sm: 'px-4 py-2 text-sm min-h-[36px]',
         md: 'px-6 py-3 text-base min-h-[48px]',
         lg: 'px-8 py-4 text-lg min-h-[56px]',
     }
 
     const variantStyles = {
-        primary: 'bg-neon-cyan text-coal hover:shadow-glow-cyan font-bold border-2 border-neon-cyan',
-        secondary: 'border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-coal',
-        danger: 'bg-critical-red text-white hover:shadow-glow-red border-2 border-critical-red',
+        primary: 'bg-brass text-cream hover:shadow-brass hover:bg-brass-light',
+        secondary: 'bg-champagne text-ink border border-border-medium hover:border-border-brass hover:bg-parchment',
+        outline: 'bg-transparent text-brass border border-brass hover:bg-brass hover:text-cream',
+        ghost: 'bg-transparent text-graphite hover:bg-parchment hover:text-ink',
+        danger: 'bg-burgundy text-cream hover:bg-burgundy/90',
     }
 
     return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users, UserCheck, Briefcase, Shield, Calendar, Building2, Activity, TrendingUp } from 'lucide-react'
+import { Users, UserCheck, Briefcase, Shield, Calendar, Building2, Activity, TrendingUp, ArrowRight } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import Card from '@/components/ui/Card'
 import SkeletonMetric from '@/components/ui/SkeletonMetric'
@@ -32,56 +32,48 @@ const DashboardPage = () => {
             label: 'Total de Usuários',
             value: metrics.total_users,
             icon: Users,
-            color: 'cyan',
             description: 'Usuários cadastrados no sistema',
         },
         {
             label: 'Moradores',
             value: metrics.total_residents,
             icon: UserCheck,
-            color: 'techblue',
             description: 'Residentes ativos',
         },
         {
             label: 'Funcionários',
             value: metrics.total_staff,
             icon: Briefcase,
-            color: 'purple',
             description: 'Equipe operacional',
         },
         {
             label: 'Administradores',
             value: metrics.total_admins,
             icon: Shield,
-            color: 'alertorange',
             description: 'Administradores do sistema',
         },
         {
             label: 'Reservas Totais',
             value: metrics.total_reservations,
             icon: Calendar,
-            color: 'terminalgreen',
             description: 'Reservas realizadas',
         },
         {
             label: 'Áreas Comuns',
             value: metrics.total_areas,
             icon: Building2,
-            color: 'cyan',
             description: 'Espaços disponíveis',
         },
         {
             label: 'Reservas Ativas',
             value: metrics.active_reservations,
             icon: Activity,
-            color: 'techblue',
             description: 'Em andamento ou confirmadas',
         },
         {
             label: 'Novos Usuários (7d)',
             value: metrics.recent_users,
             icon: TrendingUp,
-            color: 'terminalgreen',
             description: 'Cadastros nos últimos 7 dias',
         },
     ] : []
@@ -91,10 +83,11 @@ const DashboardPage = () => {
             <div className="space-y-8">
                 {/* Header */}
                 <div>
-                    <h1 className="text-4xl font-bold text-cyan text-glow-cyan mb-2">
+                    <div className="w-12 h-0.5 bg-brass rounded-full mb-4" />
+                    <h1 className="text-3xl font-display font-bold text-ink mb-2">
                         Dashboard
                     </h1>
-                    <p className="text-metal-silver/80">
+                    <p className="text-stone">
                         Visão geral do sistema SindicoAI
                     </p>
                 </div>
@@ -112,18 +105,18 @@ const DashboardPage = () => {
                             <Card key={index} hover className="group">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        <p className="text-sm text-metal-silver/70 mb-2">
+                                        <p className="text-sm text-stone mb-2">
                                             {stat.label}
                                         </p>
-                                        <p className="text-3xl font-bold text-cyan mb-1 group-hover:scale-110 transition-transform">
+                                        <p className="text-3xl font-display font-bold text-brass mb-1 group-hover:scale-105 transition-transform origin-left">
                                             {stat.value}
                                         </p>
-                                        <p className="text-xs text-metal-silver/60">
+                                        <p className="text-xs text-silver">
                                             {stat.description}
                                         </p>
                                     </div>
-                                    <div className={`p-3 rounded-lg bg-${stat.color}/10 border border-${stat.color}/30`}>
-                                        <stat.icon className={`w-6 h-6 text-${stat.color}`} />
+                                    <div className="w-12 h-12 rounded-lg bg-champagne flex items-center justify-center group-hover:bg-brass/10 transition-colors">
+                                        <stat.icon className="w-6 h-6 text-brass" strokeWidth={1.5} />
                                     </div>
                                 </div>
                             </Card>
@@ -133,76 +126,94 @@ const DashboardPage = () => {
 
                 {/* Quick Actions */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card>
-                        <h2 className="text-xl font-bold text-cyan mb-4">Ações Rápidas</h2>
+                    <Card variant="signature">
+                        <h2 className="text-xl font-display font-semibold text-ink mb-6">Ações Rápidas</h2>
                         <div className="space-y-3">
                             <button
                                 onClick={() => navigate('/users')}
-                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                                className="w-full px-4 py-4 bg-parchment hover:bg-champagne border border-border-light hover:border-border-brass rounded-lg text-left transition-all group"
                             >
-                                <div className="flex items-center gap-3">
-                                    <Users className="w-5 h-5" />
-                                    <div>
-                                        <p className="font-medium">Gerenciar Usuários</p>
-                                        <p className="text-xs text-metal-silver/60">Criar, editar e desativar usuários</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-lg bg-champagne group-hover:bg-brass/10 flex items-center justify-center transition-colors">
+                                            <Users className="w-5 h-5 text-brass" strokeWidth={1.5} />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-ink">Gerenciar Usuários</p>
+                                            <p className="text-xs text-stone">Criar, editar e desativar usuários</p>
+                                        </div>
                                     </div>
+                                    <ArrowRight className="w-5 h-5 text-stone group-hover:text-brass transition-colors" strokeWidth={1.5} />
                                 </div>
                             </button>
                             <button
                                 onClick={() => navigate('/units')}
-                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                                className="w-full px-4 py-4 bg-parchment hover:bg-champagne border border-border-light hover:border-border-brass rounded-lg text-left transition-all group"
                             >
-                                <div className="flex items-center gap-3">
-                                    <Building2 className="w-5 h-5" />
-                                    <div>
-                                        <p className="font-medium">Gerenciar Unidades</p>
-                                        <p className="text-xs text-metal-silver/60">Cadastrar e vincular apartamentos</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-lg bg-champagne group-hover:bg-brass/10 flex items-center justify-center transition-colors">
+                                            <Building2 className="w-5 h-5 text-brass" strokeWidth={1.5} />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-ink">Gerenciar Unidades</p>
+                                            <p className="text-xs text-stone">Cadastrar e vincular apartamentos</p>
+                                        </div>
                                     </div>
+                                    <ArrowRight className="w-5 h-5 text-stone group-hover:text-brass transition-colors" strokeWidth={1.5} />
                                 </div>
                             </button>
                             <button
-                                onClick={() => navigate('/notifications')}
-                                className="w-full px-4 py-3 bg-coal hover:bg-coal-light border border-cyan-glow/30 hover:border-cyan rounded-lg text-left text-metal-silver hover:text-cyan transition-all"
+                                onClick={() => navigate('/common-areas')}
+                                className="w-full px-4 py-4 bg-parchment hover:bg-champagne border border-border-light hover:border-border-brass rounded-lg text-left transition-all group"
                             >
-                                <div className="flex items-center gap-3">
-                                    <Calendar className="w-5 h-5" />
-                                    <div>
-                                        <p className="font-medium">Ver Reservas</p>
-                                        <p className="text-xs text-metal-silver/60">Visualizar e gerenciar agendamentos</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-lg bg-champagne group-hover:bg-brass/10 flex items-center justify-center transition-colors">
+                                            <Calendar className="w-5 h-5 text-brass" strokeWidth={1.5} />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-ink">Áreas Comuns</p>
+                                            <p className="text-xs text-stone">Gerenciar espaços e reservas</p>
+                                        </div>
                                     </div>
+                                    <ArrowRight className="w-5 h-5 text-stone group-hover:text-brass transition-colors" strokeWidth={1.5} />
                                 </div>
                             </button>
                         </div>
                     </Card>
 
                     <Card>
-                        <h2 className="text-xl font-bold text-cyan mb-4">Status do Sistema</h2>
+                        <h2 className="text-xl font-display font-semibold text-ink mb-6">Status do Sistema</h2>
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-metal-silver">API Backend</span>
-                                <span className="flex items-center gap-2 text-terminalgreen">
-                                    <span className="w-2 h-2 bg-terminalgreen rounded-full animate-pulse" />
+                            <div className="flex items-center justify-between py-2">
+                                <span className="text-graphite">API Backend</span>
+                                <span className="flex items-center gap-2 text-garden text-sm font-medium">
+                                    <span className="w-2 h-2 bg-garden rounded-full" />
                                     Online
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-metal-silver">Database</span>
-                                <span className="flex items-center gap-2 text-terminalgreen">
-                                    <span className="w-2 h-2 bg-terminalgreen rounded-full animate-pulse" />
+                            <div className="border-t border-border-light" />
+                            <div className="flex items-center justify-between py-2">
+                                <span className="text-graphite">Database</span>
+                                <span className="flex items-center gap-2 text-garden text-sm font-medium">
+                                    <span className="w-2 h-2 bg-garden rounded-full" />
                                     Conectado
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-metal-silver">Cache (Redis)</span>
-                                <span className="flex items-center gap-2 text-terminalgreen">
-                                    <span className="w-2 h-2 bg-terminalgreen rounded-full animate-pulse" />
+                            <div className="border-t border-border-light" />
+                            <div className="flex items-center justify-between py-2">
+                                <span className="text-graphite">Cache (Redis)</span>
+                                <span className="flex items-center gap-2 text-garden text-sm font-medium">
+                                    <span className="w-2 h-2 bg-garden rounded-full" />
                                     Ativo
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-metal-silver">AI Service</span>
-                                <span className="flex items-center gap-2 text-terminalgreen">
-                                    <span className="w-2 h-2 bg-terminalgreen rounded-full animate-pulse" />
+                            <div className="border-t border-border-light" />
+                            <div className="flex items-center justify-between py-2">
+                                <span className="text-graphite">AI Service</span>
+                                <span className="flex items-center gap-2 text-garden text-sm font-medium">
+                                    <span className="w-2 h-2 bg-garden rounded-full" />
                                     Operacional
                                 </span>
                             </div>

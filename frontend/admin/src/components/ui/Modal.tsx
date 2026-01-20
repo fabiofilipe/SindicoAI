@@ -23,8 +23,6 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
         }
     }, [isOpen])
 
-    if (!isOpen) return null
-
     const sizes = {
         sm: 'max-w-md',
         md: 'max-w-2xl',
@@ -32,11 +30,13 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
         xl: 'max-w-6xl',
     }
 
+    if (!isOpen) return null
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-coal/90 backdrop-blur-sm"
+                className="absolute inset-0 bg-ink/40 animate-in fade-in duration-200"
                 onClick={onClose}
             />
 
@@ -44,20 +44,21 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
             <div
                 className={`
                     relative w-full ${sizes[size]}
-                    bg-coal-light border border-cyan-glow/30 rounded-xl shadow-glow
+                    bg-cream border border-border-light rounded-xl shadow-soft-xl
                     max-h-[90vh] overflow-y-auto
+                    animate-in zoom-in-95 slide-in-from-bottom-2 duration-200
                 `}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-cyan-glow/20">
-                    <h2 className="text-2xl font-bold text-cyan text-glow-cyan">
+                <div className="flex items-center justify-between p-6 border-b border-border-light">
+                    <h2 className="text-2xl font-display font-semibold text-ink">
                         {title}
                     </h2>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="!p-2"
+                        className="!p-2 !rounded-full"
                     >
                         <X className="w-5 h-5" />
                     </Button>

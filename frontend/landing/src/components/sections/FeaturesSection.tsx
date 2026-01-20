@@ -25,7 +25,7 @@ const FeaturesSection = () => {
   ]
 
   return (
-    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-coal-light/20">
+    <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 bg-champagne/50">
       <div className="max-w-7xl mx-auto">
         <SectionTitle
           title={copy.features.title}

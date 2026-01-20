@@ -1,9 +1,7 @@
-import { forwardRef } from 'react'
-import type { ButtonHTMLAttributes } from 'react'
-import { motion, type HTMLMotionProps } from 'framer-motion'
+import { forwardRef, type ComponentPropsWithoutRef } from 'react'
 import { Loader2 } from 'lucide-react'
 
-interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof HTMLMotionProps<'button'>> {
+interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
     size?: 'sm' | 'md' | 'lg'
     isLoading?: boolean
@@ -25,11 +23,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref
     ) => {
         const variants = {
-            primary: 'bg-gradient-cyber text-coal font-bold shadow-glow',
-            secondary: 'bg-coal-light text-cyan border border-cyan-glow/30',
-            outline: 'bg-transparent text-cyan border border-cyan',
-            ghost: 'bg-transparent text-metal-silver',
-            danger: 'bg-gradient-alert text-white font-bold shadow-[0_0_20px_rgba(255,69,58,0.3)]',
+            primary: 'bg-brass text-cream font-medium hover:bg-brass-light hover:shadow-brass active:scale-[0.98]',
+            secondary: 'bg-champagne text-ink border border-border-medium hover:border-border-brass hover:bg-parchment active:scale-[0.98]',
+            outline: 'bg-transparent text-brass border border-brass hover:bg-brass hover:text-cream active:scale-[0.98]',
+            ghost: 'bg-transparent text-graphite hover:bg-parchment hover:text-ink active:scale-[0.98]',
+            danger: 'bg-burgundy text-cream font-medium hover:bg-burgundy/90 active:scale-[0.98]',
         }
 
         const sizes = {
@@ -39,56 +37,24 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
 
         return (
-            <motion.button
+            <button
                 ref={ref}
                 className={`
                     ${variants[variant]}
                     ${sizes[size]}
                     ${fullWidth ? 'w-full' : ''}
-                    rounded-lg
-                    disabled:opacity-50 disabled:cursor-not-allowed
+                    rounded
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
                     flex items-center justify-center gap-2
+                    transition-all duration-200
                     ${className}
                 `}
                 disabled={disabled || isLoading}
-                whileHover={
-                    !disabled && !isLoading
-                        ? {
-                              scale: 1.02,
-                              boxShadow:
-                                  variant === 'primary'
-                                      ? '0 0 30px rgba(0, 255, 240, 0.5)'
-                                      : variant === 'danger'
-                                        ? '0 0 30px rgba(255, 69, 58, 0.5)'
-                                        : '0 0 20px rgba(0, 255, 240, 0.3)',
-                          }
-                        : {}
-                }
-                whileTap={
-                    !disabled && !isLoading
-                        ? {
-                              scale: 0.98,
-                          }
-                        : {}
-                }
-                transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 17,
-                }}
                 {...props}
             >
-                {isLoading && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                    </motion.div>
-                )}
+                {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
                 {children}
-            </motion.button>
+            </button>
         )
     }
 )

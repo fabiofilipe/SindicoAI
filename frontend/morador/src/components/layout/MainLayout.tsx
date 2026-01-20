@@ -27,31 +27,26 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     ]
 
     const handleLogout = () => {
-        // TODO: Limpar token de autenticação
-        // localStorage.removeItem('token')
         navigate('/login')
     }
 
     const isActive = (path: string) => location.pathname === path
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-coal via-coal-light to-coal">
-            {/* Background Grid Pattern */}
-            <div className="fixed inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
-
+        <div className="min-h-screen bg-marble">
             {/* Sidebar */}
-            <aside className="fixed left-0 top-0 h-full w-64 bg-coal-light/80 backdrop-blur-md border-r border-cyan-glow/30 z-30">
+            <aside className="fixed left-0 top-0 h-full w-64 bg-cream border-r border-border-light z-30">
                 {/* Logo */}
-                <div className="p-6 border-b border-cyan-glow/30">
+                <div className="p-6 border-b border-border-light">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-cyber rounded-lg shadow-glow">
-                            <Building2 className="w-6 h-6 text-coal" />
+                        <div className="w-10 h-10 bg-brass rounded-lg flex items-center justify-center">
+                            <Building2 className="w-5 h-5 text-cream" strokeWidth={1.5} />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-cyan text-glow-cyan">
+                            <h1 className="text-xl font-display font-semibold text-ink">
                                 SindicoAI
                             </h1>
-                            <p className="text-xs text-metal-silver/60">
+                            <p className="text-xs text-stone">
                                 Portal do Morador
                             </p>
                         </div>
@@ -59,7 +54,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </div>
 
                 {/* Menu Items */}
-                <nav className="p-4 space-y-2">
+                <nav className="p-4 space-y-1">
                     {menuItems.map((item) => {
                         const Icon = item.icon
                         const active = isActive(item.path)
@@ -70,15 +65,15 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                                 onClick={() => navigate(item.path)}
                                 className={`
                                     w-full flex items-center gap-3 px-4 py-3 rounded-lg
-                                    transition-all duration-300
+                                    transition-all duration-200
                                     ${
                                         active
-                                            ? 'bg-gradient-cyber text-coal font-bold shadow-glow'
-                                            : 'text-metal-silver hover:bg-coal hover:text-cyan'
+                                            ? 'bg-brass/10 text-brass border-l-2 border-brass font-medium'
+                                            : 'text-graphite hover:bg-parchment hover:text-ink'
                                     }
                                 `}
                             >
-                                <Icon className="w-5 h-5" />
+                                <Icon className="w-5 h-5" strokeWidth={1.5} />
                                 <span>{item.label}</span>
                             </button>
                         )
@@ -86,12 +81,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </nav>
 
                 {/* Logout Button */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-cyan-glow/30">
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border-light">
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-metal-silver hover:bg-coal hover:text-criticalred transition-all duration-300"
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-graphite hover:bg-burgundy/10 hover:text-burgundy transition-all duration-200"
                     >
-                        <LogOut className="w-5 h-5" />
+                        <LogOut className="w-5 h-5" strokeWidth={1.5} />
                         <span>Sair</span>
                     </button>
                 </div>
@@ -99,7 +94,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
             {/* Main Content */}
             <main className="ml-64 min-h-screen">
-                <div className="relative z-10">{children}</div>
+                <div className="relative z-10 p-8">{children}</div>
             </main>
         </div>
     )

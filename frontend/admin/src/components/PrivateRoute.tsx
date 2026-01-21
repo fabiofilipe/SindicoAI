@@ -11,8 +11,8 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-coal">
-                <Loader2 className="w-12 h-12 text-cyan animate-spin" />
+            <div className="min-h-screen flex items-center justify-center bg-gradient-warm">
+                <Loader2 className="w-12 h-12 text-brass animate-spin" />
             </div>
         )
     }

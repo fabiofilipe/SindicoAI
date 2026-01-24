@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "framer-motion": "^11.0.8",
+    "gsap": "^3.12.5",
+    "lottie-react": "^2.4.0",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.0.0",
     "lucide-react": "^0.460.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

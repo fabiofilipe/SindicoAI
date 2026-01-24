@@ -151,7 +151,7 @@ class FileValidator:
         filename: str,
         file_path: Optional[str] = None
     ) -> Tuple[bool, Optional[str]]:
-        """
+        """f
         Run all validations on a file.
 
         Args:

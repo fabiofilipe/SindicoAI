@@ -1,0 +1,692 @@
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { Building2, ArrowRight, Clock, MessageSquare, FileX, Sparkles, Bot, Shield, Users, Briefcase, TrendingUp, Calendar, Bell, FileText, CheckCircle2, Phone, Mail, Menu, X, Sun, Moon } from 'lucide-react'
+import ParticlesBackground from '@/components/animations/ParticlesBackground'
+import ScrollReveal from '@/components/animations/ScrollReveal'
+import { useRef, useState, useEffect } from 'react'
+
+const StorytellingLandingPage = () => {
+    const heroRef = useRef(null)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [darkMode, setDarkMode] = useState(false)
+
+    // Verificar preferência do sistema ao carregar
+    useEffect(() => {
+        const saved = localStorage.getItem('darkMode')
+        if (saved !== null) {
+            setDarkMode(saved === 'true')
+        } else {
+            setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+        }
+    }, [])
+
+    // Salvar preferência
+    useEffect(() => {
+        localStorage.setItem('darkMode', String(darkMode))
+    }, [darkMode])
+
+    const { scrollYProgress } = useScroll({
+        target: heroRef,
+        offset: ["start start", "end start"]
+    })
+
+    const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.9, 0.7])
+
+    const scrollToSection = (id: string) => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+        setMobileMenuOpen(false)
+    }
+
+    return (
+        <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-950' : 'bg-gradient-to-br from-amber-50 via-orange-50 to-red-50'}`}>
+            <ParticlesBackground />
+
+            {/* HEADER CONTEMPORÂNEO */}
+            <header className="fixed top-0 left-0 right-0 z-50">
+                <div className="mx-4 mt-4">
+                    <div className={`max-w-7xl mx-auto px-6 py-3 rounded-full backdrop-blur-xl border shadow-lg transition-colors duration-500 ${darkMode ? 'bg-gray-900/70 border-gray-700/50 shadow-black/20' : 'bg-white/70 border-white/50 shadow-black/5'}`}>
+                        <div className="flex items-center justify-between">
+                            {/* Logo */}
+                            <a href="/" className="flex items-center gap-2 group">
+                                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-shadow">
+                                    <Building2 className="w-5 h-5 text-white" />
+                                </div>
+                                <span className={`text-lg font-black tracking-tight transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>SindicoAI</span>
+                            </a>
+
+                            {/* Nav Desktop */}
+                            <nav className="hidden lg:flex items-center gap-1">
+                                <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                    Funcionalidades
+                                </button>
+                                <button onClick={() => scrollToSection('como-funciona')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                    Como funciona
+                                </button>
+                                <button onClick={() => scrollToSection('portais')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                    Portais
+                                </button>
+                            </nav>
+
+                            {/* CTA Desktop */}
+                            <div className="hidden lg:flex items-center gap-3">
+                                {/* Dark Mode Toggle */}
+                                <button
+                                    onClick={() => setDarkMode(!darkMode)}
+                                    className={`p-2.5 rounded-full transition-all ${darkMode ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                    aria-label="Alternar tema"
+                                >
+                                    {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                                </button>
+                                <a href="http://localhost:3002" className={`px-5 py-2.5 text-sm font-semibold transition-colors ${darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
+                                    Entrar
+                                </a>
+                                <motion.a
+                                    href="#cta"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-full shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-shadow"
+                                >
+                                    Começar grátis
+                                </motion.a>
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <div className="lg:hidden flex items-center gap-2">
+                                <button
+                                    onClick={() => setDarkMode(!darkMode)}
+                                    className={`p-2 rounded-xl transition-all ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-600'}`}
+                                    aria-label="Alternar tema"
+                                >
+                                    {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                                </button>
+                                <button
+                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    className={`p-2 rounded-xl transition-colors ${darkMode ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100/50 text-gray-900'}`}
+                                >
+                                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Menu */}
+                {mobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className={`lg:hidden mx-4 mt-2 p-6 rounded-3xl backdrop-blur-xl border shadow-xl transition-colors ${darkMode ? 'bg-gray-900/95 border-gray-700/50' : 'bg-white/95 border-white/50'}`}
+                    >
+                        <nav className="flex flex-col gap-2 mb-6">
+                            <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                Funcionalidades
+                            </button>
+                            <button onClick={() => scrollToSection('como-funciona')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                Como funciona
+                            </button>
+                            <button onClick={() => scrollToSection('portais')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                Portais
+                            </button>
+                        </nav>
+                        <div className="flex flex-col gap-2">
+                            <a href="http://localhost:3002" className={`px-4 py-3 text-center font-semibold border rounded-xl transition-colors ${darkMode ? 'text-gray-200 border-gray-700 hover:bg-white/10' : 'text-gray-700 border-gray-200 hover:bg-gray-50'}`}>
+                                Entrar
+                            </a>
+                            <a href="#cta" className="px-4 py-3 text-center font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg">
+                                Começar grátis
+                            </a>
+                        </div>
+                    </motion.div>
+                )}
+            </header>
+
+            <section ref={heroRef} className="relative min-h-screen flex items-center px-6 lg:px-12 py-20 pt-32 overflow-hidden">
+                {/* Video Background */}
+                <div className="absolute inset-0 z-0 overflow-hidden">
+                    <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover scale-105"
+                    >
+                        <source src="/assets/Video_Generation_Prompt_for_SaaS_Hero.mp4" type="video/mp4" />
+                    </video>
+                    {/* Overlay for readability - reduced opacity */}
+                    <div className={`absolute inset-0 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-950/70 via-gray-900/60 to-gray-950/70' : 'bg-gradient-to-br from-amber-50/50 via-orange-50/40 to-red-50/50'}`} />
+                </div>
+
+                <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 z-[1]">
+                    <div className={`absolute inset-0 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-green-900/10 via-blue-900/10 to-purple-900/10' : 'bg-gradient-to-br from-orange-400/10 via-red-400/10 to-amber-400/10'}`} />
+                    <div className={`absolute inset-0 ${darkMode ? 'bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.1),transparent_50%)]' : 'bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.1),transparent_50%)]'}`} />
+                </motion.div>
+
+                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto text-center relative z-10">
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }} className={`inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md border mb-8 transition-colors ${darkMode ? 'bg-gray-800/40 border-gray-600/60' : 'bg-white/40 border-white/60'}`}>
+                        <Sparkles className={`w-4 h-4 ${darkMode ? 'text-green-400' : 'text-orange-600'}`} />
+                        <span className={`text-sm font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Gestão Condominial Inteligente</span>
+                    </motion.div>
+
+                    <h1 className={`text-5xl md:text-7xl font-black mb-6 leading-tight transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        Cansado de{' '}
+                        <span className={`text-transparent bg-clip-text bg-gradient-to-r ${darkMode ? 'from-green-400 to-cyan-400' : 'from-orange-600 to-red-600'}`}>planilhas infinitas</span>
+                        {' '}e WhatsApp caótico?
+                    </h1>
+
+                    <p className={`text-2xl mb-12 max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Gestão condominial não precisa ser um pesadelo. <strong className={darkMode ? 'text-white' : 'text-gray-900'}> Existe um jeito melhor.</strong>
+                    </p>
+
+                    <motion.button whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all inline-flex items-center gap-3">
+                        Veja como simplificar
+                        <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </motion.button>
+
+                    <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className={`mt-20 text-sm transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Role para descobrir ↓
+                    </motion.div>
+                </motion.div>
+            </section>
+
+            {/* SEÇÃO PORTAIS - QUEM É VOCÊ? */}
+            <section id="portais" className={`relative py-24 lg:py-32 px-6 lg:px-12 overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-white/50 to-orange-50/50'}`}>
+                {/* Background decorativo */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className={`absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[120px] transition-colors ${darkMode ? 'bg-green-500/10' : 'bg-green-500/5'}`} />
+                    <div className={`absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] transition-colors ${darkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'}`} />
+                </div>
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <ScrollReveal>
+                        <div className="text-center mb-16">
+                            <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 transition-colors ${darkMode ? 'bg-white/10 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                Acesso Rápido
+                            </span>
+                            <h2 className={`text-4xl md:text-5xl font-black mb-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                Qual é o seu perfil?
+                            </h2>
+                            <p className={`text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Cada usuário tem seu próprio portal, com ferramentas feitas sob medida
+                            </p>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* Cards em layout horizontal - Glassmorphism sutil e luxuoso */}
+                    <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+                        {/* Card Morador */}
+                        <ScrollReveal delay={0}>
+                            <motion.a
+                                href="http://localhost:3000"
+                                whileHover={{ y: -6 }}
+                                className="group block relative h-full"
+                            >
+                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]' : 'bg-white/60 border-gray-200/50 hover:bg-white/80 hover:border-gray-300/50 shadow-lg hover:shadow-xl'}`}>
+                                    {/* Reflexo sutil no topo */}
+                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/20' : 'via-gray-300/50'}`} />
+
+                                    <div className="relative z-10">
+                                        <div className="flex items-start justify-between mb-6">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-100 border border-blue-200'}`}>
+                                                <Users className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                                            </div>
+                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
+                                        </div>
+                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador</h3>
+                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Reservas, IA e avisos na palma da mão</p>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Calendar className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Reserve churrasqueira, salão, piscina</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Bot className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Pergunte qualquer coisa à IA</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Bell className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Receba comunicados do condomínio</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.a>
+                        </ScrollReveal>
+
+                        {/* Card Síndico - Destaque sutil */}
+                        <ScrollReveal delay={0.1}>
+                            <motion.a
+                                href="http://localhost:3002"
+                                whileHover={{ y: -6 }}
+                                className="group block relative lg:-mt-4 lg:mb-4 h-full"
+                            >
+                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.05] border-white/[0.1] hover:bg-white/[0.08] hover:border-white/[0.15]' : 'bg-white/80 border-green-200/50 hover:bg-white hover:border-green-300/50 shadow-xl hover:shadow-2xl'}`}>
+                                    {/* Reflexo sutil no topo */}
+                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/30' : 'via-green-300/50'}`} />
+
+                                    {/* Badge discreto */}
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                        <span className={`px-3 py-1 rounded-full backdrop-blur-sm text-xs font-medium border ${darkMode ? 'bg-green-500/20 text-green-400 border-green-500/20' : 'bg-green-500 text-white border-green-600 shadow-lg'}`}>
+                                            Recomendado
+                                        </span>
+                                    </div>
+
+                                    <div className="relative z-10">
+                                        <div className="flex items-start justify-between mb-6 mt-2">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-100 border border-green-200'}`}>
+                                                <Shield className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
+                                            </div>
+                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
+                                        </div>
+                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Síndico</h3>
+                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Controle total do seu condomínio</p>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Users className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Cadastre moradores e unidades</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <FileText className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Envie regimento para a IA aprender</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <TrendingUp className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Relatórios de uso e ocupação</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Bell className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Envie avisos para todos moradores</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.a>
+                        </ScrollReveal>
+
+                        {/* Card Funcionário */}
+                        <ScrollReveal delay={0.2}>
+                            <motion.a
+                                href="http://localhost:3001"
+                                whileHover={{ y: -6 }}
+                                className="group block relative h-full"
+                            >
+                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]' : 'bg-white/60 border-gray-200/50 hover:bg-white/80 hover:border-gray-300/50 shadow-lg hover:shadow-xl'}`}>
+                                    {/* Reflexo sutil no topo */}
+                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/20' : 'via-gray-300/50'}`} />
+
+                                    <div className="relative z-10">
+                                        <div className="flex items-start justify-between mb-6">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-orange-100 border border-orange-200'}`}>
+                                                <Briefcase className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+                                            </div>
+                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
+                                        </div>
+                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Funcionário</h3>
+                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Agenda organizada, trabalho eficiente</p>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Calendar className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Veja todas as tarefas do dia</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <CheckCircle2 className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Registre início e fim de cada tarefa</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <MessageSquare className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
+                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Reporte problemas com 1 clique</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.a>
+                        </ScrollReveal>
+                    </div>
+                </div>
+            </section>
+
+            <section id="como-funciona" className={`relative py-32 px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-transparent to-white/50'}`}>
+                <div className="max-w-7xl mx-auto">
+                    <ScrollReveal>
+                        <h2 className={`text-4xl md:text-5xl font-black text-center mb-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reconhecemos o seu dia a dia</h2>
+                        <p className={`text-xl text-center mb-16 max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sabemos exatamente os desafios que você enfrenta</p>
+                    </ScrollReveal>
+
+                    <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        <ScrollReveal direction="left">
+                            <div className="relative h-[600px] rounded-[40px] overflow-hidden shadow-2xl">
+                                <img
+                                    src="/assets/Gemini_Generated_Image_sdmzy9sdmzy9sdmz.png"
+                                    alt="Síndico sobrecarregado"
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                            </div>
+                        </ScrollReveal>
+
+                        <div className="space-y-6">
+                            {[
+                                {
+                                    icon: Clock,
+                                    title: 'O Síndico às 23h',
+                                    pain: '"Posso fazer festa até que horas?"',
+                                    description: 'Você recebe essa mesma pergunta 15 vezes por semana. No WhatsApp. No elevador. Na garagem. E ainda precisa lembrar onde está o regimento para responder.',
+                                    color: 'from-red-500 to-orange-500'
+                                },
+                                {
+                                    icon: MessageSquare,
+                                    title: 'O Morador no Sábado',
+                                    pain: '"Alguém reservou a churrasqueira?"',
+                                    description: 'Você quer fazer um churrasco. Liga pro síndico: caixa postal. Manda WhatsApp: visto às 14h, sem resposta. Chega lá: ocupado. Ninguém avisou.',
+                                    color: 'from-orange-500 to-amber-500'
+                                },
+                                {
+                                    icon: FileX,
+                                    title: 'O Funcionário na Segunda',
+                                    pain: '"Tem mudança hoje? Ninguém me avisou."',
+                                    description: 'O caminhão de mudança chega às 8h. O morador está nervoso na portaria. Você não sabia de nada. A informação ficou perdida em algum grupo.',
+                                    color: 'from-amber-500 to-yellow-500'
+                                }
+                            ].map((item, i) => (
+                                <ScrollReveal key={i} delay={i * 0.1} direction="right">
+                                    <div className={`p-8 rounded-3xl backdrop-blur-xl border-2 shadow-2xl hover:scale-[1.02] transition-all ${darkMode ? 'bg-gray-800/60 border-gray-700/80' : 'bg-white/60 border-white/80'}`}>
+                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-5 shadow-lg`}>
+                                            <item.icon className="w-7 h-7 text-white" />
+                                        </div>
+                                        <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.title}</p>
+                                        <p className={`text-2xl font-black mb-3 leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.pain}</p>
+                                        <p className={`leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{item.description}</p>
+                                    </div>
+                                </ScrollReveal>
+                            ))}
+                        </div>
+                    </div>
+
+                    <ScrollReveal delay={0.5}>
+                        <div className="text-center mt-20">
+                            <motion.div
+                                animate={{ y: [0, 10, 0] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className={darkMode ? 'text-gray-500' : 'text-gray-400'}
+                            >
+                                <p className="text-lg font-medium mb-2">Veja como resolvemos cada problema</p>
+                                <ArrowRight className="w-6 h-6 mx-auto rotate-90" />
+                            </motion.div>
+                        </div>
+                    </ScrollReveal>
+                </div>
+            </section>
+
+            {/* SEÇÃO: E SE EXISTISSE UMA SOLUÇÃO? */}
+            <section id="funcionalidades" className={`relative py-32 px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80' : 'bg-gradient-to-br from-white/80 to-orange-50/80'}`}>
+                <div className="max-w-6xl mx-auto">
+                    <ScrollReveal>
+                        <div className="text-center mb-20">
+                            <div className="inline-flex items-center gap-3 mb-6">
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-xl">
+                                    <Building2 className="w-8 h-8 text-white" />
+                                </div>
+                                <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-700">SindicoAI</h2>
+                            </div>
+                            <p className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transforma caos em controle</p>
+                            <p className={`text-xl max-w-3xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cada problema que você vive tem uma solução específica. Veja como resolvemos cada um:</p>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* FUNCIONALIDADE 1: IA que responde */}
+                    <ScrollReveal>
+                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-800/50' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100'}`}>
+                            <div className="grid md:grid-cols-2 gap-8 items-center">
+                                <div>
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                        <Bot className="w-4 h-4" />
+                                        Assistente IA
+                                    </div>
+                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador pergunta, IA responde. Na hora.</h3>
+                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        O morador digita: <strong>"Posso fazer festa até que horas?"</strong>
+                                        <br />A IA lê o regimento do SEU condomínio e responde: <strong>"Festas podem ocorrer até 22h em dias de semana e até 00h aos finais de semana, conforme Art. 15 do Regimento Interno."</strong>
+                                    </p>
+                                    <ul className="space-y-3">
+                                        {['Lê os documentos reais do seu condomínio', 'Responde sobre horários, regras, políticas', 'Funciona 24 horas, inclusive de madrugada', 'Você não precisa responder a mesma pergunta de novo'].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                    <p className={`text-xs mb-3 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Exemplo de conversa real</p>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-end">
+                                            <div className="bg-green-500 text-white px-4 py-2 rounded-2xl rounded-br-md max-w-[80%]">
+                                                Qual o horário da piscina?
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-start">
+                                            <div className={`px-4 py-2 rounded-2xl rounded-bl-md max-w-[80%] ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+                                                <p className="mb-2">A piscina funciona das <strong>8h às 20h</strong>, de terça a domingo.</p>
+                                                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Segundas-feiras é dia de manutenção.</p>
+                                                <p className="text-xs text-green-500 mt-2">📄 Fonte: Regimento Interno, Art. 23</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* FUNCIONALIDADE 2: Reservas automáticas */}
+                    <ScrollReveal delay={0.1}>
+                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-800/50' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'}`}>
+                            <div className="grid md:grid-cols-2 gap-8 items-center">
+                                <div className="order-2 md:order-1">
+                                    <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                        <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Calendário de reservas</p>
+                                        <div className="grid grid-cols-7 gap-1 text-center text-sm mb-4">
+                                            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
+                                                <div key={i} className={`font-medium py-1 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{d}</div>
+                                            ))}
+                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((d) => (
+                                                <div
+                                                    key={d}
+                                                    className={`py-2 rounded-lg ${d === 8 ? 'bg-blue-500 text-white font-bold' : d === 5 || d === 12 ? 'bg-red-500/20 text-red-400 line-through' : darkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                                                >
+                                                    {d}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className={`flex items-center gap-4 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500" /> Sua reserva</span>
+                                            <span className="flex items-center gap-1"><span className={`w-3 h-3 rounded ${darkMode ? 'bg-red-500/30' : 'bg-red-100'}`} /> Ocupado</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="order-1 md:order-2">
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
+                                        <Calendar className="w-4 h-4" />
+                                        Sistema de Reservas
+                                    </div>
+                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reserve a churrasqueira em 3 cliques.</h3>
+                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Nada de ligar pro síndico. Nada de WhatsApp. Abre o sistema, vê os horários disponíveis, reserva. Pronto.
+                                    </p>
+                                    <ul className="space-y-3">
+                                        {['Veja em tempo real o que está livre', 'O sistema impede reservas duplicadas', 'Receba confirmação automática', 'Cancele com 1 clique se precisar'].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* FUNCIONALIDADE 3: Notificações */}
+                    <ScrollReveal delay={0.2}>
+                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-orange-900/30 to-amber-900/30 border-orange-800/50' : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-100'}`}>
+                            <div className="grid md:grid-cols-2 gap-8 items-center">
+                                <div>
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>
+                                        <Bell className="w-4 h-4" />
+                                        Notificações Inteligentes
+                                    </div>
+                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Aviso importante? Chega pra todo mundo.</h3>
+                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Acabou a água? Vai ter manutenção no elevador? Manda uma notificação. Chega no portal de cada morador. Sem se perder em grupo de WhatsApp com 200 mensagens de bom dia.
+                                    </p>
+                                    <ul className="space-y-3">
+                                        {['Envie para todos ou para apartamentos específicos', 'Saiba quem visualizou o aviso', 'Histórico completo de comunicações', 'Moradores acessam no portal deles'].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                    <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Notificações recentes</p>
+                                    <div className="space-y-3">
+                                        {[
+                                            { title: 'Manutenção do elevador', time: 'Hoje, 14:30', read: true },
+                                            { title: 'Interrupção de água - Bloco B', time: 'Ontem, 09:15', read: true },
+                                            { title: 'Assembleia dia 15/02', time: '3 dias atrás', read: false }
+                                        ].map((notif, i) => (
+                                            <div key={i} className={`p-4 rounded-xl border ${notif.read ? (darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-100') : (darkMode ? 'bg-orange-500/20 border-orange-500/30' : 'bg-orange-50 border-orange-200')}`}>
+                                                <div className="flex items-start justify-between">
+                                                    <div>
+                                                        <p className={`font-semibold ${notif.read ? (darkMode ? 'text-gray-300' : 'text-gray-700') : (darkMode ? 'text-white' : 'text-gray-900')}`}>{notif.title}</p>
+                                                        <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{notif.time}</p>
+                                                    </div>
+                                                    {!notif.read && <span className="w-2 h-2 rounded-full bg-orange-500" />}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* FUNCIONALIDADE 4: Agenda do Funcionário */}
+                    <ScrollReveal delay={0.3}>
+                        <div className={`p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-800/50' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100'}`}>
+                            <div className="grid md:grid-cols-2 gap-8 items-center">
+                                <div className="order-2 md:order-1">
+                                    <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                        <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Agenda de hoje - Segunda</p>
+                                        <div className="space-y-3">
+                                            {[
+                                                { time: '08:00', task: 'Mudança - Apto 302', status: 'pendente' },
+                                                { time: '10:00', task: 'Churrasqueira - reserva Sr. Carlos', status: 'em andamento' },
+                                                { time: '14:00', task: 'Manutenção piscina', status: 'pendente' },
+                                                { time: '16:00', task: 'Salão de festas - aniversário', status: 'pendente' }
+                                            ].map((item, i) => (
+                                                <div key={i} className={`flex items-center gap-4 p-3 rounded-xl ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                                                    <span className={`text-sm font-mono w-12 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.time}</span>
+                                                    <span className={`flex-1 font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{item.task}</span>
+                                                    <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'em andamento' ? (darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700') : (darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600')}`}>
+                                                        {item.status}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="order-1 md:order-2">
+                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-700'}`}>
+                                        <Briefcase className="w-4 h-4" />
+                                        Portal do Funcionário
+                                    </div>
+                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Funcionário chega e sabe o que fazer.</h3>
+                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        Acabou o "ninguém me avisou". O porteiro, zelador, faxineira - todos veem a agenda do dia. Sabem das reservas, mudanças, manutenções. Tudo organizado.
+                                    </p>
+                                    <ul className="space-y-3">
+                                        {['Agenda visual do dia inteiro', 'Marca quando começou e terminou cada tarefa', 'Reporta problemas com 1 clique', 'Histórico de tudo que foi feito'].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+                </div>
+            </section>
+
+            {/* SEÇÃO: CTA FINAL */}
+            <section id="cta" className="relative py-32 px-6 lg:px-12">
+                <div className="max-w-4xl mx-auto">
+                    <ScrollReveal>
+                        <div className="p-12 md:p-16 rounded-[40px] bg-gradient-to-br from-green-600 to-green-800 text-white text-center relative overflow-hidden">
+                            {/* Decorative elements */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+
+                            <div className="relative z-10">
+                                <h2 className="text-4xl md:text-5xl font-black mb-6">Chega de caos. Comece hoje.</h2>
+                                <p className="text-xl text-green-100 mb-4 max-w-2xl mx-auto">
+                                    Você pode continuar respondendo as mesmas perguntas no WhatsApp. Ou deixar a IA fazer isso por você.
+                                </p>
+                                <p className="text-lg text-green-200 mb-10">
+                                    Configure em 15 minutos. Sem técnico. Sem complicação.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, y: -3 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-green-700 font-bold text-lg shadow-2xl hover:shadow-white/30 inline-flex items-center justify-center gap-3"
+                                    >
+                                        Testar grátis por 30 dias
+                                        <ArrowRight className="w-5 h-5" />
+                                    </motion.button>
+                                    <button className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold text-lg hover:bg-white/20 transition-all inline-flex items-center justify-center gap-3">
+                                        <Phone className="w-5 h-5" />
+                                        Falar com especialista
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap justify-center gap-6 text-sm text-green-200">
+                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sem cartão de crédito</span>
+                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Cancele quando quiser</span>
+                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Suporte por WhatsApp</span>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+                </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className={`py-12 px-6 lg:px-12 transition-colors ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-900 text-white'}`}>
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
+                                <Building2 className="w-6 h-6 text-white" />
+                            </div>
+                            <span className="text-xl font-bold">SindicoAI</span>
+                        </div>
+                        <div className="flex items-center gap-6 text-sm text-gray-400">
+                            <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
+                            <a href="#" className="hover:text-white transition-colors">Privacidade</a>
+                            <a href="mailto:contato@sindicoai.com" className="hover:text-white transition-colors flex items-center gap-2">
+                                <Mail className="w-4 h-4" /> contato@sindicoai.com
+                            </a>
+                        </div>
+                    </div>
+                    <div className={`mt-8 pt-8 border-t text-center text-sm ${darkMode ? 'border-gray-800 text-gray-600' : 'border-gray-800 text-gray-500'}`}>
+                        © 2025 SindicoAI. Gestão condominial inteligente.
+                    </div>
+                </div>
+            </footer>
+        </div>
+    )
+}
+
+export default StorytellingLandingPage

@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Building2, ArrowRight, Clock, MessageSquare, FileX, Sparkles, Bot, Shield, Users, Briefcase, TrendingUp, Calendar, Bell, FileText, CheckCircle2, Phone, Mail, Menu, X, Sun, Moon } from 'lucide-react'
+import { Building2, ArrowRight, Clock, MessageSquare, FileX, Sparkles, Bot, Shield, Users, Briefcase, Calendar, Bell, CheckCircle2, Mail, Menu, X, Sun, Moon, HelpCircle, Plus, Minus } from 'lucide-react'
 import ParticlesBackground from '@/components/animations/ParticlesBackground'
 import ScrollReveal from '@/components/animations/ScrollReveal'
 import { useRef, useState, useEffect } from 'react'
@@ -8,6 +8,7 @@ const StorytellingLandingPage = () => {
     const heroRef = useRef(null)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [darkMode, setDarkMode] = useState(false)
+    const [openFaq, setOpenFaq] = useState<number | null>(null)
 
     // Verificar preferência do sistema ao carregar
     useEffect(() => {
@@ -41,7 +42,7 @@ const StorytellingLandingPage = () => {
         <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-950' : 'bg-gradient-to-br from-amber-50 via-orange-50 to-red-50'}`}>
             <ParticlesBackground />
 
-            {/* HEADER CONTEMPORÂNEO */}
+            {/* HEADER CONTEMPORÂNEO - Updated with Login Dropdown */}
             <header className="fixed top-0 left-0 right-0 z-50">
                 <div className="mx-4 mt-4">
                     <div className={`max-w-7xl mx-auto px-6 py-3 rounded-full backdrop-blur-xl border shadow-lg transition-colors duration-500 ${darkMode ? 'bg-gray-900/70 border-gray-700/50 shadow-black/20' : 'bg-white/70 border-white/50 shadow-black/5'}`}>
@@ -56,14 +57,14 @@ const StorytellingLandingPage = () => {
 
                             {/* Nav Desktop */}
                             <nav className="hidden lg:flex items-center gap-1">
-                                <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
-                                    Funcionalidades
+                                <button onClick={() => scrollToSection('destaques')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                    Destaques
                                 </button>
                                 <button onClick={() => scrollToSection('como-funciona')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
                                     Como funciona
                                 </button>
-                                <button onClick={() => scrollToSection('portais')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
-                                    Portais
+                                <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                    Funcionalidades
                                 </button>
                             </nav>
 
@@ -77,9 +78,48 @@ const StorytellingLandingPage = () => {
                                 >
                                     {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                                 </button>
-                                <a href="http://localhost:3002" className={`px-5 py-2.5 text-sm font-semibold transition-colors ${darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
-                                    Entrar
-                                </a>
+
+                                {/* Login Group */}
+                                <div className="relative group">
+                                    <button className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-colors rounded-full ${darkMode ? 'text-gray-300 hover:text-white hover:bg-white/10' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/50'}`}>
+                                        Entrar
+                                        <Plus className="w-4 h-4 rotate-45" />
+                                    </button>
+
+                                    {/* Dropdown Menu */}
+                                    <div className="absolute right-0 top-full mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                                        <div className={`p-2 rounded-2xl border shadow-xl backdrop-blur-xl ${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/95 border-gray-200'}`}>
+                                            <div className={`px-3 py-2 text-xs font-semibold uppercase tracking-wider mb-1 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                Selecione seu portal
+                                            </div>
+                                            <a href="http://localhost:3002" className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${darkMode ? 'hover:bg-white/10 text-gray-200' : 'hover:bg-gray-50 text-gray-700'}`}>
+                                                <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                                                    <Shield className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold">Síndico</div>
+                                                </div>
+                                            </a>
+                                            <a href="http://localhost:3000" className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${darkMode ? 'hover:bg-white/10 text-gray-200' : 'hover:bg-gray-50 text-gray-700'}`}>
+                                                <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                                                    <Users className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold">Morador</div>
+                                                </div>
+                                            </a>
+                                            <a href="http://localhost:3001" className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${darkMode ? 'hover:bg-white/10 text-gray-200' : 'hover:bg-gray-50 text-gray-700'}`}>
+                                                <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600'}`}>
+                                                    <Briefcase className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold">Funcionário</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <motion.a
                                     href="#cta"
                                     whileHover={{ scale: 1.02 }}
@@ -119,21 +159,35 @@ const StorytellingLandingPage = () => {
                         className={`lg:hidden mx-4 mt-2 p-6 rounded-3xl backdrop-blur-xl border shadow-xl transition-colors ${darkMode ? 'bg-gray-900/95 border-gray-700/50' : 'bg-white/95 border-white/50'}`}
                     >
                         <nav className="flex flex-col gap-2 mb-6">
-                            <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
-                                Funcionalidades
+                            <button onClick={() => scrollToSection('destaques')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                Destaques
                             </button>
                             <button onClick={() => scrollToSection('como-funciona')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
                                 Como funciona
                             </button>
-                            <button onClick={() => scrollToSection('portais')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
-                                Portais
+                            <button onClick={() => scrollToSection('funcionalidades')} className={`px-4 py-3 text-left font-medium rounded-xl transition-colors ${darkMode ? 'text-gray-200 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'}`}>
+                                Funcionalidades
                             </button>
                         </nav>
                         <div className="flex flex-col gap-2">
-                            <a href="http://localhost:3002" className={`px-4 py-3 text-center font-semibold border rounded-xl transition-colors ${darkMode ? 'text-gray-200 border-gray-700 hover:bg-white/10' : 'text-gray-700 border-gray-200 hover:bg-gray-50'}`}>
-                                Entrar
-                            </a>
-                            <a href="#cta" className="px-4 py-3 text-center font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg">
+                            <div className={`p-4 rounded-xl border ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                                <p className={`text-xs font-semibold uppercase tracking-wider mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Acesse seu portal</p>
+                                <div className="space-y-2">
+                                    <a href="http://localhost:3002" className={`flex items-center gap-3 p-2 rounded-lg ${darkMode ? 'hover:bg-white/10' : 'hover:bg-white'} transition-colors`}>
+                                        <Shield className={`w-4 h-4 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
+                                        <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Síndico</span>
+                                    </a>
+                                    <a href="http://localhost:3000" className={`flex items-center gap-3 p-2 rounded-lg ${darkMode ? 'hover:bg-white/10' : 'hover:bg-white'} transition-colors`}>
+                                        <Users className={`w-4 h-4 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                                        <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Morador</span>
+                                    </a>
+                                    <a href="http://localhost:3001" className={`flex items-center gap-3 p-2 rounded-lg ${darkMode ? 'hover:bg-white/10' : 'hover:bg-white'} transition-colors`}>
+                                        <Briefcase className={`w-4 h-4 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+                                        <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Funcionário</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="#cta" className="px-4 py-3 text-center font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg mt-2">
                                 Começar grátis
                             </a>
                         </div>
@@ -189,158 +243,137 @@ const StorytellingLandingPage = () => {
                 </motion.div>
             </section>
 
-            {/* SEÇÃO PORTAIS - QUEM É VOCÊ? */}
-            <section id="portais" className={`relative py-24 lg:py-32 px-6 lg:px-12 overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-white/50 to-orange-50/50'}`}>
-                {/* Background decorativo */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className={`absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[120px] transition-colors ${darkMode ? 'bg-green-500/10' : 'bg-green-500/5'}`} />
-                    <div className={`absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] transition-colors ${darkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'}`} />
-                </div>
-
+            {/* SEÇÃO PRODUCT SPOTLIGHT (Substitui Portais) */}
+            <section id="destaques" className={`relative py-32 px-6 lg:px-12 overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-white to-gray-50'}`}>
                 <div className="max-w-7xl mx-auto relative z-10">
                     <ScrollReveal>
                         <div className="text-center mb-16">
-                            <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 transition-colors ${darkMode ? 'bg-white/10 text-green-400' : 'bg-green-100 text-green-700'}`}>
-                                Acesso Rápido
-                            </span>
-                            <h2 className={`text-4xl md:text-5xl font-black mb-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                Qual é o seu perfil?
+                            <h2 className={`text-4xl md:text-5xl font-black mb-6 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                Uma plataforma, <br className="hidden md:block" />três experiências perfeitas.
                             </h2>
                             <p className={`text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Cada usuário tem seu próprio portal, com ferramentas feitas sob medida
+                                O SindicoAI se adapta a quem está usando. Simples para o morador, eficiente para o funcionário e poderoso para o síndico.
                             </p>
                         </div>
                     </ScrollReveal>
 
-                    {/* Cards em layout horizontal - Glassmorphism sutil e luxuoso */}
-                    <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
-                        {/* Card Morador */}
-                        <ScrollReveal delay={0}>
-                            <motion.a
-                                href="http://localhost:3000"
-                                whileHover={{ y: -6 }}
-                                className="group block relative h-full"
+                    {/* Interactive Showcase */}
+                    <div className="grid lg:grid-cols-12 gap-8 items-center">
+                        {/* Left: Navigation (Tabs) */}
+                        <div className="lg:col-span-4 space-y-4">
+                            {/* Síndico Tab */}
+                            <motion.div
+                                className={`p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 group ${darkMode ? 'bg-gray-800/40 border-gray-700 hover:border-green-500/50' : 'bg-white border-gray-100 hover:border-green-200 shadow-sm hover:shadow-md'}`}
+                                whileHover={{ x: 5 }}
                             >
-                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]' : 'bg-white/60 border-gray-200/50 hover:bg-white/80 hover:border-gray-300/50 shadow-lg hover:shadow-xl'}`}>
-                                    {/* Reflexo sutil no topo */}
-                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/20' : 'via-gray-300/50'}`} />
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className={`p-2 rounded-lg ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'}`}>
+                                        <Shield className="w-5 h-5" />
+                                    </div>
+                                    <h3 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>Para Síndicos</h3>
+                                </div>
+                                <p className={`text-sm leading-relaxed mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    Controle total sem microgerenciamento. A IA responde dúvidas, o sistema organiza reservas.
+                                </p>
+                                <span className={`text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                                    Ver painel <ArrowRight className="w-3 h-3" />
+                                </span>
+                            </motion.div>
 
-                                    <div className="relative z-10">
-                                        <div className="flex items-start justify-between mb-6">
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-100 border border-blue-200'}`}>
-                                                <Users className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                                            </div>
-                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
+                            {/* Morador Tab */}
+                            <motion.div
+                                className={`p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 group ${darkMode ? 'bg-gray-800/40 border-gray-700 hover:border-blue-500/50' : 'bg-white border-gray-100 hover:border-blue-200 shadow-sm hover:shadow-md'}`}
+                                whileHover={{ x: 5 }}
+                            >
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className={`p-2 rounded-lg ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                                        <Users className="w-5 h-5" />
+                                    </div>
+                                    <h3 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>Para Moradores</h3>
+                                </div>
+                                <p className={`text-sm leading-relaxed mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    Zero burocracia. Reserve áreas, receba encomendas e vote em enquetes pelo celular.
+                                </p>
+                                <span className={`text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                    Ver app <ArrowRight className="w-3 h-3" />
+                                </span>
+                            </motion.div>
+
+                            {/* Funcionário Tab */}
+                            <motion.div
+                                className={`p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 group ${darkMode ? 'bg-gray-800/40 border-gray-700 hover:border-orange-500/50' : 'bg-white border-gray-100 hover:border-orange-200 shadow-sm hover:shadow-md'}`}
+                                whileHover={{ x: 5 }}
+                            >
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className={`p-2 rounded-lg ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600'}`}>
+                                        <Briefcase className="w-5 h-5" />
+                                    </div>
+                                    <h3 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>Para Funcionários</h3>
+                                </div>
+                                <p className={`text-sm leading-relaxed mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    Agenda clara do dia. Checklist de tarefas e comunicação direta sem confusão.
+                                </p>
+                                <span className={`text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
+                                    Ver rotina <ArrowRight className="w-3 h-3" />
+                                </span>
+                            </motion.div>
+                        </div>
+
+                        {/* Right: Dynamic Preview (Placeholder for now) */}
+                        <div className="lg:col-span-8">
+                            <motion.div
+                                className={`relative rounded-3xl overflow-hidden shadow-2xl border aspect-[16/10] group ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                            >
+                                <div className={`absolute inset-0 bg-gradient-to-br opacity-50 ${darkMode ? 'from-green-900/20 to-blue-900/20' : 'from-green-50 to-blue-50'}`} />
+
+                                {/* Placeholder Content representing a Dashboard */}
+                                <div className="absolute inset-4 sm:inset-8 flex flex-col">
+                                    {/* Fake Header */}
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div className="flex gap-4">
+                                            <div className={`w-32 h-8 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                                            <div className={`w-20 h-8 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`} />
                                         </div>
-                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador</h3>
-                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Reservas, IA e avisos na palma da mão</p>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Calendar className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Reserve churrasqueira, salão, piscina</span>
+                                        <div className={`w-10 h-10 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                                    </div>
+
+                                    {/* Dashboard Grid */}
+                                    <div className="grid grid-cols-3 gap-6 flex-1">
+                                        <div className={`col-span-2 rounded-2xl p-6 ${darkMode ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                                    <Sparkles className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <div className={`h-4 w-24 rounded mb-1 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                                                    <div className={`h-3 w-32 rounded ${darkMode ? 'bg-gray-800' : 'bg-gray-300'}`} />
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Bot className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Pergunte qualquer coisa à IA</span>
+                                            <div className="space-y-3">
+                                                {[1, 2, 3].map(i => (
+                                                    <div key={i} className={`h-12 w-full rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-100'}`} />
+                                                ))}
                                             </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Bell className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Receba comunicados do condomínio</span>
-                                            </div>
+                                        </div>
+                                        <div className="col-span-1 space-y-6">
+                                            <div className={`h-32 w-full rounded-2xl ${darkMode ? 'bg-gray-900/50' : 'bg-gray-50'}`} />
+                                            <div className={`h-32 w-full rounded-2xl ${darkMode ? 'bg-gray-900/50' : 'bg-gray-50'}`} />
                                         </div>
                                     </div>
                                 </div>
-                            </motion.a>
-                        </ScrollReveal>
-
-                        {/* Card Síndico - Destaque sutil */}
-                        <ScrollReveal delay={0.1}>
-                            <motion.a
-                                href="http://localhost:3002"
-                                whileHover={{ y: -6 }}
-                                className="group block relative lg:-mt-4 lg:mb-4 h-full"
-                            >
-                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.05] border-white/[0.1] hover:bg-white/[0.08] hover:border-white/[0.15]' : 'bg-white/80 border-green-200/50 hover:bg-white hover:border-green-300/50 shadow-xl hover:shadow-2xl'}`}>
-                                    {/* Reflexo sutil no topo */}
-                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/30' : 'via-green-300/50'}`} />
-
-                                    {/* Badge discreto */}
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        <span className={`px-3 py-1 rounded-full backdrop-blur-sm text-xs font-medium border ${darkMode ? 'bg-green-500/20 text-green-400 border-green-500/20' : 'bg-green-500 text-white border-green-600 shadow-lg'}`}>
-                                            Recomendado
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 backdrop-blur-[1px] group-hover:backdrop-blur-none transition-all">
+                                    <div className={`px-6 py-3 rounded-full backdrop-blur-md border shadow-lg ${darkMode ? 'bg-black/80 border-white/10 text-white' : 'bg-white/90 border-white/40 text-gray-900'}`}>
+                                        <span className="font-bold flex items-center gap-2">
+                                            <Shield className="w-4 h-4 text-green-500" />
+                                            Visão do Síndico
                                         </span>
                                     </div>
-
-                                    <div className="relative z-10">
-                                        <div className="flex items-start justify-between mb-6 mt-2">
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-100 border border-green-200'}`}>
-                                                <Shield className={`w-6 h-6 ${darkMode ? 'text-green-400' : 'text-green-600'}`} />
-                                            </div>
-                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
-                                        </div>
-                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Síndico</h3>
-                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Controle total do seu condomínio</p>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Users className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Cadastre moradores e unidades</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <FileText className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Envie regimento para a IA aprender</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <TrendingUp className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Relatórios de uso e ocupação</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Bell className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Envie avisos para todos moradores</span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
-                            </motion.a>
-                        </ScrollReveal>
-
-                        {/* Card Funcionário */}
-                        <ScrollReveal delay={0.2}>
-                            <motion.a
-                                href="http://localhost:3001"
-                                whileHover={{ y: -6 }}
-                                className="group block relative h-full"
-                            >
-                                <div className={`relative h-full p-8 rounded-2xl backdrop-blur-md border transition-all duration-500 ${darkMode ? 'bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12]' : 'bg-white/60 border-gray-200/50 hover:bg-white/80 hover:border-gray-300/50 shadow-lg hover:shadow-xl'}`}>
-                                    {/* Reflexo sutil no topo */}
-                                    <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${darkMode ? 'via-white/20' : 'via-gray-300/50'}`} />
-
-                                    <div className="relative z-10">
-                                        <div className="flex items-start justify-between mb-6">
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-orange-100 border border-orange-200'}`}>
-                                                <Briefcase className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-600'}`} />
-                                            </div>
-                                            <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-all ${darkMode ? 'text-white/20 group-hover:text-white/50' : 'text-gray-300 group-hover:text-gray-500'}`} />
-                                        </div>
-                                        <h3 className={`text-xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Funcionário</h3>
-                                        <p className={`text-sm mb-6 ${darkMode ? 'text-white/40' : 'text-gray-500'}`}>Agenda organizada, trabalho eficiente</p>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <Calendar className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Veja todas as tarefas do dia</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <CheckCircle2 className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Registre início e fim de cada tarefa</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-sm">
-                                                <MessageSquare className={`w-4 h-4 ${darkMode ? 'text-white/30' : 'text-gray-400'}`} />
-                                                <span className={darkMode ? 'text-white/60' : 'text-gray-600'}>Reporte problemas com 1 clique</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.a>
-                        </ScrollReveal>
+                            </motion.div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -419,239 +452,386 @@ const StorytellingLandingPage = () => {
 
             {/* SEÇÃO: E SE EXISTISSE UMA SOLUÇÃO? */}
             <section id="funcionalidades" className={`relative py-32 px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80' : 'bg-gradient-to-br from-white/80 to-orange-50/80'}`}>
-                <div className="max-w-6xl mx-auto">
-                    <ScrollReveal>
-                        <div className="text-center mb-20">
-                            <div className="inline-flex items-center gap-3 mb-6">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-xl">
-                                    <Building2 className="w-8 h-8 text-white" />
-                                </div>
-                                <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-700">SindicoAI</h2>
-                            </div>
-                            <p className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transforma caos em controle</p>
-                            <p className={`text-xl max-w-3xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cada problema que você vive tem uma solução específica. Veja como resolvemos cada um:</p>
-                        </div>
-                    </ScrollReveal>
-
-                    {/* FUNCIONALIDADE 1: IA que responde */}
-                    <ScrollReveal>
-                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-800/50' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100'}`}>
-                            <div className="grid md:grid-cols-2 gap-8 items-center">
-                                <div>
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
-                                        <Bot className="w-4 h-4" />
-                                        Assistente IA
+                <div className="max-w-full mx-auto">
+                    <div className="max-w-7xl mx-auto px-4 lg:px-8">
+                        <ScrollReveal>
+                            <div className="text-center mb-20">
+                                <div className="inline-flex items-center gap-3 mb-6">
+                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-xl">
+                                        <Building2 className="w-8 h-8 text-white" />
                                     </div>
-                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador pergunta, IA responde. Na hora.</h3>
-                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        O morador digita: <strong>"Posso fazer festa até que horas?"</strong>
-                                        <br />A IA lê o regimento do SEU condomínio e responde: <strong>"Festas podem ocorrer até 22h em dias de semana e até 00h aos finais de semana, conforme Art. 15 do Regimento Interno."</strong>
-                                    </p>
-                                    <ul className="space-y-3">
-                                        {['Lê os documentos reais do seu condomínio', 'Responde sobre horários, regras, políticas', 'Funciona 24 horas, inclusive de madrugada', 'Você não precisa responder a mesma pergunta de novo'].map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-700">SindicoAI</h2>
                                 </div>
-                                <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-                                    <p className={`text-xs mb-3 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Exemplo de conversa real</p>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-end">
-                                            <div className="bg-green-500 text-white px-4 py-2 rounded-2xl rounded-br-md max-w-[80%]">
-                                                Qual o horário da piscina?
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-start">
-                                            <div className={`px-4 py-2 rounded-2xl rounded-bl-md max-w-[80%] ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
-                                                <p className="mb-2">A piscina funciona das <strong>8h às 20h</strong>, de terça a domingo.</p>
-                                                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Segundas-feiras é dia de manutenção.</p>
-                                                <p className="text-xs text-green-500 mt-2">📄 Fonte: Regimento Interno, Art. 23</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transforma caos em controle</p>
+                                <p className={`text-xl max-w-3xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cada problema que você vive tem uma solução específica. Veja como resolvemos cada um:</p>
                             </div>
-                        </div>
-                    </ScrollReveal>
+                        </ScrollReveal>
 
-                    {/* FUNCIONALIDADE 2: Reservas automáticas */}
-                    <ScrollReveal delay={0.1}>
-                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-800/50' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'}`}>
-                            <div className="grid md:grid-cols-2 gap-8 items-center">
-                                <div className="order-2 md:order-1">
+                        {/* FUNCIONALIDADE 1: IA que responde */}
+                        <ScrollReveal>
+                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-800/50' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100'}`}>
+                                <div className="grid md:grid-cols-2 gap-8 items-center">
+                                    <div>
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                            <Bot className="w-4 h-4" />
+                                            Assistente IA
+                                        </div>
+                                        <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador pergunta, IA responde. Na hora.</h3>
+                                        <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            O morador digita: <strong>"Posso fazer festa até que horas?"</strong>
+                                            <br />A IA lê o regimento do SEU condomínio e responde: <strong>"Festas podem ocorrer até 22h em dias de semana e até 00h aos finais de semana, conforme Art. 15 do Regimento Interno."</strong>
+                                        </p>
+                                        <ul className="space-y-3">
+                                            {['Lê os documentos reais do seu condomínio', 'Responde sobre horários, regras, políticas', 'Funciona 24 horas, inclusive de madrugada', 'Você não precisa responder a mesma pergunta de novo'].map((item, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                                    <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                     <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-                                        <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Calendário de reservas</p>
-                                        <div className="grid grid-cols-7 gap-1 text-center text-sm mb-4">
-                                            {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
-                                                <div key={i} className={`font-medium py-1 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{d}</div>
-                                            ))}
-                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((d) => (
-                                                <div
-                                                    key={d}
-                                                    className={`py-2 rounded-lg ${d === 8 ? 'bg-blue-500 text-white font-bold' : d === 5 || d === 12 ? 'bg-red-500/20 text-red-400 line-through' : darkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                                                >
-                                                    {d}
+                                        <p className={`text-xs mb-3 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Exemplo de conversa real</p>
+                                        <div className="space-y-4">
+                                            <div className="flex justify-end">
+                                                <div className="bg-green-500 text-white px-4 py-2 rounded-2xl rounded-br-md max-w-[80%]">
+                                                    Qual o horário da piscina?
                                                 </div>
-                                            ))}
-                                        </div>
-                                        <div className={`flex items-center gap-4 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500" /> Sua reserva</span>
-                                            <span className="flex items-center gap-1"><span className={`w-3 h-3 rounded ${darkMode ? 'bg-red-500/30' : 'bg-red-100'}`} /> Ocupado</span>
+                                            </div>
+                                            <div className="flex justify-start">
+                                                <div className={`px-4 py-2 rounded-2xl rounded-bl-md max-w-[80%] ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+                                                    <p className="mb-2">A piscina funciona das <strong>8h às 20h</strong>, de terça a domingo.</p>
+                                                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Segundas-feiras é dia de manutenção.</p>
+                                                    <p className="text-xs text-green-500 mt-2">📄 Fonte: Regimento Interno, Art. 23</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="order-1 md:order-2">
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
-                                        <Calendar className="w-4 h-4" />
-                                        Sistema de Reservas
-                                    </div>
-                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reserve a churrasqueira em 3 cliques.</h3>
-                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        Nada de ligar pro síndico. Nada de WhatsApp. Abre o sistema, vê os horários disponíveis, reserva. Pronto.
-                                    </p>
-                                    <ul className="space-y-3">
-                                        {['Veja em tempo real o que está livre', 'O sistema impede reservas duplicadas', 'Receba confirmação automática', 'Cancele com 1 clique se precisar'].map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                    </ScrollReveal>
+                        </ScrollReveal>
 
-                    {/* FUNCIONALIDADE 3: Notificações */}
-                    <ScrollReveal delay={0.2}>
-                        <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-orange-900/30 to-amber-900/30 border-orange-800/50' : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-100'}`}>
-                            <div className="grid md:grid-cols-2 gap-8 items-center">
-                                <div>
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>
-                                        <Bell className="w-4 h-4" />
-                                        Notificações Inteligentes
-                                    </div>
-                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Aviso importante? Chega pra todo mundo.</h3>
-                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        Acabou a água? Vai ter manutenção no elevador? Manda uma notificação. Chega no portal de cada morador. Sem se perder em grupo de WhatsApp com 200 mensagens de bom dia.
-                                    </p>
-                                    <ul className="space-y-3">
-                                        {['Envie para todos ou para apartamentos específicos', 'Saiba quem visualizou o aviso', 'Histórico completo de comunicações', 'Moradores acessam no portal deles'].map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
-                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-                                    <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Notificações recentes</p>
-                                    <div className="space-y-3">
-                                        {[
-                                            { title: 'Manutenção do elevador', time: 'Hoje, 14:30', read: true },
-                                            { title: 'Interrupção de água - Bloco B', time: 'Ontem, 09:15', read: true },
-                                            { title: 'Assembleia dia 15/02', time: '3 dias atrás', read: false }
-                                        ].map((notif, i) => (
-                                            <div key={i} className={`p-4 rounded-xl border ${notif.read ? (darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-100') : (darkMode ? 'bg-orange-500/20 border-orange-500/30' : 'bg-orange-50 border-orange-200')}`}>
-                                                <div className="flex items-start justify-between">
-                                                    <div>
-                                                        <p className={`font-semibold ${notif.read ? (darkMode ? 'text-gray-300' : 'text-gray-700') : (darkMode ? 'text-white' : 'text-gray-900')}`}>{notif.title}</p>
-                                                        <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{notif.time}</p>
+                        {/* FUNCIONALIDADE 2: Reservas automáticas */}
+                        <ScrollReveal delay={0.1}>
+                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-800/50' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'}`}>
+                                <div className="grid md:grid-cols-2 gap-8 items-center">
+                                    <div className="order-2 md:order-1">
+                                        <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                            <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Calendário de reservas</p>
+                                            <div className="grid grid-cols-7 gap-1 text-center text-sm mb-4">
+                                                {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
+                                                    <div key={i} className={`font-medium py-1 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{d}</div>
+                                                ))}
+                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((d) => (
+                                                    <div
+                                                        key={d}
+                                                        className={`py-2 rounded-lg ${d === 8 ? 'bg-blue-500 text-white font-bold' : d === 5 || d === 12 ? 'bg-red-500/20 text-red-400 line-through' : darkMode ? 'text-gray-300 hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                                                    >
+                                                        {d}
                                                     </div>
-                                                    {!notif.read && <span className="w-2 h-2 rounded-full bg-orange-500" />}
-                                                </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                            <div className={`flex items-center gap-4 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500" /> Sua reserva</span>
+                                                <span className="flex items-center gap-1"><span className={`w-3 h-3 rounded ${darkMode ? 'bg-red-500/30' : 'bg-red-100'}`} /> Ocupado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="order-1 md:order-2">
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'}`}>
+                                            <Calendar className="w-4 h-4" />
+                                            Sistema de Reservas
+                                        </div>
+                                        <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reserve a churrasqueira em 3 cliques.</h3>
+                                        <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            Nada de ligar pro síndico. Nada de WhatsApp. Abre o sistema, vê os horários disponíveis, reserva. Pronto.
+                                        </p>
+                                        <ul className="space-y-3">
+                                            {['Veja em tempo real o que está livre', 'O sistema impede reservas duplicadas', 'Receba confirmação automática', 'Cancele com 1 clique se precisar'].map((item, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                                                    <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </ScrollReveal>
+                        </ScrollReveal>
 
-                    {/* FUNCIONALIDADE 4: Agenda do Funcionário */}
-                    <ScrollReveal delay={0.3}>
-                        <div className={`p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-800/50' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100'}`}>
-                            <div className="grid md:grid-cols-2 gap-8 items-center">
-                                <div className="order-2 md:order-1">
+                        {/* FUNCIONALIDADE 3: Notificações */}
+                        <ScrollReveal delay={0.2}>
+                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-orange-900/30 to-amber-900/30 border-orange-800/50' : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-100'}`}>
+                                <div className="grid md:grid-cols-2 gap-8 items-center">
+                                    <div>
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>
+                                            <Bell className="w-4 h-4" />
+                                            Notificações Inteligentes
+                                        </div>
+                                        <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Aviso importante? Chega pra todo mundo.</h3>
+                                        <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            Acabou a água? Vai ter manutenção no elevador? Manda uma notificação. Chega no portal de cada morador. Sem se perder em grupo de WhatsApp com 200 mensagens de bom dia.
+                                        </p>
+                                        <ul className="space-y-3">
+                                            {['Envie para todos ou para apartamentos específicos', 'Saiba quem visualizou o aviso', 'Histórico completo de comunicações', 'Moradores acessam no portal deles'].map((item, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                                                    <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                     <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-                                        <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Agenda de hoje - Segunda</p>
+                                        <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Notificações recentes</p>
                                         <div className="space-y-3">
                                             {[
-                                                { time: '08:00', task: 'Mudança - Apto 302', status: 'pendente' },
-                                                { time: '10:00', task: 'Churrasqueira - reserva Sr. Carlos', status: 'em andamento' },
-                                                { time: '14:00', task: 'Manutenção piscina', status: 'pendente' },
-                                                { time: '16:00', task: 'Salão de festas - aniversário', status: 'pendente' }
-                                            ].map((item, i) => (
-                                                <div key={i} className={`flex items-center gap-4 p-3 rounded-xl ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
-                                                    <span className={`text-sm font-mono w-12 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.time}</span>
-                                                    <span className={`flex-1 font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{item.task}</span>
-                                                    <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'em andamento' ? (darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700') : (darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600')}`}>
-                                                        {item.status}
-                                                    </span>
+                                                { title: 'Manutenção do elevador', time: 'Hoje, 14:30', read: true },
+                                                { title: 'Interrupção de água - Bloco B', time: 'Ontem, 09:15', read: true },
+                                                { title: 'Assembleia dia 15/02', time: '3 dias atrás', read: false }
+                                            ].map((notif, i) => (
+                                                <div key={i} className={`p-4 rounded-xl border ${notif.read ? (darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-100') : (darkMode ? 'bg-orange-500/20 border-orange-500/30' : 'bg-orange-50 border-orange-200')}`}>
+                                                    <div className="flex items-start justify-between">
+                                                        <div>
+                                                            <p className={`font-semibold ${notif.read ? (darkMode ? 'text-gray-300' : 'text-gray-700') : (darkMode ? 'text-white' : 'text-gray-900')}`}>{notif.title}</p>
+                                                            <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{notif.time}</p>
+                                                        </div>
+                                                        {!notif.read && <span className="w-2 h-2 rounded-full bg-orange-500" />}
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="order-1 md:order-2">
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-700'}`}>
-                                        <Briefcase className="w-4 h-4" />
-                                        Portal do Funcionário
+                            </div>
+                        </ScrollReveal>
+
+                        {/* FUNCIONALIDADE 4: Agenda do Funcionário */}
+                        <ScrollReveal delay={0.3}>
+                            <div className={`p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-800/50' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100'}`}>
+                                <div className="grid md:grid-cols-2 gap-8 items-center">
+                                    <div className="order-2 md:order-1">
+                                        <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                            <p className={`text-xs mb-4 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Agenda de hoje - Segunda</p>
+                                            <div className="space-y-3">
+                                                {[
+                                                    { time: '08:00', task: 'Mudança - Apto 302', status: 'pendente' },
+                                                    { time: '10:00', task: 'Churrasqueira - reserva Sr. Carlos', status: 'em andamento' },
+                                                    { time: '14:00', task: 'Manutenção piscina', status: 'pendente' },
+                                                    { time: '16:00', task: 'Salão de festas - aniversário', status: 'pendente' }
+                                                ].map((item, i) => (
+                                                    <div key={i} className={`flex items-center gap-4 p-3 rounded-xl ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                                                        <span className={`text-sm font-mono w-12 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.time}</span>
+                                                        <span className={`flex-1 font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{item.task}</span>
+                                                        <span className={`text-xs px-2 py-1 rounded-full ${item.status === 'em andamento' ? (darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700') : (darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600')}`}>
+                                                            {item.status}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Funcionário chega e sabe o que fazer.</h3>
-                                    <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        Acabou o "ninguém me avisou". O porteiro, zelador, faxineira - todos veem a agenda do dia. Sabem das reservas, mudanças, manutenções. Tudo organizado.
-                                    </p>
-                                    <ul className="space-y-3">
-                                        {['Agenda visual do dia inteiro', 'Marca quando começou e terminou cada tarefa', 'Reporta problemas com 1 clique', 'Histórico de tudo que foi feito'].map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                                                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <div className="order-1 md:order-2">
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-700'}`}>
+                                            <Briefcase className="w-4 h-4" />
+                                            Portal do Funcionário
+                                        </div>
+                                        <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Funcionário chega e sabe o que fazer.</h3>
+                                        <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            Acabou o "ninguém me avisou". O porteiro, zelador, faxineira - todos veem a agenda do dia. Sabem das reservas, mudanças, manutenções. Tudo organizado.
+                                        </p>
+                                        <ul className="space-y-3">
+                                            {['Agenda visual do dia inteiro', 'Marca quando começou e terminou cada tarefa', 'Reporta problemas com 1 clique', 'Histórico de tudo que foi feito'].map((item, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                                                    <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </ScrollReveal>
+                        </ScrollReveal>
+                    </div>
                 </div>
             </section>
 
-            {/* SEÇÃO: CTA FINAL */}
+            {/* SEÇÃO: FAQ */}
+            <section className={`relative transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-t from-white to-orange-50/30'}`}>
+                {/* Background Decorativo */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className={`absolute top-1/4 right-0 w-[500px] h-[500px] rounded-full blur-[120px] transition-colors ${darkMode ? 'bg-green-500/5' : 'bg-green-500/5'}`} />
+                    <div className={`absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] transition-colors ${darkMode ? 'bg-blue-500/5' : 'bg-blue-500/5'}`} />
+                </div>
+
+                <div className="relative z-10 pt-32">
+                    <ScrollReveal>
+                        <div className="text-center mb-20 px-6 lg:px-12 max-w-7xl mx-auto">
+                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-6 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                <HelpCircle className="w-4 h-4" />
+                                Tira-dúvidas
+                            </div>
+                            <h2 className={`text-4xl md:text-5xl font-black mb-6 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                Perguntas Frequentes
+                            </h2>
+                            <p className={`text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Tudo que você precisa saber sobre como o SindicoAI vai transformar a gestão do seu condomínio
+                            </p>
+                        </div>
+                    </ScrollReveal>
+
+                    <div className="grid lg:grid-cols-2 gap-0 items-start">
+                        {/* Imagem fixa no lado esquerdo - Full Bleed */}
+                        <ScrollReveal direction="left" className="w-full">
+                            <div className="lg:sticky lg:top-32 w-full">
+                                <div className="relative w-full overflow-hidden">
+                                    <div className={`absolute inset-0 bg-gradient-to-r via-transparent to-transparent z-10 ${darkMode ? 'from-gray-900/50' : 'from-white/10'}`} />
+                                    <img
+                                        src="/assets/Gemini_Generated_Image_1hjvez1hjvez1hjv.png"
+                                        alt="Gestão inteligente de condomínio"
+                                        className="w-full h-auto object-contain lg:rounded-r-[40px] shadow-2xl"
+                                    />
+                                </div>
+                            </div>
+                        </ScrollReveal>
+
+                        {/* FAQs no lado direito */}
+                        <div className="p-6 lg:p-20 lg:pt-0 space-y-6 max-w-3xl">
+                            {[
+                                {
+                                    question: "Como a IA aprende sobre meu condomínio?",
+                                    answer: "Você faz upload do regimento interno, atas de assembleias e outros documentos importantes. A IA lê tudo e consegue responder perguntas baseadas nesses documentos. É como ter um assistente que leu toda a documentação do seu condomínio."
+                                },
+                                {
+                                    question: "Preciso de conhecimento técnico para usar?",
+                                    answer: "Não! O SindicoAI foi feito para ser simples. Se você sabe usar WhatsApp, sabe usar o SindicoAI. A configuração inicial leva cerca de 15 minutos e não precisa de técnico."
+                                },
+                                {
+                                    question: "Como faço o cadastro inicial dos moradores?",
+                                    answer: "É muito simples! Você pode importar uma planilha com os dados dos moradores ou cadastrar manualmente. Cada morador recebe automaticamente um link de acesso personalizado por email ou WhatsApp."
+                                },
+                                {
+                                    question: "E se a IA responder errado?",
+                                    answer: "A IA sempre informa a fonte da informação (qual documento e artigo). Se houver alguma dúvida, o morador pode conferir. Além disso, você pode revisar e corrigir respostas no painel do síndico."
+                                },
+                                {
+                                    question: "Quanto custa?",
+                                    answer: "Oferecemos 30 dias grátis para você testar sem compromisso. Os valores dos planos estão sendo definidos e serão anunciados em breve. Entre em contato conosco para saber mais sobre condições especiais para early adopters."
+                                },
+                                {
+                                    question: "Meus dados estão seguros?",
+                                    answer: "Sim. Usamos criptografia de ponta a ponta e servidores no Brasil. Seus documentos e dados dos moradores são protegidos conforme a LGPD. Nunca compartilhamos informações com terceiros."
+                                },
+                                {
+                                    question: "Posso cancelar quando quiser?",
+                                    answer: "Sim! Não há fidelidade. Você pode cancelar a qualquer momento e seus dados ficam disponíveis para exportação por 90 dias após o cancelamento."
+                                },
+                                {
+                                    question: "Funciona para condomínios pequenos?",
+                                    answer: "Funciona para qualquer tamanho! Desde prédios pequenos com 8 apartamentos até grandes condomínios com centenas de unidades. O sistema se adapta ao seu tamanho."
+                                }
+                            ].map((faq, index) => (
+                                <ScrollReveal key={index} delay={index * 0.05}>
+                                    <motion.div
+                                        className={`rounded-2xl border transition-all duration-300 ${darkMode ?
+                                            'bg-gray-800/40 border-gray-700 hover:bg-gray-800 hover:border-gray-600' :
+                                            'bg-white border-gray-100 hover:border-green-200 hover:shadow-lg'}`}
+                                    >
+                                        <button
+                                            onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                            className="w-full px-6 py-5 flex items-center justify-between text-left"
+                                        >
+                                            <span className={`text-lg font-bold pr-4 transition-colors ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                                                {faq.question}
+                                            </span>
+                                            <div className={`p-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
+                                                {openFaq === index ? (
+                                                    <Minus className="w-4 h-4" />
+                                                ) : (
+                                                    <Plus className="w-4 h-4" />
+                                                )}
+                                            </div>
+                                        </button>
+                                        <motion.div
+                                            initial={false}
+                                            animate={{
+                                                height: openFaq === index ? "auto" : 0,
+                                                opacity: openFaq === index ? 1 : 0
+                                            }}
+                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                            className="overflow-hidden"
+                                        >
+                                            <div className={`px-6 pb-6 text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                {faq.answer}
+                                            </div>
+                                        </motion.div>
+                                    </motion.div>
+                                </ScrollReveal>
+                            ))}
+
+                            {/* CTA dentro do FAQ */}
+                            <ScrollReveal delay={0.5}>
+                                <div className={`mt-20 p-1 rounded-3xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-500`}>
+                                    <div className={`rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                                        <div className="relative z-10">
+                                            <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                                Ainda tem alguma dúvida específica?
+                                            </h3>
+                                            <p className={`mb-8 max-w-2xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                Nossa equipe de especialistas está pronta para explicar exatamente como o SindicoAI se adapta à realidade do seu condomínio.
+                                            </p>
+                                            <a
+                                                href="mailto:contato@sindicoai.com"
+                                                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-500/30"
+                                            >
+                                                <Mail className="w-5 h-5" />
+                                                Falar com especialista
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ScrollReveal>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* SEÇÃO: CTA FINAL - Refactored for Risk Reversal */}
             <section id="cta" className="relative py-32 px-6 lg:px-12">
                 <div className="max-w-4xl mx-auto">
                     <ScrollReveal>
-                        <div className="p-12 md:p-16 rounded-[40px] bg-gradient-to-br from-green-600 to-green-800 text-white text-center relative overflow-hidden">
+                        <div className="p-12 md:p-16 rounded-[40px] bg-gradient-to-br from-green-600 to-green-800 text-white text-center relative overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-shadow duration-500">
                             {/* Decorative elements */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl opacity-50" />
+                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl opacity-50" />
+
+                            {/* Texture overlay */}
+                            <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-10 mix-blend-overlay" />
 
                             <div className="relative z-10">
-                                <h2 className="text-4xl md:text-5xl font-black mb-6">Chega de caos. Comece hoje.</h2>
-                                <p className="text-xl text-green-100 mb-4 max-w-2xl mx-auto">
-                                    Você pode continuar respondendo as mesmas perguntas no WhatsApp. Ou deixar a IA fazer isso por você.
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-green-50 text-sm font-semibold mb-8">
+                                    <Shield className="w-4 h-4" />
+                                    Garantia incondicional
+                                </div>
+                                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                                    Teste 30 dias com <br /><span className="text-green-200">Risco Zero.</span>
+                                </h2>
+                                <p className="text-xl text-green-50 mb-4 max-w-2xl mx-auto leading-relaxed">
+                                    Use todas as funcionalidades. Se o SindicoAI não transformar a gestão do seu condomínio, você não paga absolutamente nada.
                                 </p>
-                                <p className="text-lg text-green-200 mb-10">
-                                    Configure em 15 minutos. Sem técnico. Sem complicação.
+                                <p className="text-lg text-green-200 mb-10 font-medium">
+                                    Sem contratos de fidelidade. Sem letras miúdas.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
                                     <motion.button
                                         whileHover={{ scale: 1.05, y: -3 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-green-700 font-bold text-lg shadow-2xl hover:shadow-white/30 inline-flex items-center justify-center gap-3"
+                                        className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white text-green-800 font-bold text-lg shadow-2xl hover:shadow-white/30 inline-flex items-center justify-center gap-3 transition-all"
                                     >
-                                        Testar grátis por 30 dias
+                                        Começar teste grátis agora
                                         <ArrowRight className="w-5 h-5" />
                                     </motion.button>
-                                    <button className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold text-lg hover:bg-white/20 transition-all inline-flex items-center justify-center gap-3">
-                                        <Phone className="w-5 h-5" />
-                                        Falar com especialista
-                                    </button>
                                 </div>
-                                <div className="flex flex-wrap justify-center gap-6 text-sm text-green-200">
+                                <div className="flex flex-wrap justify-center gap-8 text-sm text-green-100/80 font-medium">
                                     <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sem cartão de crédito</span>
                                     <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Cancele quando quiser</span>
                                     <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Suporte por WhatsApp</span>

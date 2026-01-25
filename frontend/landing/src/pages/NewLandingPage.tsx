@@ -195,7 +195,7 @@ const StorytellingLandingPage = () => {
                 )}
             </header>
 
-            <section ref={heroRef} className="relative min-h-screen flex items-center px-6 lg:px-12 py-20 pt-32 overflow-hidden">
+            <section ref={heroRef} className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-12 py-16 sm:py-20 pt-24 sm:pt-32 overflow-hidden">
                 {/* Video Background */}
                 <div className="absolute inset-0 z-0 overflow-hidden">
                     <video
@@ -222,19 +222,19 @@ const StorytellingLandingPage = () => {
                         <span className={`text-sm font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Gestão Condominial Inteligente</span>
                     </motion.div>
 
-                    <h1 className={`text-5xl md:text-7xl font-black mb-6 leading-tight transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black mb-6 leading-tight transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                         Cansado de{' '}
                         <span className={`text-transparent bg-clip-text bg-gradient-to-r ${darkMode ? 'from-green-400 to-cyan-400' : 'from-orange-600 to-red-600'}`}>planilhas infinitas</span>
                         {' '}e WhatsApp caótico?
                     </h1>
 
-                    <p className={`text-2xl mb-12 max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <p className={`text-lg sm:text-xl md:text-2xl mb-12 max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                         Gestão condominial não precisa ser um pesadelo. <strong className={darkMode ? 'text-white' : 'text-gray-900'}> Existe um jeito melhor.</strong>
                     </p>
 
-                    <motion.button whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all inline-flex items-center gap-3">
+                    <motion.button whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} className="group px-6 sm:px-10 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold text-base sm:text-lg shadow-2xl hover:shadow-green-500/50 transition-all inline-flex items-center gap-2 sm:gap-3">
                         Veja como simplificar
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                        <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform" />
                     </motion.button>
 
                     <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className={`mt-20 text-sm transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -244,14 +244,14 @@ const StorytellingLandingPage = () => {
             </section>
 
             {/* SEÇÃO PRODUCT SPOTLIGHT (Substitui Portais) */}
-            <section id="destaques" className={`relative py-32 px-6 lg:px-12 overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-white to-gray-50'}`}>
+            <section id="destaques" className={`relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-12 overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-white to-gray-50'}`}>
                 <div className="max-w-7xl mx-auto relative z-10">
                     <ScrollReveal>
-                        <div className="text-center mb-16">
-                            <h2 className={`text-4xl md:text-5xl font-black mb-6 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        <div className="text-center mb-12 sm:mb-16">
+                            <h2 className={`text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 px-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 Uma plataforma, <br className="hidden md:block" />três experiências perfeitas.
                             </h2>
-                            <p className={`text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <p className={`text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4 transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                 O SindicoAI se adapta a quem está usando. Simples para o morador, eficiente para o funcionário e poderoso para o síndico.
                             </p>
                         </div>
@@ -378,16 +378,16 @@ const StorytellingLandingPage = () => {
                 </div>
             </section>
 
-            <section id="como-funciona" className={`relative py-32 px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-transparent to-white/50'}`}>
+            <section id="como-funciona" className={`relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-transparent to-white/50'}`}>
                 <div className="max-w-7xl mx-auto">
                     <ScrollReveal>
-                        <h2 className={`text-4xl md:text-5xl font-black text-center mb-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reconhecemos o seu dia a dia</h2>
-                        <p className={`text-xl text-center mb-16 max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sabemos exatamente os desafios que você enfrenta</p>
+                        <h2 className={`text-3xl sm:text-4xl md:text-5xl font-black text-center mb-3 sm:mb-4 px-4 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>Reconhecemos o seu dia a dia</h2>
+                        <p className={`text-base sm:text-lg md:text-xl text-center mb-12 sm:mb-16 max-w-2xl mx-auto px-4 transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Sabemos exatamente os desafios que você enfrenta</p>
                     </ScrollReveal>
 
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
                         <ScrollReveal direction="left">
-                            <div className="relative h-[600px] rounded-[40px] overflow-hidden shadow-2xl">
+                            <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl sm:rounded-[40px] overflow-hidden shadow-2xl">
                                 <img
                                     src="/assets/Gemini_Generated_Image_sdmzy9sdmzy9sdmz.png"
                                     alt="Síndico sobrecarregado"
@@ -397,7 +397,7 @@ const StorytellingLandingPage = () => {
                             </div>
                         </ScrollReveal>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4 sm:space-y-6">
                             {[
                                 {
                                     icon: Clock,
@@ -422,13 +422,13 @@ const StorytellingLandingPage = () => {
                                 }
                             ].map((item, i) => (
                                 <ScrollReveal key={i} delay={i * 0.1} direction="right">
-                                    <div className={`p-8 rounded-3xl backdrop-blur-xl border-2 shadow-2xl hover:scale-[1.02] transition-all ${darkMode ? 'bg-gray-800/60 border-gray-700/80' : 'bg-white/60 border-white/80'}`}>
-                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-5 shadow-lg`}>
-                                            <item.icon className="w-7 h-7 text-white" />
+                                    <div className={`p-5 sm:p-8 rounded-2xl sm:rounded-3xl backdrop-blur-xl border-2 shadow-2xl hover:scale-[1.02] transition-all ${darkMode ? 'bg-gray-800/60 border-gray-700/80' : 'bg-white/60 border-white/80'}`}>
+                                        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 sm:mb-5 shadow-lg`}>
+                                            <item.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                                         </div>
                                         <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.title}</p>
-                                        <p className={`text-2xl font-black mb-3 leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.pain}</p>
-                                        <p className={`leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{item.description}</p>
+                                        <p className={`text-xl sm:text-2xl font-black mb-3 leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.pain}</p>
+                                        <p className={`text-sm sm:text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{item.description}</p>
                                     </div>
                                 </ScrollReveal>
                             ))}
@@ -451,46 +451,46 @@ const StorytellingLandingPage = () => {
             </section>
 
             {/* SEÇÃO: E SE EXISTISSE UMA SOLUÇÃO? */}
-            <section id="funcionalidades" className={`relative py-32 px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80' : 'bg-gradient-to-br from-white/80 to-orange-50/80'}`}>
+            <section id="funcionalidades" className={`relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-12 transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-800/80 to-gray-900/80' : 'bg-gradient-to-br from-white/80 to-orange-50/80'}`}>
                 <div className="max-w-full mx-auto">
                     <div className="max-w-7xl mx-auto px-4 lg:px-8">
                         <ScrollReveal>
-                            <div className="text-center mb-20">
-                                <div className="inline-flex items-center gap-3 mb-6">
-                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-xl">
-                                        <Building2 className="w-8 h-8 text-white" />
+                            <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+                                <div className="inline-flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-xl">
+                                        <Building2 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                     </div>
-                                    <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-700">SindicoAI</h2>
+                                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-green-700">SindicoAI</h2>
                                 </div>
-                                <p className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transforma caos em controle</p>
-                                <p className={`text-xl max-w-3xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cada problema que você vive tem uma solução específica. Veja como resolvemos cada um:</p>
+                                <p className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 px-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Transforma caos em controle</p>
+                                <p className={`text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Cada problema que você vive tem uma solução específica. Veja como resolvemos cada um:</p>
                             </div>
                         </ScrollReveal>
 
                         {/* FUNCIONALIDADE 1: IA que responde */}
                         <ScrollReveal>
-                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-800/50' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100'}`}>
-                                <div className="grid md:grid-cols-2 gap-8 items-center">
+                            <div className={`mb-8 sm:mb-12 lg:mb-16 p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-800/50' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100'}`}>
+                                <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
                                     <div>
-                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
-                                            <Bot className="w-4 h-4" />
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                            <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                                             Assistente IA
                                         </div>
-                                        <h3 className={`text-3xl font-black mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador pergunta, IA responde. Na hora.</h3>
-                                        <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                        <h3 className={`text-2xl sm:text-3xl font-black mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Morador pergunta, IA responde. Na hora.</h3>
+                                        <p className={`text-base sm:text-lg mb-4 sm:mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                                             O morador digita: <strong>"Posso fazer festa até que horas?"</strong>
                                             <br />A IA lê o regimento do SEU condomínio e responde: <strong>"Festas podem ocorrer até 22h em dias de semana e até 00h aos finais de semana, conforme Art. 15 do Regimento Interno."</strong>
                                         </p>
-                                        <ul className="space-y-3">
+                                        <ul className="space-y-2 sm:space-y-3">
                                             {['Lê os documentos reais do seu condomínio', 'Responde sobre horários, regras, políticas', 'Funciona 24 horas, inclusive de madrugada', 'Você não precisa responder a mesma pergunta de novo'].map((item, i) => (
-                                                <li key={i} className="flex items-start gap-3">
-                                                    <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                                    <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>{item}</span>
+                                                <li key={i} className="flex items-start gap-2 sm:gap-3">
+                                                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                                    <span className={`text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item}</span>
                                                 </li>
                                             ))}
                                         </ul>
                                     </div>
-                                    <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
                                         <p className={`text-xs mb-3 uppercase tracking-wider ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Exemplo de conversa real</p>
                                         <div className="space-y-4">
                                             <div className="flex justify-end">
@@ -513,7 +513,7 @@ const StorytellingLandingPage = () => {
 
                         {/* FUNCIONALIDADE 2: Reservas automáticas */}
                         <ScrollReveal delay={0.1}>
-                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-800/50' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'}`}>
+                            <div className={`mb-8 sm:mb-12 lg:mb-16 p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-blue-900/30 to-indigo-900/30 border-blue-800/50' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'}`}>
                                 <div className="grid md:grid-cols-2 gap-8 items-center">
                                     <div className="order-2 md:order-1">
                                         <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
@@ -561,7 +561,7 @@ const StorytellingLandingPage = () => {
 
                         {/* FUNCIONALIDADE 3: Notificações */}
                         <ScrollReveal delay={0.2}>
-                            <div className={`mb-16 p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-orange-900/30 to-amber-900/30 border-orange-800/50' : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-100'}`}>
+                            <div className={`mb-8 sm:mb-12 lg:mb-16 p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-orange-900/30 to-amber-900/30 border-orange-800/50' : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-100'}`}>
                                 <div className="grid md:grid-cols-2 gap-8 items-center">
                                     <div>
                                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-4 ${darkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-700'}`}>
@@ -607,7 +607,7 @@ const StorytellingLandingPage = () => {
 
                         {/* FUNCIONALIDADE 4: Agenda do Funcionário */}
                         <ScrollReveal delay={0.3}>
-                            <div className={`p-8 md:p-12 rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-800/50' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100'}`}>
+                            <div className={`p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-[32px] border-2 shadow-xl transition-colors ${darkMode ? 'bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-800/50' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100'}`}>
                                 <div className="grid md:grid-cols-2 gap-8 items-center">
                                     <div className="order-2 md:order-1">
                                         <div className={`rounded-2xl p-6 shadow-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
@@ -663,17 +663,17 @@ const StorytellingLandingPage = () => {
                     <div className={`absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] transition-colors ${darkMode ? 'bg-blue-500/5' : 'bg-blue-500/5'}`} />
                 </div>
 
-                <div className="relative z-10 pt-32">
+                <div className="relative z-10 pt-16 sm:pt-24 lg:pt-32">
                     <ScrollReveal>
-                        <div className="text-center mb-20 px-6 lg:px-12 max-w-7xl mx-auto">
-                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-6 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
-                                <HelpCircle className="w-4 h-4" />
+                        <div className="text-center mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-4 sm:mb-6 ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
+                                <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                 Tira-dúvidas
                             </div>
-                            <h2 className={`text-4xl md:text-5xl font-black mb-6 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            <h2 className={`text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                 Perguntas Frequentes
                             </h2>
-                            <p className={`text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <p className={`text-base sm:text-lg md:text-xl max-w-2xl mx-auto transition-colors ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                 Tudo que você precisa saber sobre como o SindicoAI vai transformar a gestão do seu condomínio
                             </p>
                         </div>
@@ -681,21 +681,21 @@ const StorytellingLandingPage = () => {
 
                     <div className="grid lg:grid-cols-2 gap-0 items-start">
                         {/* Imagem fixa no lado esquerdo - Full Bleed */}
-                        <ScrollReveal direction="left" className="w-full">
-                            <div className="lg:sticky lg:top-32 w-full">
+                        <ScrollReveal direction="left" className="w-full order-1 lg:order-1">
+                            <div className="lg:sticky lg:top-32 w-full mb-8 lg:mb-0">
                                 <div className="relative w-full overflow-hidden">
                                     <div className={`absolute inset-0 bg-gradient-to-r via-transparent to-transparent z-10 ${darkMode ? 'from-gray-900/50' : 'from-white/10'}`} />
                                     <img
                                         src="/assets/Gemini_Generated_Image_1hjvez1hjvez1hjv.png"
                                         alt="Gestão inteligente de condomínio"
-                                        className="w-full h-auto object-contain lg:rounded-r-[40px] shadow-2xl"
+                                        className="w-full h-auto object-contain rounded-2xl lg:rounded-r-[40px] lg:rounded-l-none shadow-2xl"
                                     />
                                 </div>
                             </div>
                         </ScrollReveal>
 
                         {/* FAQs no lado direito */}
-                        <div className="p-6 lg:p-20 lg:pt-0 space-y-6 max-w-3xl">
+                        <div className="p-4 sm:p-6 lg:p-20 lg:pt-0 space-y-4 sm:space-y-6 max-w-3xl order-2 lg:order-2">
                             {[
                                 {
                                     question: "Como a IA aprende sobre meu condomínio?",
@@ -738,16 +738,16 @@ const StorytellingLandingPage = () => {
                                     >
                                         <button
                                             onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                            className="w-full px-6 py-5 flex items-center justify-between text-left"
+                                            className="w-full px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between text-left"
                                         >
-                                            <span className={`text-lg font-bold pr-4 transition-colors ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                                            <span className={`text-base sm:text-lg font-bold pr-3 sm:pr-4 transition-colors ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                                                 {faq.question}
                                             </span>
-                                            <div className={`p-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
+                                            <div className={`p-1.5 sm:p-2 rounded-lg transition-colors flex-shrink-0 ${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
                                                 {openFaq === index ? (
-                                                    <Minus className="w-4 h-4" />
+                                                    <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                                                 ) : (
-                                                    <Plus className="w-4 h-4" />
+                                                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                                                 )}
                                             </div>
                                         </button>
@@ -760,7 +760,7 @@ const StorytellingLandingPage = () => {
                                             transition={{ duration: 0.3, ease: "easeInOut" }}
                                             className="overflow-hidden"
                                         >
-                                            <div className={`px-6 pb-6 text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <div className={`px-4 sm:px-6 pb-4 sm:pb-6 text-sm sm:text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                                 {faq.answer}
                                             </div>
                                         </motion.div>
@@ -770,20 +770,20 @@ const StorytellingLandingPage = () => {
 
                             {/* CTA dentro do FAQ */}
                             <ScrollReveal delay={0.5}>
-                                <div className={`mt-20 p-1 rounded-3xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-500`}>
-                                    <div className={`rounded-[22px] p-8 md:p-12 text-center relative overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                                <div className={`mt-12 sm:mt-16 lg:mt-20 p-1 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-green-500 via-emerald-500 to-green-500`}>
+                                    <div className={`rounded-[15px] sm:rounded-[22px] p-6 sm:p-8 md:p-12 text-center relative overflow-hidden ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
                                         <div className="relative z-10">
-                                            <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                            <h3 className={`text-xl sm:text-2xl font-bold mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                                 Ainda tem alguma dúvida específica?
                                             </h3>
-                                            <p className={`mb-8 max-w-2xl mx-auto ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <p className={`mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                                 Nossa equipe de especialistas está pronta para explicar exatamente como o SindicoAI se adapta à realidade do seu condomínio.
                                             </p>
                                             <a
                                                 href="mailto:contato@sindicoai.com"
-                                                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-500/30"
+                                                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-green-600 text-white text-sm sm:text-base font-bold hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-500/30"
                                             >
-                                                <Mail className="w-5 h-5" />
+                                                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                                                 Falar com especialista
                                             </a>
                                         </div>
@@ -796,10 +796,10 @@ const StorytellingLandingPage = () => {
             </section>
 
             {/* SEÇÃO: CTA FINAL - Refactored for Risk Reversal */}
-            <section id="cta" className="relative py-32 px-6 lg:px-12">
+            <section id="cta" className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-12">
                 <div className="max-w-4xl mx-auto">
                     <ScrollReveal>
-                        <div className="p-12 md:p-16 rounded-[40px] bg-gradient-to-br from-green-600 to-green-800 text-white text-center relative overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-shadow duration-500">
+                        <div className="p-8 sm:p-12 md:p-16 rounded-2xl sm:rounded-[40px] bg-gradient-to-br from-green-600 to-green-800 text-white text-center relative overflow-hidden shadow-2xl hover:shadow-green-500/20 transition-shadow duration-500">
                             {/* Decorative elements */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl opacity-50" />
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl opacity-50" />
@@ -808,33 +808,33 @@ const StorytellingLandingPage = () => {
                             <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-10 mix-blend-overlay" />
 
                             <div className="relative z-10">
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-green-50 text-sm font-semibold mb-8">
-                                    <Shield className="w-4 h-4" />
+                                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-green-50 text-xs sm:text-sm font-semibold mb-6 sm:mb-8">
+                                    <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
                                     Garantia incondicional
                                 </div>
-                                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 leading-tight px-4">
                                     Teste 30 dias com <br /><span className="text-green-200">Risco Zero.</span>
                                 </h2>
-                                <p className="text-xl text-green-50 mb-4 max-w-2xl mx-auto leading-relaxed">
+                                <p className="text-base sm:text-lg md:text-xl text-green-50 mb-3 sm:mb-4 max-w-2xl mx-auto leading-relaxed px-4">
                                     Use todas as funcionalidades. Se o SindicoAI não transformar a gestão do seu condomínio, você não paga absolutamente nada.
                                 </p>
-                                <p className="text-lg text-green-200 mb-10 font-medium">
+                                <p className="text-sm sm:text-base md:text-lg text-green-200 mb-8 sm:mb-10 font-medium px-4">
                                     Sem contratos de fidelidade. Sem letras miúdas.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-10 px-4">
                                     <motion.button
                                         whileHover={{ scale: 1.05, y: -3 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white text-green-800 font-bold text-lg shadow-2xl hover:shadow-white/30 inline-flex items-center justify-center gap-3 transition-all"
+                                        className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-6 rounded-xl sm:rounded-2xl bg-white text-green-800 font-bold text-base sm:text-lg shadow-2xl hover:shadow-white/30 inline-flex items-center justify-center gap-2 sm:gap-3 transition-all"
                                     >
                                         Começar teste grátis agora
-                                        <ArrowRight className="w-5 h-5" />
+                                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </motion.button>
                                 </div>
-                                <div className="flex flex-wrap justify-center gap-8 text-sm text-green-100/80 font-medium">
-                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sem cartão de crédito</span>
-                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Cancele quando quiser</span>
-                                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Suporte por WhatsApp</span>
+                                <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-green-100/80 font-medium px-4">
+                                    <span className="flex items-center gap-1.5 sm:gap-2"><CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" /> Sem cartão de crédito</span>
+                                    <span className="flex items-center gap-1.5 sm:gap-2"><CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" /> Cancele quando quiser</span>
+                                    <span className="flex items-center gap-1.5 sm:gap-2"><CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" /> Suporte por WhatsApp</span>
                                 </div>
                             </div>
                         </div>
@@ -843,24 +843,26 @@ const StorytellingLandingPage = () => {
             </section>
 
             {/* FOOTER */}
-            <footer className={`py-12 px-6 lg:px-12 transition-colors ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-900 text-white'}`}>
+            <footer className={`py-8 sm:py-12 px-4 sm:px-6 lg:px-12 transition-colors ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-900 text-white'}`}>
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
-                                <Building2 className="w-6 h-6 text-white" />
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
+                                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold">SindicoAI</span>
+                            <span className="text-lg sm:text-xl font-bold">SindicoAI</span>
                         </div>
-                        <div className="flex items-center gap-6 text-sm text-gray-400">
+                        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-xs sm:text-sm text-gray-400">
                             <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
                             <a href="#" className="hover:text-white transition-colors">Privacidade</a>
                             <a href="mailto:contato@sindicoai.com" className="hover:text-white transition-colors flex items-center gap-2">
-                                <Mail className="w-4 h-4" /> contato@sindicoai.com
+                                <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <span className="hidden sm:inline">contato@sindicoai.com</span>
+                                <span className="sm:hidden">Contato</span>
                             </a>
                         </div>
                     </div>
-                    <div className={`mt-8 pt-8 border-t text-center text-sm ${darkMode ? 'border-gray-800 text-gray-600' : 'border-gray-800 text-gray-500'}`}>
+                    <div className={`mt-6 sm:mt-8 pt-6 sm:pt-8 border-t text-center text-xs sm:text-sm ${darkMode ? 'border-gray-800 text-gray-600' : 'border-gray-800 text-gray-500'}`}>
                         © 2025 SindicoAI. Gestão condominial inteligente.
                     </div>
                 </div>

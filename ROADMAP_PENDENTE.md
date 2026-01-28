@@ -1,25 +1,25 @@
-# 🗺️ Roadmap de Tarefas Pendentes - SindicoAI
+# Roadmap de Tarefas Pendentes - SindicoAI
 
 **Atualizado em:** 06/01/2026
 **Status do Projeto:** ~85% Completo
 
 ---
 
-## 📊 Visão Geral do Progresso
+##  Visão Geral do Progresso
 
-### ✅ Fases Completas (100%)
-- ✅ **Fase 1:** Fundação Sólida e Design
-- ✅ **Fase 2:** Backend Core e Infraestrutura
-- ✅ **Fase 3:** Inteligência Artificial e RAG
+###  Fases Completas (100%)
+-  **Fase 1:** Fundação Sólida e Design
+-  **Fase 2:** Backend Core e Infraestrutura
+-  **Fase 3:** Inteligência Artificial e RAG
 
-### 🟡 Fases Parciais (50-90%)
-- 🟡 **Fase 4:** Frontend e Mobile (85% - Web completo, Mobile pendente)
-- 🟡 **Fase 5:** Qualidade e Refinamento (40% - Testes básicos, falta carga e segurança)
+###  Fases Parciais (50-90%)
+-  **Fase 4:** Frontend e Mobile (85% - Web completo, Mobile pendente)
+-  **Fase 5:** Qualidade e Refinamento (40% - Testes básicos, falta carga e segurança)
 
 ---
 
-## 🎯 SPRINT 1 - Melhorias de UX/UI
-**Prioridade:** 🔴 CRÍTICA | **Status:** 0%
+##  SPRINT 1 - Melhorias de UX/UI
+**Prioridade:**  CRÍTICA | **Status:** 0%
 
 ### 1.1 Framer Motion Integration
 - [ ] **Instalar framer-motion nos 3 frontends Web**
@@ -78,7 +78,7 @@
 ---
 
 ## 🔧 SPRINT 2 - Funcionalidades Essenciais
-**Prioridade:** 🔴 ALTA | **Status:** 0%
+**Prioridade:**  ALTA | **Status:** 0%
 
 ### 2.1 Recuperação de Senha
 **Backend:**
@@ -197,8 +197,8 @@
 
 ---
 
-## 🧪 SPRINT 3 - Testes de Qualidade
-**Prioridade:** 🟡 ALTA | **Status:** 20%
+##  SPRINT 3 - Testes de Qualidade
+**Prioridade:**  ALTA | **Status:** 20%
 
 ### 3.1 Aumentar Cobertura de Testes Backend
 - [ ] **Configurar pytest-cov**
@@ -300,8 +300,8 @@
 
 ---
 
-## 🔒 SPRINT 4 - Segurança e Compliance
-**Prioridade:** 🟠 MÉDIA | **Status:** 60%
+##  SPRINT 4 - Segurança e Compliance
+**Prioridade:**  MÉDIA | **Status:** 60%
 
 ### 4.1 Pentest Básico
 - [ ] **Executar OWASP ZAP Automated Scan**
@@ -379,8 +379,8 @@
 
 ---
 
-## 🌟 SPRINT 5 - Features Futuras (Opcional)
-**Prioridade:** 🟢 BAIXA | **Status:** 0%
+##  SPRINT 5 - Features Futuras 
+**Prioridade:**  BAIXA | **Status:** 0%
 
 ### 5.1 Mobile Apps (React Native)
 #### App Morador Mobile
@@ -421,8 +421,8 @@
 
 ---
 
-## 🚀 SPRINT 6 - Deploy e Produção
-**Prioridade:** 🔵 DEPLOY (Último) | **Status:** 0%
+##  SPRINT 6 - Deploy e Produção
+**Prioridade:**  DEPLOY (Último) | **Status:** 0%
 
 ### 6.1 Infraestrutura Base
 - [ ] **Escolher e Configurar VPS/Cloud**
@@ -531,39 +531,39 @@
 
 ---
 
-## 🎯 Meu Plano de Execução
+##  Meu Plano de Execução
 
-### ✅ **Sprint 1: UX/UI**
+###  **Sprint 1: UX/UI**
 Vou implementar Framer Motion em todos os frontends, criar PWA setup básico e adicionar dark/light mode toggle.
 **Resultado:** Aplicação com cara de produto premium
 
-### ✅ **Sprint 2: Funcionalidades Essenciais**
+###  **Sprint 2: Funcionalidades Essenciais**
 Vou desenvolver recuperação de senha, notificações agendadas, audit log completo e WebSocket para tempo real.
 **Resultado:** Features críticas implementadas
 
-### ✅ **Sprint 3: Qualidade e Testes**
+###  **Sprint 3: Qualidade e Testes**
 Vou aumentar cobertura de testes para >70%, implementar testes E2E com Playwright e executar testes de carga com Locust.
 **Resultado:** Confiança na estabilidade do sistema
 
-### ✅ **Sprint 4: Segurança**
+###  **Sprint 4: Segurança**
 Vou realizar pentest com OWASP ZAP, executar auditoria de multi-tenancy e garantir LGPD compliance.
 **Resultado:** Sistema seguro e compliant
 
-### 🚀 **Sprint 6: Deploy em Produção**
+###  **Sprint 6: Deploy em Produção**
 Vou configurar VPS e domínio, implementar SSL/HTTPS, criar backups automatizados e configurar monitoramento e alertas.
 **Resultado:** Sistema em produção, estável e monitorado
 
-### 🌟 **Sprint 5: Mobile e Features Avançadas (Futuro)**
+###  **Sprint 5: Mobile e Features Avançadas (Futuro)**
 Vou desenvolver apps mobile e implementar Dashboard IA, Votações, Financeiro.
 **Resultado:** Expansão do produto
 
 ---
 
-## ✨ Conclusão
+##  Conclusão
 
 **Minha Estratégia:** Resolver tudo antes de produção
 
 1. **Primeiro:** Vou deixar o produto perfeito (UX, Features, Testes, Segurança)
 2. **Último:** Vou fazer deploy em produção com infraestrutura robusta
 
-**Vou deixar o sistema rock solid antes de ir para produção! 💪🚀**
+**Vou deixar o sistema rock solid antes de ir para produção!**

@@ -94,7 +94,7 @@ export default function EventsPage() {
     const formatDateTime = (dateStr: string, timeStr: string) => {
         const date = new Date(dateStr)
         const time = new Date(timeStr)
-        return `${date.toLocaleDateString('pt-BR')} às ${time.toLocaleTimeString('pt-BR', { hour: '2digit', minute: '2digit' })}`
+        return `${date.toLocaleDateString('pt-BR')} às ${time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
     }
 
     const getStatusBadge = (status: string) => {

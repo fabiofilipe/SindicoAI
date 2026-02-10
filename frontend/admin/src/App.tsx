@@ -11,6 +11,7 @@ import DashboardPage from '@/pages/DashboardPage'
 import UsersPage from '@/pages/UsersPage'
 import UnitsPage from '@/pages/UnitsPage'
 import CommonAreasPage from '@/pages/CommonAreasPage'
+import EventsPage from '@/pages/EventsPage'
 import NotificationsPage from '@/pages/NotificationsPage'
 import ReportsPage from '@/pages/ReportsPage'
 import SettingsPage from '@/pages/SettingsPage'
@@ -81,6 +82,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <CommonAreasPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/events"
+              element={
+                <PrivateRoute>
+                  <EventsPage />
                 </PrivateRoute>
               }
             />

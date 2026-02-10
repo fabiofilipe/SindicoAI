@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Save, Building2, Clock, Bell, FileText } from 'lucide-react'
+import { Save, Building2, Clock, Bell, FileText, Download, Trash2 } from 'lucide-react'
 import { getSettings, updateSettings } from '../services/settingsService'
-import { listDocuments } from '../services/documentService'
+import { listDocuments, deleteDocument, downloadDocument } from '../services/documentService'
 import type { SettingsUpdate, ReservationSettings, NotificationSettings } from '../types/settings'
 import type { Document } from '../types/document'
 import { CATEGORY_LABELS, STATUS_LABELS } from '../types/document'
@@ -49,6 +49,8 @@ export default function SettingsPage() {
     const [showUploadModal, setShowUploadModal] = useState(false)
     const [documents, setDocuments] = useState<Document[]>([])
     const [documentsLoading, setDocumentsLoading] = useState(false)
+    const [deletingDocId, setDeletingDocId] = useState<string | null>(null)
+    const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null)
 
     const loadDocuments = async () => {
         try {
@@ -59,6 +61,35 @@ export default function SettingsPage() {
             console.error('Error loading documents:', err)
         } finally {
             setDocumentsLoading(false)
+        }
+    }
+
+    const handleDeleteDocument = async (docId: string) => {
+        if (!confirm('Tem certeza que deseja deletar este documento? Esta ação não pode ser desfeita.')) {
+            return
+        }
+
+        try {
+            setDeletingDocId(docId)
+            await deleteDocument(docId)
+            setSuccessMessage('Documento deletado com sucesso!')
+            await loadDocuments()
+            setTimeout(() => setSuccessMessage(''), 3000)
+        } catch (err: any) {
+            setError(err.response?.data?.detail || 'Erro ao deletar documento')
+        } finally {
+            setDeletingDocId(null)
+        }
+    }
+
+    const handleDownloadDocument = async (docId: string, filename: string) => {
+        try {
+            setDownloadingDocId(docId)
+            await downloadDocument(docId, filename)
+        } catch (err: any) {
+            setError(err.response?.data?.detail || 'Erro ao fazer download do documento')
+        } finally {
+            setDownloadingDocId(null)
         }
     }
 
@@ -448,14 +479,40 @@ export default function SettingsPage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span className={`text-xs px-2 py-1 rounded flex-shrink-0 ${doc.status === 'completed'
-                                                    ? 'bg-green-500/10 text-green-500'
-                                                    : doc.status === 'processing' || doc.status === 'uploading'
-                                                        ? 'bg-yellow-500/10 text-yellow-500'
-                                                        : 'bg-red-500/10 text-red-500'
-                                                }`}>
-                                                {STATUS_LABELS[doc.status]}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-xs px-2 py-1 rounded flex-shrink-0 ${doc.status === 'completed'
+                                                        ? 'bg-green-500/10 text-green-500'
+                                                        : doc.status === 'processing' || doc.status === 'uploading'
+                                                            ? 'bg-yellow-500/10 text-yellow-500'
+                                                            : 'bg-red-500/10 text-red-500'
+                                                    }`}>
+                                                    {STATUS_LABELS[doc.status]}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleDownloadDocument(doc.id, doc.filename)}
+                                                    disabled={downloadingDocId === doc.id || doc.status !== 'completed'}
+                                                    className="p-2 hover:bg-techblue/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Baixar documento"
+                                                >
+                                                    {downloadingDocId === doc.id ? (
+                                                        <div className="w-4 h-4 border-2 border-techblue border-t-transparent rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Download className="w-4 h-4 text-techblue" />
+                                                    )}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteDocument(doc.id)}
+                                                    disabled={deletingDocId === doc.id}
+                                                    className="p-2 hover:bg-criticalred/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Deletar documento"
+                                                >
+                                                    {deletingDocId === doc.id ? (
+                                                        <div className="w-4 h-4 border-2 border-criticalred border-t-transparent rounded-full animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="w-4 h-4 text-criticalred" />
+                                                    )}
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                     {documents.length > 5 && (

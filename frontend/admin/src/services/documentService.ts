@@ -69,3 +69,22 @@ export const getDocument = async (id: string): Promise<Document> => {
 export const deleteDocument = async (id: string): Promise<void> => {
     await api.delete(`/documents/${id}`)
 }
+
+/**
+ * Fazer download de um documento
+ */
+export const downloadDocument = async (id: string, filename: string): Promise<void> => {
+    const response = await api.get(`/documents/${id}/download`, {
+        responseType: 'blob'
+    })
+
+    // Criar link temporário para download
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', filename)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+}

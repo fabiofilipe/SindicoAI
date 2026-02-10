@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks, Query
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List, Optional
@@ -209,6 +210,40 @@ async def get_document(
         raise HTTPException(status_code=404, detail="Documento não encontrado")
 
     return document
+
+
+@router.get("/{document_id}/download")
+async def download_document(
+    document_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Fazer download de um documento"""
+
+    result = await db.execute(
+        select(Document).where(
+            Document.id == document_id,
+            Document.tenant_id == current_user.tenant_id
+        )
+    )
+    document = result.scalar_one_or_none()
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+
+    # Verificar se arquivo existe
+    ext = document.file_type
+    file_path = os.path.join(UPLOAD_DIR, f"{document.id}.{ext}")
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado no servidor")
+
+    # Retornar arquivo para download
+    return FileResponse(
+        path=file_path,
+        filename=document.filename,
+        media_type='application/octet-stream'
+    )
 
 
 @router.delete("/{document_id}", status_code=204)

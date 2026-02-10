@@ -19,10 +19,15 @@ services:
       dockerfile: Dockerfile
       args:
         APP_NAME: morador
+      target: builder
+    command: npm run dev
     ports:
-      - "3000:80"
+      - "3000:5173"
+    volumes:
+      - ./frontend/morador:/app/morador
+      - /app/morador/node_modules
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
     networks:
@@ -34,10 +39,15 @@ services:
       dockerfile: Dockerfile
       args:
         APP_NAME: funcionario
+      target: builder
+    command: npm run dev
     ports:
-      - "3001:80"
+      - "3001:5173"
+    volumes:
+      - ./frontend/funcionario:/app/funcionario
+      - /app/funcionario/node_modules
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
     networks:
@@ -49,10 +59,15 @@ services:
       dockerfile: Dockerfile
       args:
         APP_NAME: admin
+      target: builder
+    command: npm run dev
     ports:
-      - "3002:80"
+      - "3002:5173"
+    volumes:
+      - ./frontend/admin:/app/admin
+      - /app/admin/node_modules
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
     networks:
@@ -64,8 +79,13 @@ services:
       dockerfile: Dockerfile
       args:
         APP_NAME: landing
+      target: builder
+    command: npm run dev
     ports:
-      - "3003:80"
+      - "3003:5173"
+    volumes:
+      - ./frontend/landing:/app/landing
+      - /app/landing/node_modules
     networks:
       - sindicoai-network
 

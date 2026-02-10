@@ -4,6 +4,7 @@ import { AuthProvider } from '@/contexts'
 import { PrivateRoute } from '@/components'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { LoginPage, ForgotPasswordPage, ResetPasswordPage, HomePage, ReservationsPage, AssistantPage, NotificationsPage, ProfilePage } from '@/pages'
+import EventsPage from '@/pages/events/EventsPage'
 
 function App() {
     return (
@@ -57,6 +58,14 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <ReservationsPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/events"
+                            element={
+                                <PrivateRoute>
+                                    <EventsPage />
                                 </PrivateRoute>
                             }
                         />

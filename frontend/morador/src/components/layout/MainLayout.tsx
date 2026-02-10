@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import {
     Home,
     Calendar,
+    CalendarDays,
     MessageSquare,
     Bell,
     User,
@@ -21,6 +22,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     const menuItems = [
         { path: '/home', icon: Home, label: 'Início' },
         { path: '/reservations', icon: Calendar, label: 'Reservas' },
+        { path: '/events', icon: CalendarDays, label: 'Eventos' },
         { path: '/assistant', icon: MessageSquare, label: 'Assistente IA' },
         { path: '/notifications', icon: Bell, label: 'Notificações' },
         { path: '/profile', icon: User, label: 'Perfil' },

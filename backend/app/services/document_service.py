@@ -118,7 +118,7 @@ class DocumentProcessor:
         """Gera embedding usando Gemini"""
         try:
             result = genai.embed_content(
-                model="models/text-embedding-004",
+                model="models/gemini-embedding-001",
                 content=text,
                 task_type="retrieval_document"
             )

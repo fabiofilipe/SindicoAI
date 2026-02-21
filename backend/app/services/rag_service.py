@@ -18,7 +18,7 @@ class RAGService:
     async def generate_query_embedding(self, query: str) -> List[float]:
         """Gera embedding para a pergunta do usuário"""
         result = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-001",
             content=query,
             task_type="retrieval_query"
         )

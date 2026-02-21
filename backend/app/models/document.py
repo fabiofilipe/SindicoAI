@@ -44,8 +44,8 @@ class DocumentChunk(Base):
     chunk_index = Column(Integer, nullable=False)  # Ordem do chunk no documento
     page_number = Column(Integer)  # Página de origem (se disponível)
 
-    # Vector embedding (768 dimensões para Gemini text-embedding-004)
-    embedding = Column(Vector(768))
+    # Vector embedding (3072 dimensões para Gemini gemini-embedding-001)
+    embedding = Column(Vector(3072))
 
     document_id = Column(String, ForeignKey("documents.id"), nullable=False)
     document = relationship("Document", back_populates="chunks")

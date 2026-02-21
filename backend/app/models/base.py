@@ -1,10 +1,17 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, JSON, Text, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, JSON, Text, UniqueConstraint, Enum
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+import enum
 import uuid
 
 def generate_uuid():
     return str(uuid.uuid4())
+
+
+class UserRole(str, enum.Enum):
+    ADMIN = "admin"
+    STAFF = "staff"
+    RESIDENT = "resident"
 
 class Tenant(Base):
     __tablename__ = "tenants"
@@ -53,7 +60,7 @@ class User(Base):
     cpf = Column(String, unique=True, index=True, nullable=True)  # CPF for validation
     hashed_password = Column(String, nullable=False)
     full_name = Column(String)
-    role = Column(String, default="resident") # resident, admin, staff
+    role = Column(String, default=UserRole.RESIDENT.value)
     is_active = Column(Boolean, default=True)
 
     # Password reset fields

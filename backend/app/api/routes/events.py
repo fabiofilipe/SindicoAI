@@ -7,7 +7,7 @@ from datetime import datetime
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import Event, EventRSVP, User, Notification
+from app.models.base import Event, EventRSVP, User, Notification, UserRole
 from app.schemas.event import EventCreate, EventUpdate, EventResponse, EventRSVPCreate, EventRSVPResponse
 from app.services.event_service import check_capacity, get_user_rsvp, count_attendees
 
@@ -54,7 +54,7 @@ async def create_event(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new event (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can create events"
@@ -80,7 +80,7 @@ async def create_event(
     result = await db.execute(
         select(User).where(
             User.tenant_id == current_user.tenant_id,
-            User.role == "resident"
+            User.role == UserRole.RESIDENT
         )
     )
     residents = result.scalars().all()
@@ -129,7 +129,7 @@ async def update_event(
     current_user: User = Depends(get_current_user)
 ):
     """Update an event (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can update events"
@@ -185,7 +185,7 @@ async def cancel_event(
     current_user: User = Depends(get_current_user)
 ):
     """Cancel an event (admin only, soft delete)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can cancel events"
@@ -237,7 +237,7 @@ async def create_or_update_rsvp(
 ):
     """Create or update RSVP (residents only)"""
     # Staff cannot RSVP
-    if current_user.role == "staff":
+    if current_user.role == UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Staff members cannot RSVP to events"
@@ -310,7 +310,7 @@ async def list_event_rsvps(
     current_user: User = Depends(get_current_user)
 ):
     """List all RSVPs for an event (admin only)"""
-    if current_user.role not in ["admin", "staff"]:
+    if current_user.role not in [UserRole.ADMIN, UserRole.STAFF]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins and staff can view RSVPs"
@@ -333,7 +333,7 @@ async def mark_attendance(
     current_user: User = Depends(get_current_user)
 ):
     """Mark attendance for an RSVP (staff and admin only)"""
-    if current_user.role not in ["admin", "staff"]:
+    if current_user.role not in [UserRole.ADMIN, UserRole.STAFF]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins and staff can mark attendance"

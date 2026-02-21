@@ -1,40 +1,33 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 from app.core.database import get_db
-from app.core.security import get_password_hash, verify_password
 from app.dependencies.auth import get_current_user
-from app.models.base import User
-from app.schemas.user import UserResponse, UserUpdate, PasswordResetRequest, ChangePasswordRequest
+from app.models.base import User, UserRole
+from app.schemas.user import UserResponse, PasswordResetRequest, ChangePasswordRequest
+from app.services.user_service import (
+    list_users_by_tenant, get_user_by_id, set_user_active,
+    admin_reset_password, change_password
+)
 
 router = APIRouter()
+
 
 @router.get("/", response_model=List[UserResponse])
 async def list_users(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """List all users in the tenant (admin only)"""
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admins can list users"
-        )
-    
-    result = await db.execute(
-        select(User).where(User.tenant_id == current_user.tenant_id)
-    )
-    users = result.scalars().all()
-    return users
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can list users")
+    return await list_users_by_tenant(db, current_user.tenant_id)
+
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_info(
-    current_user: User = Depends(get_current_user)
-):
-    """Get current user information"""
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
+
 
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(
@@ -42,26 +35,13 @@ async def get_user(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Get user details (admin or self)"""
-    result = await db.execute(
-        select(User).where(
-            User.id == user_id,
-            User.tenant_id == current_user.tenant_id
-        )
-    )
-    user = result.scalars().first()
-    
+    if current_user.role != UserRole.ADMIN and current_user.id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only view your own profile")
+    user = await get_user_by_id(db, user_id, current_user.tenant_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    # Only admin or self can view
-    if current_user.role != "admin" and current_user.id != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You can only view your own profile"
-        )
-    
     return user
+
 
 @router.put("/{user_id}/activate", response_model=UserResponse)
 async def activate_user(
@@ -69,28 +49,13 @@ async def activate_user(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Activate a user (admin only)"""
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admins can activate users"
-        )
-    
-    result = await db.execute(
-        select(User).where(
-            User.id == user_id,
-            User.tenant_id == current_user.tenant_id
-        )
-    )
-    user = result.scalars().first()
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.is_active = True
-    await db.commit()
-    await db.refresh(user)
-    return user
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can activate users")
+    try:
+        return await set_user_active(db, user_id, current_user.tenant_id, True)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 
 @router.put("/{user_id}/deactivate", response_model=UserResponse)
 async def deactivate_user(
@@ -98,35 +63,15 @@ async def deactivate_user(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Deactivate a user (admin only)"""
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admins can deactivate users"
-        )
-    
-    result = await db.execute(
-        select(User).where(
-            User.id == user_id,
-            User.tenant_id == current_user.tenant_id
-        )
-    )
-    user = result.scalars().first()
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Prevent admin from deactivating themselves
-    if user.id == current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cannot deactivate yourself"
-        )
-    
-    user.is_active = False
-    await db.commit()
-    await db.refresh(user)
-    return user
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can deactivate users")
+    if user_id == current_user.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot deactivate yourself")
+    try:
+        return await set_user_active(db, user_id, current_user.tenant_id, False)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 
 @router.put("/{user_id}/reset-password", response_model=UserResponse)
 async def reset_user_password(
@@ -135,28 +80,13 @@ async def reset_user_password(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Reset user password (admin only)"""
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admins can reset passwords"
-        )
-    
-    result = await db.execute(
-        select(User).where(
-            User.id == user_id,
-            User.tenant_id == current_user.tenant_id
-        )
-    )
-    user = result.scalars().first()
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.hashed_password = get_password_hash(password_reset.new_password)
-    await db.commit()
-    await db.refresh(user)
-    return user
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can reset passwords")
+    try:
+        return await admin_reset_password(db, user_id, current_user.tenant_id, password_reset.new_password)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 
 @router.put("/me/change-password", response_model=UserResponse)
 async def change_own_password(
@@ -164,16 +94,7 @@ async def change_own_password(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Change current user's password"""
-    # Verify current password
-    if not verify_password(password_change.current_password, current_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Senha atual incorreta"
-        )
-
-    # Update to new password
-    current_user.hashed_password = get_password_hash(password_change.new_password)
-    await db.commit()
-    await db.refresh(current_user)
-    return current_user
+    try:
+        return await change_password(db, current_user, password_change.current_password, password_change.new_password)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

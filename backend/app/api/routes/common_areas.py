@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import CommonArea, User
+from app.models.base import CommonArea, User, UserRole
 from app.schemas.common_area import CommonAreaCreate, CommonAreaUpdate, CommonAreaResponse
 
 router = APIRouter()
@@ -29,7 +29,7 @@ async def create_common_area(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new common area (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can create common areas"
@@ -67,7 +67,7 @@ async def update_common_area(
     current_user: User = Depends(get_current_user)
 ):
     """Update a common area (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can update common areas"
@@ -97,7 +97,7 @@ async def delete_common_area(
     current_user: User = Depends(get_current_user)
 ):
     """Delete a common area (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can delete common areas"

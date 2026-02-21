@@ -5,11 +5,12 @@ from sqlalchemy.future import select
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import Notification, User
+from app.models.base import Notification, User, UserRole
 from app.schemas.notification import NotificationCreate, NotificationResponse
-from app.services.websocket import manager
+from app.services.notification_service import get_target_user_ids, create_notifications
 
 router = APIRouter()
+
 
 @router.get("/", response_model=List[NotificationResponse])
 async def list_notifications(
@@ -17,15 +18,12 @@ async def list_notifications(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """List all notifications for the current user, optionally filter by unread"""
     query = select(Notification).where(Notification.user_id == current_user.id)
-    
     if unread is not None:
         query = query.where(Notification.is_read == (not unread))
-    
     result = await db.execute(query)
-    notifications = result.scalars().all()
-    return notifications
+    return result.scalars().all()
+
 
 @router.put("/{notification_id}/read", response_model=NotificationResponse)
 async def mark_notification_as_read(
@@ -33,7 +31,6 @@ async def mark_notification_as_read(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Mark a notification as read"""
     result = await db.execute(
         select(Notification).where(
             Notification.id == notification_id,
@@ -41,14 +38,13 @@ async def mark_notification_as_read(
         )
     )
     notification = result.scalars().first()
-    
     if not notification:
         raise HTTPException(status_code=404, detail="Notification not found")
-    
     notification.is_read = True
     await db.commit()
     await db.refresh(notification)
     return notification
+
 
 @router.delete("/{notification_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_notification(
@@ -56,7 +52,6 @@ async def delete_notification(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Delete a notification"""
     result = await db.execute(
         select(Notification).where(
             Notification.id == notification_id,
@@ -64,13 +59,12 @@ async def delete_notification(
         )
     )
     notification = result.scalars().first()
-    
     if not notification:
         raise HTTPException(status_code=404, detail="Notification not found")
-    
     await db.delete(notification)
     await db.commit()
     return None
+
 
 @router.post("/", response_model=List[NotificationResponse], status_code=status.HTTP_201_CREATED)
 async def create_notification(
@@ -78,76 +72,22 @@ async def create_notification(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Create notifications (admin only).
-    Can send to specific users, all residents of specific units, or all residents.
-    """
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can create notifications"
         )
-    
-    target_user_ids = set()
-    
-    # Collect target user IDs based on criteria
-    if notification.send_to_all:
-        # Send to all residents in tenant
-        result = await db.execute(
-            select(User).where(
-                User.tenant_id == current_user.tenant_id,
-                User.role == "resident"
-            )
-        )
-        users = result.scalars().all()
-        target_user_ids.update([u.id for u in users])
-    
-    if notification.user_ids:
-        # Add specific user IDs
-        target_user_ids.update(notification.user_ids)
-    
-    if notification.unit_ids:
-        # Add all residents of specified units
-        result = await db.execute(
-            select(User).where(
-                User.unit_id.in_(notification.unit_ids),
-                User.tenant_id == current_user.tenant_id
-            )
-        )
-        users = result.scalars().all()
-        target_user_ids.update([u.id for u in users])
-    
-    # Create notifications for all target users
-    created_notifications = []
-    for user_id in target_user_ids:
-        db_notification = Notification(
-            title=notification.title,
-            message=notification.message,
-            user_id=user_id,
-            tenant_id=current_user.tenant_id
-        )
-        db.add(db_notification)
-        created_notifications.append(db_notification)
-    
-    await db.commit()
 
-    # Refresh all notifications
-    for notif in created_notifications:
-        await db.refresh(notif)
+    target_ids = await get_target_user_ids(
+        db, current_user.tenant_id,
+        send_to_all=notification.send_to_all,
+        user_ids=notification.user_ids,
+        unit_ids=notification.unit_ids
+    )
 
-    # Broadcast to all connected clients in tenant via WebSocket
-    for notif in created_notifications:
-        await manager.broadcast_to_tenant(
-            {
-                "type": "notification",
-                "data": {
-                    "id": notif.id,
-                    "title": notif.title,
-                    "message": notif.message,
-                    "created_at": notif.created_at.isoformat() if notif.created_at else None,
-                }
-            },
-            current_user.tenant_id
-        )
-
-    return created_notifications
+    return await create_notifications(
+        db, current_user.tenant_id,
+        title=notification.title,
+        message=notification.message,
+        user_ids=target_ids
+    )

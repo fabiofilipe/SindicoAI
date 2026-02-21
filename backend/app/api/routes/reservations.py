@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import Reservation, User
+from app.models.base import Reservation, User, UserRole
 from app.schemas.reservation import ReservationCreate, ReservationResponse
 from app.services.reservation_service import check_reservation_conflict, check_unit_limit
 
@@ -31,7 +31,7 @@ async def create_reservation(
 ):
     """Create a new reservation with conflict checking (residents and admins only)"""
     # Staff cannot create reservations
-    if current_user.role == "staff":
+    if current_user.role == UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Staff members cannot create reservations"
@@ -115,7 +115,7 @@ async def cancel_reservation(
         raise HTTPException(status_code=404, detail="Reservation not found")
     
     # Only owner or admin can cancel
-    if current_user.role != "admin" and reservation.user_id != current_user.id:
+    if current_user.role != UserRole.ADMIN and reservation.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You can only cancel your own reservations"
@@ -134,7 +134,7 @@ async def start_reservation(
 ):
     """Mark reservation as started (staff only)"""
     # Only staff can start reservations
-    if current_user.role != "staff":
+    if current_user.role != UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only staff members can start reservations"
@@ -170,7 +170,7 @@ async def complete_reservation(
 ):
     """Mark reservation as completed (staff only)"""
     # Only staff can complete reservations
-    if current_user.role != "staff":
+    if current_user.role != UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only staff members can complete reservations"
@@ -207,7 +207,7 @@ async def report_reservation_issue(
 ):
     """Report an issue with a reservation (staff only)"""
     # Only staff can report issues
-    if current_user.role != "staff":
+    if current_user.role != UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only staff members can report issues"
@@ -233,7 +233,7 @@ async def report_reservation_issue(
     admin_result = await db.execute(
         select(User).where(
             User.tenant_id == current_user.tenant_id,
-            User.role == "admin"
+            User.role == UserRole.ADMIN
         )
     )
     admins = admin_result.scalars().all()

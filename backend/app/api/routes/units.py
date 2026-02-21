@@ -8,7 +8,7 @@ import json
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import Unit, User
+from app.models.base import Unit, User, UserRole
 from app.schemas.unit import UnitCreate, UnitUpdate, UnitResponse, UnitWithResidents, AssignUserRequest, CSVImportResponse
 
 router = APIRouter()
@@ -32,7 +32,7 @@ async def create_unit(
     current_user: User = Depends(get_current_user)
 ):
     """Create a new unit (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can create units"
@@ -78,7 +78,7 @@ async def update_unit(
     current_user: User = Depends(get_current_user)
 ):
     """Update a unit (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can update units"
@@ -112,7 +112,7 @@ async def delete_unit(
     current_user: User = Depends(get_current_user)
 ):
     """Delete a unit (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can delete units"
@@ -185,7 +185,7 @@ async def assign_user_to_unit(
     current_user: User = Depends(get_current_user)
 ):
     """Assign a user to this unit (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can assign users to units"
@@ -227,7 +227,7 @@ async def remove_user_from_unit(
     current_user: User = Depends(get_current_user)
 ):
     """Remove user from unit (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can remove users from units"
@@ -255,7 +255,7 @@ async def import_units_csv(
     current_user: User = Depends(get_current_user)
 ):
     """Import units from CSV file (admin only)"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can import units"

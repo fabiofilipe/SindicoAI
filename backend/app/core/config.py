@@ -1,6 +1,9 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "SindicoAI"
@@ -41,6 +44,9 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings():
-    return Settings()
+    s = Settings()
+    if s.SECRET_KEY == "CHANGE_THIS_IN_PRODUCTION":
+        logger.warning("SECRET_KEY is using default value! Set a secure key in .env for production.")
+    return s
 
 settings = get_settings()

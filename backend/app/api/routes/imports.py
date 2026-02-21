@@ -4,7 +4,7 @@ import os
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
-from app.models.base import User
+from app.models.base import User, UserRole
 from app.schemas.import_data import ImportResponse
 from app.services import import_service
 
@@ -20,7 +20,7 @@ async def import_units(
     Import units from CSV or Excel file
     Admin only
     """
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can import data"
@@ -75,7 +75,7 @@ async def import_residents(
     Import residents from CSV or Excel file
     Admin only
     """
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can import data"

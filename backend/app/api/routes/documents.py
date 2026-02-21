@@ -23,11 +23,20 @@ from app.services.file_validator import FileValidator
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-processor = DocumentProcessor()
-validator = FileValidator()
+
+_processor = DocumentProcessor()
+_validator = FileValidator()
 
 UPLOAD_DIR = "/app/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+def get_processor() -> DocumentProcessor:
+    return _processor
+
+
+def get_validator() -> FileValidator:
+    return _validator
 
 
 @router.post("/upload", response_model=DocumentUploadResponse)
@@ -36,7 +45,9 @@ async def upload_documents(
     files: List[UploadFile] = File(...),
     category: DocumentCategory = Query(DocumentCategory.OUTROS),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
+    processor: DocumentProcessor = Depends(get_processor),
+    validator: FileValidator = Depends(get_validator)
 ):
     """
     Upload de múltiplos documentos (Admin only).
@@ -255,7 +266,8 @@ async def reprocess_document(
     document_id: str,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
+    processor: DocumentProcessor = Depends(get_processor)
 ):
     """Reprocessar documento existente: deleta chunks e gera novos embeddings (Admin only)"""
 

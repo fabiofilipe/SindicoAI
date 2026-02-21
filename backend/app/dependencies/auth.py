@@ -9,7 +9,7 @@ from sqlalchemy.future import select
 from app.core.config import settings
 from app.core import security
 from app.core.database import get_db, set_tenant_context
-from app.models.base import User
+from app.models.base import User, UserRole
 from app.schemas.token import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -49,7 +49,7 @@ async def require_admin(
     current_user: User = Depends(get_current_user)
 ) -> User:
     """Dependency that requires the current user to be an admin"""
-    if current_user.role != "admin":
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only admins can perform this action"
@@ -61,7 +61,7 @@ async def require_staff(
     current_user: User = Depends(get_current_user)
 ) -> User:
     """Dependency that requires the current user to be staff"""
-    if current_user.role != "staff":
+    if current_user.role != UserRole.STAFF:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only staff can perform this action"

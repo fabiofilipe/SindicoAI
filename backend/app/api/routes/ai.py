@@ -10,7 +10,12 @@ from app.services.cache_service import CacheService
 from app.middleware.rate_limit import check_rate_limit, get_user_request_count
 
 router = APIRouter()
-rag_service = RAGService()
+
+_rag_service = RAGService()
+
+
+def get_rag_service() -> RAGService:
+    return _rag_service
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -18,7 +23,8 @@ async def chat_with_ai(
     http_request: Request,
     request: ChatRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    rag_service: RAGService = Depends(get_rag_service)
 ):
     """
     Endpoint de chat com o assistente virtual.
@@ -32,8 +38,8 @@ async def chat_with_ai(
     await check_rate_limit(http_request, current_user.id, limit=50)
     
     # Verificar cache
-    cached_response = CacheService.get_cached_response(
-        request.question, 
+    cached_response = await CacheService.get_cached_response(
+        request.question,
         current_user.tenant_id
     )
     
@@ -53,7 +59,7 @@ async def chat_with_ai(
         )
         
         # Salvar em cache (1 hora)
-        CacheService.cache_response(
+        await CacheService.cache_response(
             request.question,
             current_user.tenant_id,
             result,
@@ -79,7 +85,7 @@ async def get_usage_stats(
     """
     Retorna estatísticas de uso do usuário atual
     """
-    return get_user_request_count(current_user.id)
+    return await get_user_request_count(current_user.id)
 
 
 @router.get("/cache/stats")
@@ -89,7 +95,7 @@ async def get_cache_stats(
     """
     Retorna estatísticas do cache de respostas
     """
-    return CacheService.get_cache_stats()
+    return await CacheService.get_cache_stats()
 
 
 @router.delete("/cache")
@@ -100,7 +106,7 @@ async def invalidate_cache(
     Invalida todo o cache (Admin only)
     Útil quando novos documentos são adicionados
     """
-    deleted = CacheService.invalidate_cache(current_user.tenant_id)
+    deleted = await CacheService.invalidate_cache(current_user.tenant_id)
     return {
         "message": f"Cache invalidated successfully",
         "deleted_entries": deleted

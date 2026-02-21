@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -7,20 +8,24 @@ from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.base import CommonArea, User, UserRole
 from app.schemas.common_area import CommonAreaCreate, CommonAreaUpdate, CommonAreaResponse
+from app.schemas.pagination import PagedResponse
 
 router = APIRouter()
 
-@router.get("/", response_model=List[CommonAreaResponse])
+
+@router.get("/", response_model=PagedResponse[CommonAreaResponse])
 async def list_common_areas(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """List all common areas for the current tenant"""
-    result = await db.execute(
-        select(CommonArea).where(CommonArea.tenant_id == current_user.tenant_id)
-    )
+    base_query = select(CommonArea).where(CommonArea.tenant_id == current_user.tenant_id)
+    total = await db.scalar(select(func.count()).select_from(base_query.subquery()))
+    result = await db.execute(base_query.offset((page - 1) * page_size).limit(page_size))
     areas = result.scalars().all()
-    return areas
+    return PagedResponse.build(items=areas, total=total, page=page, page_size=page_size)
 
 @router.post("/", response_model=CommonAreaResponse, status_code=status.HTTP_201_CREATED)
 async def create_common_area(

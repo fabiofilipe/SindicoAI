@@ -1,8 +1,9 @@
 import api from './api'
 import type { Event, EventCreate, EventUpdate, EventRSVP } from '../types/event'
+import type { PagedResponse, PaginationParams } from '../types/pagination'
 
-export const getEvents = async (params?: { status?: string, upcoming?: boolean }): Promise<Event[]> => {
-    const response = await api.get<Event[]>('/events/', { params })
+export const getEvents = async (params?: { status?: string, upcoming?: boolean } & PaginationParams): Promise<PagedResponse<Event>> => {
+    const response = await api.get<PagedResponse<Event>>('/events/', { params })
     return response.data
 }
 

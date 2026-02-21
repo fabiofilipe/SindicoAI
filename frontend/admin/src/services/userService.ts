@@ -1,8 +1,9 @@
 import api from './api'
 import type { UserListItem, CreateUserRequest, UpdateUserRequest, ResetPasswordRequest } from '@/types/user'
+import type { PagedResponse, PaginationParams } from '@/types/pagination'
 
-export const getUsers = async (): Promise<UserListItem[]> => {
-    const response = await api.get<UserListItem[]>('/users')
+export const getUsers = async (params?: PaginationParams): Promise<PagedResponse<UserListItem>> => {
+    const response = await api.get<PagedResponse<UserListItem>>('/users', { params })
     return response.data
 }
 

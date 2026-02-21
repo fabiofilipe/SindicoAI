@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks, Query
 from fastapi.responses import FileResponse
+from sqlalchemy import delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import delete
 from typing import List, Optional
 import logging
 import os
@@ -13,10 +13,10 @@ from app.models.base import User
 from app.models.document import Document, DocumentCategory, DocumentChunk
 from app.schemas.document import (
     DocumentUploadResponse,
-    DocumentListResponse,
     DocumentResponse,
     FileUploadResult
 )
+from app.schemas.pagination import PagedResponse
 from app.services.document_service import DocumentProcessor
 from app.services.file_validator import FileValidator
 
@@ -177,33 +177,27 @@ async def upload_documents(
     )
 
 
-@router.get("/", response_model=DocumentListResponse)
+@router.get("/", response_model=PagedResponse[DocumentResponse])
 async def list_documents(
     category: Optional[DocumentCategory] = Query(None, description="Filtrar por categoria"),
     status: Optional[str] = Query(None, description="Filtrar por status (processing, completed, failed)"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Listar documentos do condomínio com filtros opcionais"""
-
-    query = select(Document).where(Document.tenant_id == current_user.tenant_id)
-
-    # Aplicar filtros
+    base_query = select(Document).where(Document.tenant_id == current_user.tenant_id)
     if category:
-        query = query.where(Document.category == category)
+        base_query = base_query.where(Document.category == category)
     if status:
-        query = query.where(Document.status == status)
+        base_query = base_query.where(Document.status == status)
 
-    # Ordenar por data de upload (mais recentes primeiro)
-    query = query.order_by(Document.upload_date.desc())
-
-    result = await db.execute(query)
+    total = await db.scalar(select(func.count()).select_from(base_query.subquery()))
+    base_query = base_query.order_by(Document.upload_date.desc())
+    result = await db.execute(base_query.offset((page - 1) * page_size).limit(page_size))
     documents = result.scalars().all()
-
-    return DocumentListResponse(
-        documents=documents,
-        total=len(documents)
-    )
+    return PagedResponse.build(items=documents, total=total, page=page, page_size=page_size)
 
 
 @router.get("/{document_id}", response_model=DocumentResponse)

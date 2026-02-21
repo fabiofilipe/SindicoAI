@@ -1,8 +1,9 @@
 import api from './api'
 import type { Unit, UnitCreate, UnitUpdate, UnitWithResidents, CSVImportResponse } from '../types/unit'
+import type { PagedResponse, PaginationParams } from '../types/pagination'
 
-export const listUnits = async (): Promise<Unit[]> => {
-    const response = await api.get('/units/')
+export const listUnits = async (params?: PaginationParams): Promise<PagedResponse<Unit>> => {
+    const response = await api.get<PagedResponse<Unit>>('/units/', { params })
     return response.data
 }
 

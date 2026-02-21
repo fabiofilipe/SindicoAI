@@ -102,46 +102,42 @@ async def import_residents(
     """
     from sqlalchemy.future import select
     import json
-    
+
     created_count = 0
     errors = []
-    
+
+    # Pre-load all data needed for the loop in 3 queries (avoids N+1)
+    units_result = await db.execute(
+        select(Unit).where(Unit.tenant_id == tenant_id)
+    )
+    units_map: dict[str, Unit] = {u.number: u for u in units_result.scalars().all()}
+
+    emails_result = await db.execute(
+        select(User.email).where(User.tenant_id == tenant_id)
+    )
+    existing_emails: set[str] = {row[0] for row in emails_result.all()}
+
+    cpfs_result = await db.execute(
+        select(User.cpf).where(User.tenant_id == tenant_id, User.cpf.isnot(None))
+    )
+    existing_cpfs: set[str] = {row[0] for row in cpfs_result.all()}
+
     for resident_data in residents:
-        # Find unit by number
-        result = await db.execute(
-            select(Unit).where(
-                Unit.number == resident_data.unit_number,
-                Unit.tenant_id == tenant_id
-            )
-        )
-        unit = result.scalars().first()
-        
+        unit = units_map.get(resident_data.unit_number)
+
         if not unit:
             errors.append(f"Unit {resident_data.unit_number} not found for CPF {resident_data.cpf}")
             continue
-        
-        # If email and password provided, create full user account
+
         if resident_data.email and resident_data.password:
-            # Check if email already exists
-            result = await db.execute(
-                select(User).where(User.email == resident_data.email)
-            )
-            existing_user = result.scalars().first()
-            
-            if existing_user:
+            if resident_data.email in existing_emails:
                 errors.append(f"Email {resident_data.email} already exists")
                 continue
-            
-            # Check if CPF already exists
-            result = await db.execute(
-                select(User).where(User.cpf == resident_data.cpf)
-            )
-            existing_cpf = result.scalars().first()
-            
-            if existing_cpf:
+
+            if resident_data.cpf in existing_cpfs:
                 errors.append(f"CPF {resident_data.cpf} already registered")
                 continue
-            
+
             db_user = User(
                 email=resident_data.email,
                 cpf=resident_data.cpf,
@@ -152,21 +148,20 @@ async def import_residents(
                 unit_id=unit.id
             )
             db.add(db_user)
-        
+            existing_emails.add(resident_data.email)
+            existing_cpfs.add(resident_data.cpf)
+
         # Always add CPF to authorized list if not already there
-        if unit.authorized_cpfs:
-            try:
-                cpf_list = json.loads(unit.authorized_cpfs)
-            except:
-                cpf_list = []
-        else:
+        try:
+            cpf_list = json.loads(unit.authorized_cpfs) if unit.authorized_cpfs else []
+        except Exception:
             cpf_list = []
-        
+
         if resident_data.cpf not in cpf_list:
             cpf_list.append(resident_data.cpf)
             unit.authorized_cpfs = json.dumps(cpf_list)
-        
+
         created_count += 1
-    
+
     await db.commit()
     return created_count, errors

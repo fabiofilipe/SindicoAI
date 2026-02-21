@@ -68,3 +68,20 @@ async def count_attendees(
         )
     )
     return result.scalar()
+
+
+async def get_attendee_counts(
+    db: AsyncSession,
+    tenant_id: str,
+    event_ids: list[str] | None = None
+) -> dict[str, int]:
+    """Return {event_id: attendee_count} for given events in a single query."""
+    query = (
+        select(EventRSVP.event_id, func.count(EventRSVP.id).label("cnt"))
+        .where(and_(EventRSVP.tenant_id == tenant_id, EventRSVP.response == "attending"))
+        .group_by(EventRSVP.event_id)
+    )
+    if event_ids is not None:
+        query = query.where(EventRSVP.event_id.in_(event_ids))
+    result = await db.execute(query)
+    return {row.event_id: row.cnt for row in result.all()}

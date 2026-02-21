@@ -1,5 +1,6 @@
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -7,22 +8,26 @@ from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.base import Notification, User, UserRole
 from app.schemas.notification import NotificationCreate, NotificationResponse
+from app.schemas.pagination import PagedResponse
 from app.services.notification_service import get_target_user_ids, create_notifications
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[NotificationResponse])
+@router.get("/", response_model=PagedResponse[NotificationResponse])
 async def list_notifications(
-    unread: bool = None,
+    unread: Optional[bool] = None,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    query = select(Notification).where(Notification.user_id == current_user.id)
+    base_query = select(Notification).where(Notification.user_id == current_user.id)
     if unread is not None:
-        query = query.where(Notification.is_read == (not unread))
-    result = await db.execute(query)
-    return result.scalars().all()
+        base_query = base_query.where(Notification.is_read == (not unread))
+    total = await db.scalar(select(func.count()).select_from(base_query.subquery()))
+    result = await db.execute(base_query.offset((page - 1) * page_size).limit(page_size))
+    return PagedResponse.build(items=result.scalars().all(), total=total, page=page, page_size=page_size)
 
 
 @router.put("/{notification_id}/read", response_model=NotificationResponse)

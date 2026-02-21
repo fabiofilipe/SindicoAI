@@ -1,29 +1,33 @@
 from typing import List
 import csv
 import io
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-import json
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.base import Unit, User, UserRole
+from app.schemas.pagination import PagedResponse
 from app.schemas.unit import UnitCreate, UnitUpdate, UnitResponse, UnitWithResidents, AssignUserRequest, CSVImportResponse
 
 router = APIRouter()
 
-@router.get("/", response_model=List[UnitResponse])
+
+@router.get("/", response_model=PagedResponse[UnitResponse])
 async def list_units(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """List all units for the current tenant"""
-    result = await db.execute(
-        select(Unit).where(Unit.tenant_id == current_user.tenant_id)
-    )
+    base_query = select(Unit).where(Unit.tenant_id == current_user.tenant_id)
+    total = await db.scalar(select(func.count()).select_from(base_query.subquery()))
+    result = await db.execute(base_query.offset((page - 1) * page_size).limit(page_size))
     units = result.scalars().all()
-    return units
+    return PagedResponse.build(items=units, total=total, page=page, page_size=page_size)
 
 @router.post("/", response_model=UnitResponse, status_code=status.HTTP_201_CREATED)
 async def create_unit(
@@ -265,29 +269,27 @@ async def import_units_csv(
     content = await file.read()
     decoded_content = content.decode('utf-8')
     reader = csv.DictReader(io.StringIO(decoded_content))
-    
+
     total_rows = 0
     created = 0
     skipped = 0
     errors = []
-    
+
+    # Pre-load existing units in a single query to avoid N+1
+    existing_result = await db.execute(
+        select(Unit.number, Unit.block).where(Unit.tenant_id == current_user.tenant_id)
+    )
+    existing_units = {(r[0], r[1] or '') for r in existing_result.all()}
+
     # Expected columns: number, block, floor, type
     for row in reader:
         total_rows += 1
         try:
-            # Check if unit already exists
-            existing = await db.execute(
-                select(Unit).where(
-                    Unit.tenant_id == current_user.tenant_id,
-                    Unit.number == row.get('number'),
-                    Unit.block == row.get('block', '')
-                )
-            )
-            if existing.scalars().first():
+            key = (row.get('number'), row.get('block', ''))
+            if key in existing_units:
                 skipped += 1
                 continue
-            
-            # Create new unit
+
             new_unit = Unit(
                 number=row.get('number'),
                 block=row.get('block'),
@@ -296,11 +298,12 @@ async def import_units_csv(
                 tenant_id=current_user.tenant_id
             )
             db.add(new_unit)
+            existing_units.add(key)  # track to avoid duplicates within the same CSV
             created += 1
-            
+
         except Exception as e:
             errors.append(f"Row {total_rows}: {str(e)}")
-    
+
     await db.commit()
     
     return {

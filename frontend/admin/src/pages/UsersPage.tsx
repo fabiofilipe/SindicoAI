@@ -6,15 +6,18 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Modal from '@/components/ui/Modal'
+import Pagination from '@/components/ui/Pagination'
 import SkeletonTable from '@/components/ui/SkeletonTable'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
 import * as userService from '@/services/userService'
+import { usePagination } from '@/hooks/usePagination'
 import type { UserListItem, CreateUserRequest, UpdateUserRequest } from '@/types/user'
+import type { PagedResponse } from '@/types/pagination'
 import { format } from 'date-fns'
 
 const UsersPage = () => {
-    const [users, setUsers] = useState<UserListItem[]>([])
-    const [filteredUsers, setFilteredUsers] = useState<UserListItem[]>([])
+    const { page, params, goToPage, reset } = usePagination(20)
+    const [pagedData, setPagedData] = useState<PagedResponse<UserListItem> | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [roleFilter, setRoleFilter] = useState('all')
@@ -40,17 +43,13 @@ const UsersPage = () => {
 
     useEffect(() => {
         loadUsers()
-    }, [])
-
-    useEffect(() => {
-        filterUsers()
-    }, [users, searchTerm, roleFilter])
+    }, [page])
 
     const loadUsers = async () => {
         try {
             setIsLoading(true)
-            const data = await userService.getUsers()
-            setUsers(data)
+            const data = await userService.getUsers(params)
+            setPagedData(data)
         } catch (error) {
             console.error('Erro ao carregar usuários:', error)
         } finally {
@@ -58,24 +57,14 @@ const UsersPage = () => {
         }
     }
 
-    const filterUsers = () => {
-        let filtered = users
-
-        if (searchTerm) {
-            filtered = filtered.filter(
-                (user) =>
-                    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    user.cpf?.includes(searchTerm)
-            )
-        }
-
-        if (roleFilter !== 'all') {
-            filtered = filtered.filter((user) => user.role === roleFilter)
-        }
-
-        setFilteredUsers(filtered)
-    }
+    const displayedUsers = (pagedData?.items ?? []).filter((user) => {
+        const matchesSearch = !searchTerm ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.cpf?.includes(searchTerm)
+        const matchesRole = roleFilter === 'all' || user.role === roleFilter
+        return matchesSearch && matchesRole
+    })
 
     const handleCreateUser = async () => {
         try {

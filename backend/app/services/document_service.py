@@ -1,3 +1,4 @@
+import asyncio
 import pdfplumber
 import pandas as pd
 import google.generativeai as genai
@@ -25,15 +26,18 @@ class DocumentProcessor:
 
     async def extract_text_from_pdf(self, pdf_path: str) -> dict:
         """Extrai texto de PDF com informação de páginas"""
-        text_by_page = {}
 
-        try:
-            with pdfplumber.open(pdf_path) as pdf:
+        def _extract(path: str) -> dict:
+            text_by_page = {}
+            with pdfplumber.open(path) as pdf:
                 for page_num, page in enumerate(pdf.pages, start=1):
                     text = page.extract_text()
                     if text:
                         text_by_page[page_num] = text
+            return text_by_page
 
+        try:
+            text_by_page = await asyncio.to_thread(_extract, pdf_path)
             logger.info(f"Extracted text from {len(text_by_page)} pages")
             return text_by_page
 
@@ -43,35 +47,34 @@ class DocumentProcessor:
 
     async def extract_text_from_excel(self, excel_path: str) -> dict:
         """Extrai texto de planilhas Excel (XLSX/XLS) preservando estrutura"""
-        text_by_sheet = {}
 
-        try:
-            excel_file = pd.ExcelFile(excel_path)
+        def _extract(path: str) -> dict:
+            text_by_sheet = {}
+            excel_file = pd.ExcelFile(path)
 
             for sheet_name in excel_file.sheet_names:
                 df = pd.read_excel(excel_file, sheet_name=sheet_name)
 
                 text_parts = []
-
-                # Add sheet name as header
                 text_parts.append(f"Planilha: {sheet_name}\n")
                 text_parts.append("=" * 50 + "\n\n")
 
-                # Add column headers
                 headers = " | ".join(str(col) for col in df.columns)
                 text_parts.append(f"Colunas: {headers}\n\n")
 
-                # Add row data
                 for idx, row in df.iterrows():
-                    # Filter out NaN values and format row
                     row_text = " | ".join(
                         f"{col}: {val}" for col, val in row.items() if pd.notna(val)
                     )
-                    if row_text:  # Only add non-empty rows
+                    if row_text:
                         text_parts.append(f"Linha {idx + 1}: {row_text}\n")
 
                 text_by_sheet[sheet_name] = "\n".join(text_parts)
 
+            return text_by_sheet
+
+        try:
+            text_by_sheet = await asyncio.to_thread(_extract, excel_path)
             logger.info(f"Extracted text from {len(text_by_sheet)} sheets")
             return text_by_sheet
 
@@ -117,7 +120,8 @@ class DocumentProcessor:
     async def generate_embedding(self, text: str) -> List[float]:
         """Gera embedding usando Gemini"""
         try:
-            result = genai.embed_content(
+            result = await asyncio.to_thread(
+                genai.embed_content,
                 model="models/gemini-embedding-001",
                 content=text,
                 task_type="retrieval_document"

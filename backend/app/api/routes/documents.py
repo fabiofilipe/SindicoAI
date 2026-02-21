@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Backgro
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import delete
 from typing import List, Optional
+import logging
 import os
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user, require_admin
 from app.models.base import User
-from app.models.document import Document, DocumentCategory
+from app.models.document import Document, DocumentCategory, DocumentChunk
 from app.schemas.document import (
     DocumentUploadResponse,
     DocumentListResponse,
@@ -17,6 +19,8 @@ from app.schemas.document import (
 )
 from app.services.document_service import DocumentProcessor
 from app.services.file_validator import FileValidator
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 processor = DocumentProcessor()
@@ -244,6 +248,50 @@ async def download_document(
         filename=document.filename,
         media_type='application/octet-stream'
     )
+
+
+@router.post("/{document_id}/reprocess")
+async def reprocess_document(
+    document_id: str,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """Reprocessar documento existente: deleta chunks e gera novos embeddings (Admin only)"""
+
+    result = await db.execute(
+        select(Document).where(
+            Document.id == document_id,
+            Document.tenant_id == current_user.tenant_id
+        )
+    )
+    document = result.scalar_one_or_none()
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+
+    ext = document.file_type
+    file_path = os.path.join(UPLOAD_DIR, f"{document.id}.{ext}")
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado no servidor. Re-upload necessário.")
+
+    # Deletar chunks existentes
+    await db.execute(
+        delete(DocumentChunk).where(DocumentChunk.document_id == document_id)
+    )
+    document.status = "processing"
+    await db.commit()
+
+    logger.info(f"Reprocessing document {document_id} ({document.filename})")
+
+    background_tasks.add_task(processor.process_document, db, document, file_path)
+
+    return {
+        "message": f"Reprocessamento do documento '{document.filename}' iniciado.",
+        "document_id": document_id,
+        "status": "processing"
+    }
 
 
 @router.delete("/{document_id}", status_code=204)

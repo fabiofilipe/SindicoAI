@@ -1,23 +1,14 @@
-import { Navigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { default as SharedPrivateRoute } from '@shared/components/PrivateRoute'
 import { useAuth } from '@/contexts/AuthContext'
-import { Loader2 } from 'lucide-react'
 
-interface PrivateRouteProps {
-    children: React.ReactNode
-}
-
-const PrivateRoute = ({ children }: PrivateRouteProps) => {
+const PrivateRoute = ({ children }: { children: ReactNode }) => {
     const { isAuthenticated, isLoading } = useAuth()
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-warm">
-                <Loader2 className="w-12 h-12 text-brass animate-spin" />
-            </div>
-        )
-    }
-
-    return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />
+    return (
+        <SharedPrivateRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
+            {children}
+        </SharedPrivateRoute>
+    )
 }
 
 export default PrivateRoute

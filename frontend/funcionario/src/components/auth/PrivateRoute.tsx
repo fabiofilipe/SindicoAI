@@ -1,14 +1,14 @@
-import { Navigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { default as SharedPrivateRoute } from '@shared/components/PrivateRoute'
 import { useAuth } from '@/contexts/AuthContext'
 
-interface PrivateRouteProps {
-    children: React.ReactNode
-}
-
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-    const { isAuthenticated } = useAuth()
-
-    return isAuthenticated ? <>{children}</> : <Navigate to="/login" />
+const PrivateRoute = ({ children }: { children: ReactNode }) => {
+    const { isAuthenticated, isLoading } = useAuth()
+    return (
+        <SharedPrivateRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
+            {children}
+        </SharedPrivateRoute>
+    )
 }
 
 export default PrivateRoute

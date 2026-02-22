@@ -3,15 +3,19 @@ import { Plus, Edit2, Trash2, Calendar, Users, Eye, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getEvents, deleteEvent } from '../services/eventService'
 import type { Event } from '../types/event'
+import type { PagedResponse } from '../types/pagination'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import SkeletonTable from '../components/ui/SkeletonTable'
+import Pagination from '../components/ui/Pagination'
 import EventFormModal from '../components/events/EventFormModal'
 import AttendeeListModal from '../components/events/AttendeeListModal'
 import MainLayout from '../components/layout/MainLayout'
+import { usePagination } from '../hooks/usePagination'
 
 export default function EventsPage() {
-    const [events, setEvents] = useState<Event[]>([])
+    const { page, params, goToPage, reset } = usePagination(20)
+    const [pagedData, setPagedData] = useState<PagedResponse<Event> | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [showCreateModal, setShowCreateModal] = useState(false)
@@ -20,19 +24,17 @@ export default function EventsPage() {
     const [statusFilter, setStatusFilter] = useState<'all' | 'scheduled' | 'completed' | 'cancelled'>('all')
     const [upcomingOnly, setUpcomingOnly] = useState(false)
 
+    const events = pagedData?.items ?? []
+
     const loadEvents = async () => {
         try {
             setLoading(true)
             setError('')
-            const params: any = {}
-            if (statusFilter !== 'all') {
-                params.status = statusFilter
-            }
-            if (upcomingOnly) {
-                params.upcoming = true
-            }
-            const data = await getEvents(params)
-            setEvents(data)
+            const filters: Record<string, unknown> = { ...params }
+            if (statusFilter !== 'all') filters.status = statusFilter
+            if (upcomingOnly) filters.upcoming = true
+            const data = await getEvents(filters)
+            setPagedData(data)
         } catch (err: any) {
             setError(err.response?.data?.detail || 'Erro ao carregar eventos')
         } finally {
@@ -42,7 +44,12 @@ export default function EventsPage() {
 
     useEffect(() => {
         loadEvents()
-    }, [statusFilter, upcomingOnly])
+    }, [page, statusFilter, upcomingOnly])
+
+    const handleFilterChange = (setter: () => void) => {
+        setter()
+        reset()
+    }
 
     const handleDelete = async (id: string, title: string) => {
         if (!confirm(`Tem certeza que deseja cancelar o evento "${title}"?`)) {
@@ -85,8 +92,8 @@ export default function EventsPage() {
         loadEvents()
     }
 
-    // Stats
-    const totalEvents = events.length
+    // Stats (from current page - totals would need separate API call)
+    const totalEvents = pagedData?.total ?? 0
     const scheduledEvents = events.filter(e => e.status === 'scheduled').length
     const completedEvents = events.filter(e => e.status === 'completed').length
 
@@ -177,7 +184,7 @@ export default function EventsPage() {
                     <div className="p-4 border-b border-cyan-glow/20">
                         <div className="flex gap-2 flex-wrap items-center">
                             <button
-                                onClick={() => setStatusFilter('all')}
+                                onClick={() => handleFilterChange(() => setStatusFilter('all'))}
                                 className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === 'all'
                                     ? 'bg-cyan text-coal font-medium'
                                     : 'bg-coal-light text-metal-silver hover:bg-coal'
@@ -186,7 +193,7 @@ export default function EventsPage() {
                                 Todos
                             </button>
                             <button
-                                onClick={() => setStatusFilter('scheduled')}
+                                onClick={() => handleFilterChange(() => setStatusFilter('scheduled'))}
                                 className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === 'scheduled'
                                     ? 'bg-yellow-400 text-coal font-medium'
                                     : 'bg-coal-light text-metal-silver hover:bg-coal'
@@ -195,7 +202,7 @@ export default function EventsPage() {
                                 Agendados
                             </button>
                             <button
-                                onClick={() => setStatusFilter('completed')}
+                                onClick={() => handleFilterChange(() => setStatusFilter('completed'))}
                                 className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === 'completed'
                                     ? 'bg-terminalgreen text-coal font-medium'
                                     : 'bg-coal-light text-metal-silver hover:bg-coal'
@@ -204,7 +211,7 @@ export default function EventsPage() {
                                 Concluídos
                             </button>
                             <button
-                                onClick={() => setStatusFilter('cancelled')}
+                                onClick={() => handleFilterChange(() => setStatusFilter('cancelled'))}
                                 className={`px-4 py-2 rounded-lg transition-colors ${statusFilter === 'cancelled'
                                     ? 'bg-alertorange text-coal font-medium'
                                     : 'bg-coal-light text-metal-silver hover:bg-coal'
@@ -218,7 +225,7 @@ export default function EventsPage() {
                                     <input
                                         type="checkbox"
                                         checked={upcomingOnly}
-                                        onChange={(e) => setUpcomingOnly(e.target.checked)}
+                                        onChange={(e) => handleFilterChange(() => setUpcomingOnly(e.target.checked))}
                                         className="rounded border-cyan-glow/30 bg-coal text-cyan focus:ring-cyan focus:ring-offset-0"
                                     />
                                     <span className="text-sm">Apenas futuros</span>
@@ -313,6 +320,16 @@ export default function EventsPage() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        )}
+
+                        {pagedData && pagedData.total_pages > 1 && (
+                            <div className="mt-4 pt-4 border-t border-cyan-glow/20">
+                                <Pagination
+                                    page={page}
+                                    totalPages={pagedData.total_pages}
+                                    onPageChange={goToPage}
+                                />
                             </div>
                         )}
                     </div>

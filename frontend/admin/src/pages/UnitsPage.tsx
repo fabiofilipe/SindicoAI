@@ -3,27 +3,33 @@ import { Plus, Upload, Trash2, Edit2, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { listUnits, deleteUnit } from '../services/unitService'
 import type { Unit } from '../types/unit'
+import type { PagedResponse } from '../types/pagination'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import SkeletonTable from '../components/ui/SkeletonTable'
+import Pagination from '../components/ui/Pagination'
 import UnitFormModal from '../components/units/UnitFormModal'
 import CSVUploadModal from '../components/units/CSVUploadModal'
 import MainLayout from '../components/layout/MainLayout'
+import { usePagination } from '../hooks/usePagination'
 
 export default function UnitsPage() {
-    const [units, setUnits] = useState<Unit[]>([])
+    const { page, params, goToPage, reset } = usePagination(20)
+    const [pagedData, setPagedData] = useState<PagedResponse<Unit> | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [showUploadModal, setShowUploadModal] = useState(false)
     const [editingUnit, setEditingUnit] = useState<Unit | null>(null)
 
+    const units = pagedData?.items ?? []
+
     const loadUnits = async () => {
         try {
             setLoading(true)
             setError('')
-            const data = await listUnits()
-            setUnits(data)
+            const data = await listUnits(params)
+            setPagedData(data)
         } catch (err: any) {
             setError(err.response?.data?.detail || 'Erro ao carregar unidades')
         } finally {
@@ -33,7 +39,7 @@ export default function UnitsPage() {
 
     useEffect(() => {
         loadUnits()
-    }, [])
+    }, [page])
 
     const handleDelete = async (id: string) => {
         toast.promise(
@@ -60,11 +66,12 @@ export default function UnitsPage() {
 
     const handleSuccess = () => {
         handleCloseModal()
+        reset()
         loadUnits()
     }
 
     // Stats
-    const totalUnits = units.length
+    const totalUnits = pagedData?.total ?? 0
     const occupiedUnits = 0 // TODO: Add logic when we have residents count
     const vacantUnits = totalUnits - occupiedUnits
 
@@ -196,6 +203,16 @@ export default function UnitsPage() {
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                        )}
+
+                        {pagedData && pagedData.total_pages > 1 && (
+                            <div className="mt-4 pt-4 border-t border-cyan-glow/20">
+                                <Pagination
+                                    page={page}
+                                    totalPages={pagedData.total_pages}
+                                    onPageChange={goToPage}
+                                />
                             </div>
                         )}
                     </div>

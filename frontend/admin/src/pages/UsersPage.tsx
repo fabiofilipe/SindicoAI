@@ -70,15 +70,9 @@ const UsersPage = () => {
         try {
             await userService.createUser(createForm)
             setIsCreateModalOpen(false)
-            setCreateForm({
-                email: '',
-                password: '',
-                full_name: '',
-                cpf: '',
-                role: 'resident',
-                is_active: true,
-            })
+            setCreateForm({ email: '', password: '', full_name: '', cpf: '', role: 'resident', is_active: true })
             toast.success('Usuário criado com sucesso!')
+            reset()
             loadUsers()
         } catch (error) {
             toast.error('Erro ao criar usuário. Verifique os dados e tente novamente.')
@@ -87,7 +81,6 @@ const UsersPage = () => {
 
     const handleEditUser = async () => {
         if (!selectedUser) return
-
         try {
             await userService.updateUser(selectedUser.id, editForm)
             setIsEditModalOpen(false)
@@ -102,7 +95,6 @@ const UsersPage = () => {
 
     const handleResetPassword = async () => {
         if (!selectedUser) return
-
         try {
             await userService.resetUserPassword(selectedUser.id, resetPasswordForm)
             setIsResetPasswordModalOpen(false)
@@ -227,14 +219,14 @@ const UsersPage = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredUsers.length === 0 ? (
+                                {displayedUsers.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center py-8 text-metal-silver/60">
                                             Nenhum usuário encontrado
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    filteredUsers.map((user) => (
+                                    displayedUsers.map((user) => (
                                         <TableRow key={user.id}>
                                             <TableCell>
                                                 <div>
@@ -299,6 +291,13 @@ const UsersPage = () => {
                                 )}
                             </TableBody>
                         </Table>
+                        <div className="px-4 py-3 border-t border-cyan-glow/20">
+                            <Pagination
+                                page={page}
+                                totalPages={pagedData?.total_pages ?? 1}
+                                onPageChange={goToPage}
+                            />
+                        </div>
                     </div>
                 )}
 

@@ -1,22 +1,41 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.api.routes import api_router
+from app.exceptions import AppException
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from contextlib import asynccontextmanager
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     start_scheduler()
     yield
-    # Shutdown
     shutdown_scheduler()
+
 
 app = FastAPI(
     title="SindicoAI API",
     version="0.1.0",
     lifespan=lifespan
 )
+
+
+@app.exception_handler(AppException)
+async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
+    logger.warning(
+        "AppException [%s %s]: %s",
+        request.method,
+        request.url.path,
+        exc.message,
+    )
+    body: dict = {"detail": exc.message}
+    if exc.detail is not None:
+        body["errors"] = exc.detail
+    return JSONResponse(status_code=exc.status_code, content=body)
 
 # Configuração CORS
 app.add_middleware(

@@ -18,11 +18,13 @@ async def parse_file(file_content: bytes, file_extension: str) -> pd.DataFrame:
         elif file_extension in ['.xlsx', '.xls']:
             df = pd.read_excel(BytesIO(file_content))
         else:
-            raise ValueError(f"Unsupported file format: {file_extension}")
-        
+            from app.exceptions import UnprocessableError
+            raise UnprocessableError(f"Formato de arquivo não suportado: {file_extension}")
+
         return df
     except Exception as e:
-        raise ValueError(f"Error parsing file: {str(e)}")
+        from app.exceptions import UnprocessableError
+        raise UnprocessableError(f"Erro ao processar arquivo: {str(e)}")
 
 def validate_units(df: pd.DataFrame) -> Tuple[List[UnitImportRow], List[str]]:
     """

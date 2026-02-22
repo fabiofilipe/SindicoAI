@@ -59,10 +59,7 @@ async def activate_user(
 ):
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can activate users")
-    try:
-        return await set_user_active(db, user_id, current_user.tenant_id, True)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await set_user_active(db, user_id, current_user.tenant_id, True)
 
 
 @router.put("/{user_id}/deactivate", response_model=UserResponse)
@@ -75,10 +72,7 @@ async def deactivate_user(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can deactivate users")
     if user_id == current_user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot deactivate yourself")
-    try:
-        return await set_user_active(db, user_id, current_user.tenant_id, False)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await set_user_active(db, user_id, current_user.tenant_id, False)
 
 
 @router.put("/{user_id}/reset-password", response_model=UserResponse)
@@ -90,10 +84,7 @@ async def reset_user_password(
 ):
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can reset passwords")
-    try:
-        return await admin_reset_password(db, user_id, current_user.tenant_id, password_reset.new_password)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await admin_reset_password(db, user_id, current_user.tenant_id, password_reset.new_password)
 
 
 @router.put("/me/change-password", response_model=UserResponse)
@@ -102,7 +93,4 @@ async def change_own_password(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    try:
-        return await change_password(db, current_user, password_change.current_password, password_change.new_password)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+    return await change_password(db, current_user, password_change.current_password, password_change.new_password)

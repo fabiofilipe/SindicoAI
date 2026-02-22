@@ -1,5 +1,5 @@
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,10 +19,7 @@ async def login_access_token(
     db: AsyncSession = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    try:
-        user = await authenticate_user(db, form_data.username, form_data.password)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    user = await authenticate_user(db, form_data.username, form_data.password)
     return create_tokens(user.id)
 
 
@@ -31,10 +28,7 @@ async def refresh_token(
     request: TokenRefreshRequest,
     db: AsyncSession = Depends(get_db)
 ) -> Any:
-    try:
-        return await refresh_user_token(db, request.refresh_token)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    return await refresh_user_token(db, request.refresh_token)
 
 
 @router.post("/forgot-password")
@@ -43,9 +37,9 @@ async def forgot_password(
     db: AsyncSession = Depends(get_db)
 ) -> Any:
     token = await request_password_reset(db, request.email)
-    response = {"message": "If the email exists, a reset link has been sent"}
+    response: dict = {"message": "Se o email existir, um link de redefinição foi enviado"}
     if token:
-        response["token"] = token  # REMOVE THIS IN PRODUCTION
+        response["token"] = token  # REMOVE IN PRODUCTION
     return response
 
 
@@ -54,8 +48,5 @@ async def reset_password_endpoint(
     request: ResetPasswordRequest,
     db: AsyncSession = Depends(get_db)
 ) -> Any:
-    try:
-        await reset_password(db, request.token, request.new_password)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    return {"message": "Password has been reset successfully"}
+    await reset_password(db, request.token, request.new_password)
+    return {"message": "Senha redefinida com sucesso"}

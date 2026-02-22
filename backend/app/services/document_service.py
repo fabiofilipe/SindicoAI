@@ -162,7 +162,8 @@ class DocumentProcessor:
                 logger.info(f"Processing Excel: {document.filename}")
 
             else:
-                raise ValueError(f"Tipo de arquivo não suportado: {document.file_type}")
+                from app.exceptions import UnprocessableError
+                raise UnprocessableError(f"Tipo de arquivo não suportado: {document.file_type}")
 
             # 2. Chunking
             document.status = "chunking"

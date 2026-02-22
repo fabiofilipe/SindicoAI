@@ -37,33 +37,22 @@ async def import_units(
     # Read file content
     content = await file.read()
     
-    try:
-        # Parse file
-        df = await import_service.parse_file(content, file_extension)
-        
-        # Validate data
-        valid_units, validation_errors = import_service.validate_units(df)
-        
-        # Import valid units
-        created_count = 0
-        if valid_units:
-            created_count = await import_service.import_units(
-                db=db,
-                units=valid_units,
-                tenant_id=current_user.tenant_id
-            )
-        
-        return ImportResponse(
-            success_count=created_count,
-            error_count=len(validation_errors),
-            errors=validation_errors
+    df = await import_service.parse_file(content, file_extension)
+    valid_units, validation_errors = import_service.validate_units(df)
+
+    created_count = 0
+    if valid_units:
+        created_count = await import_service.import_units(
+            db=db,
+            units=valid_units,
+            tenant_id=current_user.tenant_id
         )
-    
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+
+    return ImportResponse(
+        success_count=created_count,
+        error_count=len(validation_errors),
+        errors=validation_errors
+    )
 
 @router.post("/residents", response_model=ImportResponse)
 async def import_residents(
@@ -92,33 +81,21 @@ async def import_residents(
     # Read file content
     content = await file.read()
     
-    try:
-        # Parse file
-        df = await import_service.parse_file(content, file_extension)
-        
-        # Validate data
-        valid_residents, validation_errors = import_service.validate_residents(df)
-        
-        # Import valid residents
-        created_count = 0
-        import_errors = []
-        if valid_residents:
-            created_count, import_errors = await import_service.import_residents(
-                db=db,
-                residents=valid_residents,
-                tenant_id=current_user.tenant_id
-            )
-        
-        all_errors = validation_errors + import_errors
-        
-        return ImportResponse(
-            success_count=created_count,
-            error_count=len(all_errors),
-            errors=all_errors
+    df = await import_service.parse_file(content, file_extension)
+    valid_residents, validation_errors = import_service.validate_residents(df)
+
+    created_count = 0
+    import_errors: list[str] = []
+    if valid_residents:
+        created_count, import_errors = await import_service.import_residents(
+            db=db,
+            residents=valid_residents,
+            tenant_id=current_user.tenant_id
         )
-    
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+
+    all_errors = validation_errors + import_errors
+    return ImportResponse(
+        success_count=created_count,
+        error_count=len(all_errors),
+        errors=all_errors
+    )

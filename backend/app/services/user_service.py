@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.core.security import get_password_hash, verify_password
+from app.exceptions import NotFoundError, ValidationError
 from app.models.base import User
 import logging
 
@@ -24,7 +25,7 @@ async def get_user_by_id(db: AsyncSession, user_id: str, tenant_id: str) -> User
 async def set_user_active(db: AsyncSession, user_id: str, tenant_id: str, is_active: bool) -> User:
     user = await get_user_by_id(db, user_id, tenant_id)
     if not user:
-        raise ValueError("User not found")
+        raise NotFoundError("Usuário não encontrado")
     user.is_active = is_active
     await db.commit()
     await db.refresh(user)
@@ -34,7 +35,7 @@ async def set_user_active(db: AsyncSession, user_id: str, tenant_id: str, is_act
 async def admin_reset_password(db: AsyncSession, user_id: str, tenant_id: str, new_password: str) -> User:
     user = await get_user_by_id(db, user_id, tenant_id)
     if not user:
-        raise ValueError("User not found")
+        raise NotFoundError("Usuário não encontrado")
     user.hashed_password = get_password_hash(new_password)
     await db.commit()
     await db.refresh(user)
@@ -43,7 +44,7 @@ async def admin_reset_password(db: AsyncSession, user_id: str, tenant_id: str, n
 
 async def change_password(db: AsyncSession, user: User, current_password: str, new_password: str) -> User:
     if not verify_password(current_password, user.hashed_password):
-        raise ValueError("Senha atual incorreta")
+        raise ValidationError("Senha atual incorreta")
     user.hashed_password = get_password_hash(new_password)
     await db.commit()
     await db.refresh(user)

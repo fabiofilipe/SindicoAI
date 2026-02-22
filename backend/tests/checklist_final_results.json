@@ -1,7 +1,7 @@
 {
   "desenvolvimento": {
     "total": 8,
-    "passed": 8,
+    "passed": 7,
     "items": {
       "modelos": true,
       "upload": true,
@@ -9,7 +9,7 @@
       "chat": true,
       "rate_limit": true,
       "cache": true,
-      "testes": true,
+      "testes": false,
       "dataset": true
     }
   },
@@ -24,17 +24,17 @@
   },
   "producao": {
     "total": 4,
-    "passed": 4,
+    "passed": 3,
     "items": {
       "env": true,
       "monitoramento": true,
       "logs": true,
-      "documentacao": true
+      "documentacao": false
     }
   },
   "geral": {
     "total": 15,
-    "passed": 15,
-    "success_rate": "100.0%"
+    "passed": 13,
+    "success_rate": "86.7%"
   }
 }

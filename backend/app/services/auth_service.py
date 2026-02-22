@@ -4,11 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.core import security
 from app.core.config import settings
+from app.exceptions import AuthenticationError, NotFoundError, ValidationError
 from app.models.base import User
 from app.schemas.token import TokenPayload
 from app.utils.email import send_password_reset_email
 from jose import jwt, JWTError
-from pydantic import ValidationError
+from pydantic import ValidationError as PydanticValidationError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,9 +21,9 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
     user = result.scalars().first()
 
     if not user or not security.verify_password(password, user.hashed_password):
-        raise ValueError("Incorrect email or password")
+        raise AuthenticationError("Email ou senha incorretos")
     if not user.is_active:
-        raise ValueError("Inactive user")
+        raise AuthenticationError("Usuário inativo")
     return user
 
 
@@ -42,19 +43,19 @@ async def refresh_user_token(db: AsyncSession, refresh_token: str) -> dict:
     try:
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
         token_data = TokenPayload(**payload)
-    except (JWTError, ValidationError):
-        raise ValueError("Could not validate credentials")
+    except (JWTError, PydanticValidationError):
+        raise AuthenticationError("Credenciais inválidas")
 
     if payload.get("type") != "refresh":
-        raise ValueError("Invalid token type")
+        raise AuthenticationError("Tipo de token inválido")
 
     result = await db.execute(select(User).where(User.id == token_data.sub))
     user = result.scalars().first()
 
     if not user:
-        raise ValueError("User not found")
+        raise NotFoundError("Usuário não encontrado")
     if not user.is_active:
-        raise ValueError("Inactive user")
+        raise AuthenticationError("Usuário inativo")
 
     return create_tokens(user.id)
 
@@ -82,10 +83,10 @@ async def reset_password(db: AsyncSession, token: str, new_password: str) -> Non
     user = result.scalars().first()
 
     if not user:
-        raise ValueError("Invalid or expired reset token")
+        raise ValidationError("Token de redefinição inválido ou expirado")
 
     if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
-        raise ValueError("Reset token has expired")
+        raise ValidationError("Token de redefinição expirado")
 
     user.hashed_password = security.get_password_hash(new_password)
     user.reset_token = None

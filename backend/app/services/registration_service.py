@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.core.security import get_password_hash, create_access_token
 from app.core.config import settings
+from app.exceptions import NotFoundError, ConflictError, AuthorizationError
 from app.models.base import User, Tenant, Unit, UserRole
 from datetime import timedelta
 import logging
@@ -24,7 +25,7 @@ async def register_resident(
     result = await db.execute(select(Tenant).where(Tenant.name == tenant_name))
     tenant = result.scalars().first()
     if not tenant:
-        raise ValueError("Condominium not found")
+        raise NotFoundError("Condomínio não encontrado")
 
     # Find unit
     result = await db.execute(
@@ -32,26 +33,26 @@ async def register_resident(
     )
     unit = result.scalars().first()
     if not unit:
-        raise ValueError("Unit not found")
+        raise NotFoundError("Unidade não encontrada")
 
     # Check CPF authorization
     if not unit.authorized_cpfs:
-        raise PermissionError("No authorized CPFs configured for this unit. Please contact the administrator.")
+        raise AuthorizationError("Nenhum CPF autorizado configurado para esta unidade. Contate o administrador.")
     try:
         authorized_list = json.loads(unit.authorized_cpfs)
     except Exception:
         authorized_list = []
     if cpf not in authorized_list:
-        raise PermissionError("CPF not authorized for this unit. Please contact the administrator.")
+        raise AuthorizationError("CPF não autorizado para esta unidade. Contate o administrador.")
 
     # Check uniqueness
     result = await db.execute(select(User).where(User.email == email))
     if result.scalars().first():
-        raise ValueError("Email already registered")
+        raise ConflictError("Email já cadastrado")
 
     result = await db.execute(select(User).where(User.cpf == cpf))
     if result.scalars().first():
-        raise ValueError("CPF already registered")
+        raise ConflictError("CPF já cadastrado")
 
     # Create user
     new_user = User(
@@ -83,12 +84,12 @@ async def onboard_tenant(
     # Check tenant name
     result = await db.execute(select(Tenant).where(Tenant.name == tenant_name))
     if result.scalars().first():
-        raise ValueError("Condominium name already exists. Please choose a different name.")
+        raise ConflictError("Nome do condomínio já existe. Escolha um nome diferente.")
 
     # Check admin email
     result = await db.execute(select(User).where(User.email == admin_email))
     if result.scalars().first():
-        raise ValueError("Email already registered")
+        raise ConflictError("Email já cadastrado")
 
     # Create tenant
     new_tenant = Tenant(name=tenant_name, address=tenant_address)

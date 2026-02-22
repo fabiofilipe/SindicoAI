@@ -4,7 +4,7 @@ import { Users, UserCheck, Briefcase, Shield, Calendar, Building2, Activity, Tre
 import MainLayout from '@/components/layout/MainLayout'
 import Card from '@/components/ui/Card'
 import SkeletonMetric from '@/components/ui/SkeletonMetric'
-import { getDashboardMetrics } from '@/services/dashboardService'
+import { fetchDashboardData } from '@/services/dashboardService'
 import type { DashboardMetrics } from '@/types/dashboard'
 
 const DashboardPage = () => {
@@ -15,8 +15,19 @@ const DashboardPage = () => {
     useEffect(() => {
         const loadMetrics = async () => {
             try {
-                const data = await getDashboardMetrics()
-                setMetrics(data)
+                const { users, reservations, areas } = await fetchDashboardData()
+                const weekAgo = new Date()
+                weekAgo.setDate(weekAgo.getDate() - 7)
+                setMetrics({
+                    total_users: users.length,
+                    total_residents: users.filter((u: any) => u.role === 'resident').length,
+                    total_staff: users.filter((u: any) => u.role === 'staff').length,
+                    total_admins: users.filter((u: any) => u.role === 'admin').length,
+                    total_reservations: reservations.length,
+                    total_areas: areas.length,
+                    active_reservations: reservations.filter((r: any) => r.status === 'confirmed' || r.status === 'in_progress').length,
+                    recent_users: users.filter((u: any) => new Date(u.created_at) > weekAgo).length,
+                })
             } catch (error) {
                 console.error('Erro ao carregar métricas:', error)
             } finally {

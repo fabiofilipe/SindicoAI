@@ -41,16 +41,3 @@ export const getUnreadCount = async (): Promise<number> => {
     return notifications.length
 }
 
-/**
- * Busca notificações recentes (últimas 5)
- */
-export const getRecentNotifications = async (): Promise<Notification[]> => {
-    const notifications = await listNotifications()
-
-    // Ordena por data de criação (mais recentes primeiro)
-    return notifications
-        .sort((a, b) => {
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        })
-        .slice(0, 5)
-}

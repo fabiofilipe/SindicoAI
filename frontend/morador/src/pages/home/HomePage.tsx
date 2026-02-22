@@ -13,8 +13,8 @@ import {
 } from 'lucide-react'
 import { MainLayout, HologramCard, Button } from '@/components'
 import { useAuth } from '@/contexts/AuthContext'
-import { getUpcomingReservations } from '@/services/reservationService'
-import { getRecentNotifications } from '@/services/notificationService'
+import { listReservations } from '@/services/reservationService'
+import { listNotifications } from '@/services/notificationService'
 import { listCommonAreas } from '@/services/commonAreaService'
 import type { Reservation, Notification, CommonArea } from '@/types/models'
 
@@ -33,14 +33,23 @@ const HomePage = () => {
                 setIsLoading(true)
 
                 // Buscar dados em paralelo
-                const [reservations, notifications, areas] = await Promise.all([
-                    getUpcomingReservations().catch(() => []),
-                    getRecentNotifications().catch(() => []),
+                const [allReservations, allNotifications, areas] = await Promise.all([
+                    listReservations().catch(() => []),
+                    listNotifications().catch(() => []),
                     listCommonAreas().catch(() => []),
                 ])
 
-                setUpcomingReservations(reservations.slice(0, 2)) // Apenas as 2 próximas
-                setImportantNotices(notifications.slice(0, 2)) // Apenas as 2 mais recentes
+                const now = new Date()
+                const upcoming = allReservations
+                    .filter(r => new Date(r.start_time) > now && r.status === 'confirmed')
+                    .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+                    .slice(0, 2)
+                const recent = allNotifications
+                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                    .slice(0, 2)
+
+                setUpcomingReservations(upcoming)
+                setImportantNotices(recent)
                 setCommonAreas(areas)
             } catch (error) {
                 console.error('Erro ao carregar dados do dashboard:', error)

@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { MainLayout, HologramCard, Button, Modal, Input } from '@/components'
 import { listCommonAreas } from '@/services/commonAreaService'
 import {
-    getMyReservations,
+    listReservations,
     createReservation,
     cancelReservation,
 } from '@/services/reservationService'
@@ -47,7 +47,7 @@ const ReservationsPage = () => {
 
             const [areasData, reservationsData] = await Promise.all([
                 listCommonAreas(),
-                getMyReservations(),
+                listReservations(),
             ])
 
             setCommonAreas(areasData)

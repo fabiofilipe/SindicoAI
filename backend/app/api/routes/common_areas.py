@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.dependencies.auth import get_current_user
-from app.models.base import User, UserRole
+from app.dependencies.auth import get_current_user, require_admin
+from app.models.base import User
 from app.schemas.common_area import CommonAreaCreate, CommonAreaUpdate, CommonAreaResponse
 from app.schemas.pagination import PagedResponse
 from app.services.common_area_service import (
@@ -19,7 +19,7 @@ async def list_common_areas_endpoint(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await list_common_areas(db, current_user.tenant_id, page, page_size)
 
@@ -28,10 +28,8 @@ async def list_common_areas_endpoint(
 async def create_common_area_endpoint(
     area: CommonAreaCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can create common areas")
     return await create_common_area(db, area.model_dump(), current_user.tenant_id)
 
 
@@ -39,7 +37,7 @@ async def create_common_area_endpoint(
 async def get_common_area_endpoint(
     area_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await get_common_area(db, area_id, current_user.tenant_id)
 
@@ -49,10 +47,8 @@ async def update_common_area_endpoint(
     area_id: str,
     area_update: CommonAreaUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can update common areas")
     return await update_common_area(db, area_id, current_user.tenant_id, area_update.model_dump(exclude_unset=True))
 
 
@@ -60,8 +56,6 @@ async def update_common_area_endpoint(
 async def delete_common_area_endpoint(
     area_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can delete common areas")
     await delete_common_area(db, area_id, current_user.tenant_id)

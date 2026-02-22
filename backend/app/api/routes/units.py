@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
+from fastapi import APIRouter, Depends, Query, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.dependencies.auth import get_current_user
-from app.models.base import User, UserRole
+from app.dependencies.auth import get_current_user, require_admin
+from app.models.base import User
 from app.schemas.pagination import PagedResponse
 from app.schemas.unit import UnitCreate, UnitUpdate, UnitResponse, UnitWithResidents, AssignUserRequest, CSVImportResponse
 from app.services.unit_service import (
@@ -20,7 +20,7 @@ async def list_units_endpoint(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await list_units(db, current_user.tenant_id, page, page_size)
 
@@ -29,10 +29,8 @@ async def list_units_endpoint(
 async def create_unit_endpoint(
     unit: UnitCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can create units")
     return await create_unit(db, unit.model_dump(), current_user.tenant_id)
 
 
@@ -40,7 +38,7 @@ async def create_unit_endpoint(
 async def get_unit_endpoint(
     unit_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await get_unit(db, unit_id, current_user.tenant_id)
 
@@ -50,10 +48,8 @@ async def update_unit_endpoint(
     unit_id: str,
     unit_update: UnitUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can update units")
     return await update_unit(db, unit_id, current_user.tenant_id, unit_update.model_dump(exclude_unset=True))
 
 
@@ -61,10 +57,8 @@ async def update_unit_endpoint(
 async def delete_unit_endpoint(
     unit_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can delete units")
     await delete_unit(db, unit_id, current_user.tenant_id)
 
 
@@ -72,7 +66,7 @@ async def delete_unit_endpoint(
 async def get_unit_with_residents_endpoint(
     unit_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     unit, residents = await get_unit_with_residents(db, unit_id, current_user.tenant_id)
     return {
@@ -96,10 +90,8 @@ async def assign_user_to_unit_endpoint(
     unit_id: str,
     request: AssignUserRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can assign users to units")
     return await assign_user_to_unit(db, unit_id, request.user_id, current_user.tenant_id)
 
 
@@ -108,10 +100,8 @@ async def remove_user_from_unit_endpoint(
     unit_id: str,
     user_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can remove users from units")
     return await remove_user_from_unit(db, unit_id, user_id, current_user.tenant_id)
 
 
@@ -119,9 +109,7 @@ async def remove_user_from_unit_endpoint(
 async def import_units_csv_endpoint(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can import units")
     content = await file.read()
     return await import_units_from_csv(db, content, current_user.tenant_id)

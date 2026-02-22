@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.dependencies.auth import get_current_user
-from app.models.base import User, UserRole
+from app.dependencies.auth import get_current_user, require_admin, require_self_or_admin
+from app.models.base import User
 from app.schemas.pagination import PagedResponse
 from app.schemas.user import UserResponse, PasswordResetRequest, ChangePasswordRequest
 from app.services.user_service import (
@@ -19,10 +19,8 @@ async def list_users(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can list users")
     return await list_users_paginated(db, current_user.tenant_id, page, page_size)
 
 
@@ -35,10 +33,8 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 async def get_user(
     user_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_self_or_admin()),
 ):
-    if current_user.role != UserRole.ADMIN and current_user.id != user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Você só pode ver seu próprio perfil")
     user = await get_user_by_id(db, user_id, current_user.tenant_id)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
@@ -49,10 +45,8 @@ async def get_user(
 async def activate_user(
     user_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can activate users")
     return await set_user_active(db, user_id, current_user.tenant_id, True)
 
 
@@ -60,10 +54,8 @@ async def activate_user(
 async def deactivate_user(
     user_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can deactivate users")
     if user_id == current_user.id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Você não pode desativar sua própria conta")
     return await set_user_active(db, user_id, current_user.tenant_id, False)
@@ -74,10 +66,8 @@ async def reset_user_password(
     user_id: str,
     password_reset: PasswordResetRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin),
 ):
-    if current_user.role != UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can reset passwords")
     return await admin_reset_password(db, user_id, current_user.tenant_id, password_reset.new_password)
 
 
@@ -85,6 +75,6 @@ async def reset_user_password(
 async def change_own_password(
     password_change: ChangePasswordRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await change_password(db, current_user, password_change.current_password, password_change.new_password)

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.dependencies.auth import get_current_user
-from app.models.base import User, UserRole
+from app.dependencies.auth import get_current_user, require_staff
+from app.models.base import User
 from app.schemas.pagination import PagedResponse
 from app.schemas.reservation import ReservationCreate, ReservationResponse
 from app.services.reservation_service import (
@@ -19,7 +19,7 @@ async def list_reservations_endpoint(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await list_reservations(db, current_user.tenant_id, page, page_size)
 
@@ -28,7 +28,7 @@ async def list_reservations_endpoint(
 async def create_reservation_endpoint(
     reservation: ReservationCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await create_reservation(db, reservation.model_dump(), current_user)
 
@@ -37,7 +37,7 @@ async def create_reservation_endpoint(
 async def get_reservation_endpoint(
     reservation_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return await get_reservation(db, reservation_id, current_user.tenant_id)
 
@@ -46,7 +46,7 @@ async def get_reservation_endpoint(
 async def cancel_reservation_endpoint(
     reservation_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     await cancel_reservation(db, reservation_id, current_user)
 
@@ -55,13 +55,11 @@ async def cancel_reservation_endpoint(
 async def start_reservation(
     reservation_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_staff),
 ):
-    if current_user.role != UserRole.STAFF:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only staff members can start reservations")
     return await update_reservation_status(
         db, reservation_id, current_user.tenant_id,
-        new_status="in-progress", allowed_current_status="confirmed"
+        new_status="in-progress", allowed_current_status="confirmed",
     )
 
 
@@ -69,13 +67,11 @@ async def start_reservation(
 async def complete_reservation(
     reservation_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_staff),
 ):
-    if current_user.role != UserRole.STAFF:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only staff members can complete reservations")
     return await update_reservation_status(
         db, reservation_id, current_user.tenant_id,
-        new_status="completed", allowed_current_status="in-progress"
+        new_status="completed", allowed_current_status="in-progress",
     )
 
 
@@ -84,10 +80,8 @@ async def report_issue(
     reservation_id: str,
     issue: dict,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_staff),
 ):
-    if current_user.role != UserRole.STAFF:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only staff members can report issues")
     return await report_reservation_issue(
         db, reservation_id, current_user,
         description=issue.get("description", "Issue reported"),

@@ -1,11 +1,14 @@
 import json
+from datetime import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.core.security import get_password_hash, create_access_token
+
 from app.core.config import settings
+from app.core.security import get_password_hash, create_access_token
 from app.exceptions import NotFoundError, ConflictError, AuthorizationError
-from app.models.base import User, Tenant, Unit, UserRole
-from datetime import timedelta
+from app.models.base import User, Tenant, UserRole
+from app.repositories.user import UserRepository
+from app.repositories.unit import UnitRepository
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,24 +21,18 @@ async def register_resident(
     email: str,
     cpf: str,
     full_name: str,
-    password: str
+    password: str,
 ) -> User:
-    """Register a new resident. Validates tenant, unit, CPF authorization."""
-    # Find tenant
     result = await db.execute(select(Tenant).where(Tenant.name == tenant_name))
     tenant = result.scalars().first()
     if not tenant:
         raise NotFoundError("Condomínio não encontrado")
 
-    # Find unit
-    result = await db.execute(
-        select(Unit).where(Unit.number == unit_number, Unit.tenant_id == tenant.id)
-    )
-    unit = result.scalars().first()
+    unit_repo = UnitRepository(db)
+    unit = await unit_repo.get_by_number(unit_number, tenant.id)
     if not unit:
         raise NotFoundError("Unidade não encontrada")
 
-    # Check CPF authorization
     if not unit.authorized_cpfs:
         raise AuthorizationError("Nenhum CPF autorizado configurado para esta unidade. Contate o administrador.")
     try:
@@ -45,16 +42,12 @@ async def register_resident(
     if cpf not in authorized_list:
         raise AuthorizationError("CPF não autorizado para esta unidade. Contate o administrador.")
 
-    # Check uniqueness
-    result = await db.execute(select(User).where(User.email == email))
-    if result.scalars().first():
+    user_repo = UserRepository(db)
+    if await user_repo.get_by_email(email):
         raise ConflictError("Email já cadastrado")
-
-    result = await db.execute(select(User).where(User.cpf == cpf))
-    if result.scalars().first():
+    if await user_repo.get_by_cpf(cpf):
         raise ConflictError("CPF já cadastrado")
 
-    # Create user
     new_user = User(
         email=email,
         cpf=cpf,
@@ -63,12 +56,9 @@ async def register_resident(
         role=UserRole.RESIDENT.value,
         tenant_id=tenant.id,
         unit_id=unit.id,
-        is_active=True
+        is_active=True,
     )
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    return new_user
+    return await user_repo.save(new_user)
 
 
 async def onboard_tenant(
@@ -78,25 +68,20 @@ async def onboard_tenant(
     admin_email: str,
     admin_cpf: str,
     admin_full_name: str,
-    admin_password: str
+    admin_password: str,
 ) -> dict:
-    """Create a new tenant and admin user. Returns tenant, admin, and access token."""
-    # Check tenant name
     result = await db.execute(select(Tenant).where(Tenant.name == tenant_name))
     if result.scalars().first():
         raise ConflictError("Nome do condomínio já existe. Escolha um nome diferente.")
 
-    # Check admin email
-    result = await db.execute(select(User).where(User.email == admin_email))
-    if result.scalars().first():
+    user_repo = UserRepository(db)
+    if await user_repo.get_by_email(admin_email):
         raise ConflictError("Email já cadastrado")
 
-    # Create tenant
     new_tenant = Tenant(name=tenant_name, address=tenant_address)
     db.add(new_tenant)
     await db.flush()
 
-    # Create admin
     new_admin = User(
         email=admin_email,
         cpf=admin_cpf,
@@ -104,18 +89,15 @@ async def onboard_tenant(
         hashed_password=get_password_hash(admin_password),
         role=UserRole.ADMIN.value,
         tenant_id=new_tenant.id,
-        is_active=True
+        is_active=True,
     )
     db.add(new_admin)
     await db.commit()
     await db.refresh(new_tenant)
     await db.refresh(new_admin)
 
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(new_admin.id, expires_delta=access_token_expires)
-
-    return {
-        "tenant": new_tenant,
-        "admin": new_admin,
-        "access_token": access_token
-    }
+    access_token = create_access_token(
+        new_admin.id,
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    return {"tenant": new_tenant, "admin": new_admin, "access_token": access_token}

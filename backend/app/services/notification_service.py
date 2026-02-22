@@ -1,6 +1,11 @@
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from app.models.base import Notification, User, UserRole
+
+from app.exceptions import NotFoundError
+from app.models.base import Notification, User
+from app.repositories.notification import NotificationRepository
+from app.repositories.user import UserRepository
+from app.schemas.pagination import PagedResponse
 from app.services.websocket import manager
 import logging
 
@@ -12,31 +17,24 @@ async def get_target_user_ids(
     tenant_id: str,
     send_to_all: bool = False,
     user_ids: list[str] | None = None,
-    unit_ids: list[str] | None = None
+    unit_ids: list[str] | None = None,
 ) -> set[str]:
-    """Resolve target user IDs from various criteria."""
-    target_ids = set()
+    target_ids: set[str] = set()
+    user_repo = UserRepository(db)
 
     if send_to_all:
-        result = await db.execute(
-            select(User).where(
-                User.tenant_id == tenant_id,
-                User.role == UserRole.RESIDENT
-            )
-        )
-        target_ids.update(u.id for u in result.scalars().all())
+        residents = await user_repo.get_residents_by_tenant(tenant_id)
+        target_ids.update(u.id for u in residents)
 
     if user_ids:
         target_ids.update(user_ids)
 
     if unit_ids:
-        result = await db.execute(
-            select(User).where(
-                User.unit_id.in_(unit_ids),
-                User.tenant_id == tenant_id
+        for unit_id in unit_ids:
+            users = await user_repo.get_by_unit(unit_id)
+            target_ids.update(
+                u.id for u in users if u.tenant_id == tenant_id
             )
-        )
-        target_ids.update(u.id for u in result.scalars().all())
 
     return target_ids
 
@@ -47,24 +45,19 @@ async def create_notifications(
     title: str,
     message: str,
     user_ids: set[str],
-    broadcast: bool = True
+    broadcast: bool = True,
 ) -> list[Notification]:
-    """Create notifications for a set of users and optionally broadcast via WebSocket."""
+    repo = NotificationRepository(db)
     created = []
+
     for user_id in user_ids:
         notification = Notification(
             title=title,
             message=message,
             user_id=user_id,
-            tenant_id=tenant_id
+            tenant_id=tenant_id,
         )
-        db.add(notification)
-        created.append(notification)
-
-    await db.commit()
-
-    for notif in created:
-        await db.refresh(notif)
+        created.append(await repo.save(notification))
 
     if broadcast:
         for notif in created:
@@ -76,10 +69,42 @@ async def create_notifications(
                         "title": notif.title,
                         "message": notif.message,
                         "created_at": notif.created_at.isoformat() if notif.created_at else None,
-                    }
+                    },
                 },
-                tenant_id
+                tenant_id,
             )
 
     logger.info(f"Created {len(created)} notifications for tenant {tenant_id}")
     return created
+
+
+async def list_notifications(
+    db: AsyncSession,
+    user_id: str,
+    page: int,
+    page_size: int,
+    unread: Optional[bool] = None,
+) -> PagedResponse:
+    repo = NotificationRepository(db)
+    items, total = await repo.list_paginated_by_user(user_id, page, page_size, unread)
+    return PagedResponse.build(items=items, total=total, page=page, page_size=page_size)
+
+
+async def mark_as_read(
+    db: AsyncSession, notification_id: str, user_id: str
+) -> Notification:
+    repo = NotificationRepository(db)
+    notification = await repo.get_by_id_and_user(notification_id, user_id)
+    if not notification:
+        raise NotFoundError("Notificação não encontrada")
+    return await repo.update_fields(notification, {"is_read": True})
+
+
+async def delete_notification(
+    db: AsyncSession, notification_id: str, user_id: str
+) -> None:
+    repo = NotificationRepository(db)
+    notification = await repo.get_by_id_and_user(notification_id, user_id)
+    if not notification:
+        raise NotFoundError("Notificação não encontrada")
+    await repo.delete(notification)

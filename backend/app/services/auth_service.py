@@ -1,11 +1,11 @@
 from datetime import timedelta, datetime
 import secrets
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from app.core import security
 from app.core.config import settings
 from app.exceptions import AuthenticationError, NotFoundError, ValidationError
 from app.models.base import User
+from app.repositories.user import UserRepository
 from app.schemas.token import TokenPayload
 from app.utils.email import send_password_reset_email
 from jose import jwt, JWTError
@@ -16,10 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> User:
-    """Authenticate user by email and password. Returns User or raises ValueError."""
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-
+    repo = UserRepository(db)
+    user = await repo.get_by_email(email)
     if not user or not security.verify_password(password, user.hashed_password):
         raise AuthenticationError("Email ou senha incorretos")
     if not user.is_active:
@@ -28,7 +26,6 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
 
 
 def create_tokens(user_id: str) -> dict:
-    """Create access and refresh token pair."""
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     return {
@@ -39,7 +36,6 @@ def create_tokens(user_id: str) -> dict:
 
 
 async def refresh_user_token(db: AsyncSession, refresh_token: str) -> dict:
-    """Validate refresh token and create new token pair. Raises ValueError on failure."""
     try:
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[security.ALGORITHM])
         token_data = TokenPayload(**payload)
@@ -49,8 +45,8 @@ async def refresh_user_token(db: AsyncSession, refresh_token: str) -> dict:
     if payload.get("type") != "refresh":
         raise AuthenticationError("Tipo de token inválido")
 
-    result = await db.execute(select(User).where(User.id == token_data.sub))
-    user = result.scalars().first()
+    repo = UserRepository(db)
+    user = await repo.get_by_id_any_tenant(token_data.sub)
 
     if not user:
         raise NotFoundError("Usuário não encontrado")
@@ -61,10 +57,8 @@ async def refresh_user_token(db: AsyncSession, refresh_token: str) -> dict:
 
 
 async def request_password_reset(db: AsyncSession, email: str) -> str | None:
-    """Generate password reset token. Returns token or None if user not found."""
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-
+    repo = UserRepository(db)
+    user = await repo.get_by_email(email)
     if not user:
         return None
 
@@ -78,13 +72,11 @@ async def request_password_reset(db: AsyncSession, email: str) -> str | None:
 
 
 async def reset_password(db: AsyncSession, token: str, new_password: str) -> None:
-    """Reset password using token. Raises ValueError on failure."""
-    result = await db.execute(select(User).where(User.reset_token == token))
-    user = result.scalars().first()
+    repo = UserRepository(db)
+    user = await repo.get_by_reset_token(token)
 
     if not user:
         raise ValidationError("Token de redefinição inválido ou expirado")
-
     if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
         raise ValidationError("Token de redefinição expirado")
 

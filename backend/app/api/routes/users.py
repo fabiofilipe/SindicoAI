@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
@@ -9,8 +7,8 @@ from app.models.base import User, UserRole
 from app.schemas.pagination import PagedResponse
 from app.schemas.user import UserResponse, PasswordResetRequest, ChangePasswordRequest
 from app.services.user_service import (
-    get_user_by_id, set_user_active,
-    admin_reset_password, change_password
+    list_users_paginated, get_user_by_id,
+    set_user_active, admin_reset_password, change_password,
 )
 
 router = APIRouter()
@@ -25,11 +23,7 @@ async def list_users(
 ):
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can list users")
-    base_query = select(User).where(User.tenant_id == current_user.tenant_id)
-    total = await db.scalar(select(func.count()).select_from(base_query.subquery()))
-    result = await db.execute(base_query.offset((page - 1) * page_size).limit(page_size))
-    users = result.scalars().all()
-    return PagedResponse.build(items=users, total=total, page=page, page_size=page_size)
+    return await list_users_paginated(db, current_user.tenant_id, page, page_size)
 
 
 @router.get("/me", response_model=UserResponse)
@@ -44,10 +38,10 @@ async def get_user(
     current_user: User = Depends(get_current_user)
 ):
     if current_user.role != UserRole.ADMIN and current_user.id != user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only view your own profile")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Você só pode ver seu próprio perfil")
     user = await get_user_by_id(db, user_id, current_user.tenant_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return user
 
 
@@ -71,7 +65,7 @@ async def deactivate_user(
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admins can deactivate users")
     if user_id == current_user.id:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot deactivate yourself")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Você não pode desativar sua própria conta")
     return await set_user_active(db, user_id, current_user.tenant_id, False)
 
 

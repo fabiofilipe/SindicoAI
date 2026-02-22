@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://redis:6379/0"
 
     # Upload Configuration
+    UPLOAD_DIR: str = "/app/uploads"
     MAX_UPLOAD_SIZE_MB: int = 10
     MAX_UPLOAD_SIZE_BYTES: int = 10 * 1024 * 1024
 
@@ -35,8 +36,18 @@ class Settings(BaseSettings):
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
         "application/vnd.ms-excel": [".xls"]
     }
-
     ALLOWED_EXTENSIONS: list = [".pdf", ".xlsx", ".xls"]
+
+    # Document Processing
+    CHUNK_SIZE: int = 1000
+    CHUNK_OVERLAP: int = 200
+
+    # AI / RAG
+    AI_CACHE_TTL: int = 3600       # seconds
+    AI_RATE_LIMIT: int = 50        # requests per day per user
+
+    # Reservations
+    MAX_UNIT_RESERVATIONS: int = 2  # max simultaneous confirmed reservations per unit
 
     class Config:
         env_file = ".env"

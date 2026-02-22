@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user, require_admin
 from app.models.base import User
@@ -35,7 +36,7 @@ async def chat_with_ai(
     """
     
     # Verificar rate limit
-    await check_rate_limit(http_request, current_user.id, limit=50)
+    await check_rate_limit(http_request, current_user.id, limit=settings.AI_RATE_LIMIT)
     
     # Verificar cache
     cached_response = await CacheService.get_cached_response(
@@ -58,12 +59,11 @@ async def chat_with_ai(
             max_chunks=request.max_chunks
         )
         
-        # Salvar em cache (1 hora)
         await CacheService.cache_response(
             request.question,
             current_user.tenant_id,
             result,
-            ttl=3600
+            ttl=settings.AI_CACHE_TTL,
         )
 
         return ChatResponse(

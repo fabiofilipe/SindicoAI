@@ -11,7 +11,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-MAX_UNIT_RESERVATIONS = 2
+MAX_UNIT_RESERVATIONS = settings.MAX_UNIT_RESERVATIONS
 
 
 async def check_reservation_conflict(

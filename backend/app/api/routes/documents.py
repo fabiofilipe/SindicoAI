@@ -18,6 +18,7 @@ from app.schemas.document import (
 from app.schemas.pagination import PagedResponse
 from app.services.document_service import DocumentProcessor
 from app.services.file_validator import FileValidator
+from app.core.config import settings
 from app.exceptions import NotFoundError
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ router = APIRouter()
 _processor = DocumentProcessor()
 _validator = FileValidator()
 
-UPLOAD_DIR = "/app/uploads"
+UPLOAD_DIR = settings.UPLOAD_DIR
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 

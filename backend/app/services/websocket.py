@@ -101,5 +101,10 @@ class ConnectionManager:
         return len(self.active_connections.get(tenant_id, set()))
 
 
-# Global instance
+# Global singleton
 manager = ConnectionManager()
+
+
+def get_ws_manager() -> ConnectionManager:
+    """FastAPI dependency returning the shared WebSocket manager."""
+    return manager

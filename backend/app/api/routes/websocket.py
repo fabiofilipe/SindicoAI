@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
-from app.services.websocket import manager
+from app.services.websocket import ConnectionManager, get_ws_manager
 from app.core import security
 from app.models.base import User
 from app.repositories.user import UserRepository
@@ -32,11 +32,12 @@ async def websocket_notifications(
     websocket: WebSocket,
     token: str = Query(..., description="JWT access token"),
     db: AsyncSession = Depends(get_db),
+    ws_manager: ConnectionManager = Depends(get_ws_manager),
 ):
     try:
         user = await get_user_from_token(token, db)
-        await manager.connect(websocket, user.tenant_id, user.id)
-        await manager.send_personal_message(
+        await ws_manager.connect(websocket, user.tenant_id, user.id)
+        await ws_manager.send_personal_message(
             {
                 "type": "connected",
                 "message": "Connected to SindicoAI notifications",
@@ -48,12 +49,12 @@ async def websocket_notifications(
         while True:
             data = await websocket.receive_json()
             if data.get("type") == "ping":
-                await manager.send_personal_message({"type": "pong"}, websocket)
+                await ws_manager.send_personal_message({"type": "pong"}, websocket)
             else:
                 logger.debug(f"Received WebSocket message: {data}")
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket, user.tenant_id)
+        ws_manager.disconnect(websocket, user.tenant_id)
         logger.info(f"WebSocket disconnected: user={user.id}")
 
     except Exception as e:

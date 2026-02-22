@@ -1,32 +1,30 @@
 from fastapi import HTTPException, Request
-import redis.asyncio as aioredis
 from app.core.config import settings
+from app.core.redis import get_redis_client
 import logging
 import time
 
 logger = logging.getLogger(__name__)
 
-redis_client: aioredis.Redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+_RATE_LIMIT_WINDOW = 86400  # 24 hours in seconds
 
 
-async def check_rate_limit(request: Request, user_id: str, limit: int = 50):
-    today = time.strftime('%Y%m%d')
+async def check_rate_limit(request: Request, user_id: str, limit: int | None = None) -> None:
+    limit = limit or settings.AI_RATE_LIMIT
+    today = time.strftime("%Y%m%d")
     key = f"rate_limit:ai:{user_id}:{today}"
 
     try:
-        current = await redis_client.get(key)
-
+        redis = get_redis_client()
+        current = await redis.get(key)
         if current and int(current) >= limit:
             raise HTTPException(
                 status_code=429,
-                detail=f"Daily limit of {limit} AI requests exceeded. Try again tomorrow."
+                detail=f"Daily limit of {limit} AI requests exceeded. Try again tomorrow.",
             )
-
-        await redis_client.incr(key)
-
+        await redis.incr(key)
         if not current:
-            await redis_client.expire(key, 86400)
-
+            await redis.expire(key, _RATE_LIMIT_WINDOW)
     except HTTPException:
         raise
     except Exception as e:
@@ -34,24 +32,18 @@ async def check_rate_limit(request: Request, user_id: str, limit: int = 50):
 
 
 async def get_user_request_count(user_id: str) -> dict:
-    today = time.strftime('%Y%m%d')
+    limit = settings.AI_RATE_LIMIT
+    today = time.strftime("%Y%m%d")
     key = f"rate_limit:ai:{user_id}:{today}"
 
     try:
-        current = await redis_client.get(key)
+        current = await get_redis_client().get(key)
         current_count = int(current) if current else 0
-        limit = 50
-
         return {
             "current_count": current_count,
             "limit": limit,
             "remaining": max(0, limit - current_count),
-            "resets_at": "midnight UTC"
+            "resets_at": "midnight UTC",
         }
     except Exception as e:
-        return {
-            "current_count": 0,
-            "limit": 50,
-            "remaining": 50,
-            "error": str(e)
-        }
+        return {"current_count": 0, "limit": limit, "remaining": limit, "error": str(e)}

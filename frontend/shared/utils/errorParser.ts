@@ -20,7 +20,8 @@ function isAxiosError(error: unknown): error is AxiosLikeError {
     return (
         typeof error === 'object' &&
         error !== null &&
-        'config' in error
+        'config' in error &&
+        'response' in error
     )
 }
 

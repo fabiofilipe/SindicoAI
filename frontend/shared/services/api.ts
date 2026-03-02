@@ -28,7 +28,8 @@ api.interceptors.response.use(
             try {
                 const refreshToken = localStorage.getItem('refresh_token')
                 if (!refreshToken) {
-                    localStorage.clear()
+                    localStorage.removeItem('access_token')
+                    localStorage.removeItem('refresh_token')
                     window.location.href = '/login'
                     return Promise.reject(error)
                 }
@@ -45,7 +46,8 @@ api.interceptors.response.use(
 
                 return api(originalRequest)
             } catch {
-                localStorage.clear()
+                localStorage.removeItem('access_token')
+                localStorage.removeItem('refresh_token')
                 window.location.href = '/login'
                 return Promise.reject(error)
             }

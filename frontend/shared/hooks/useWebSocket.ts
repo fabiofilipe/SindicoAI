@@ -24,31 +24,41 @@ export const useWebSocket = (token: string | null, options: UseWebSocketOptions 
     const wsRef = useRef<WebSocket | null>(null)
     const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
     const reconnectAttempts = useRef(0)
+    const pingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+    const optionsRef = useRef(options)
+    optionsRef.current = options
 
     useEffect(() => {
         if (!token) return
 
         const connect = () => {
             try {
-                const ws = new WebSocket(`${WS_BASE_URL}/api/v1/ws/notifications?token=${token}`)
+                const ws = new WebSocket(`${WS_BASE_URL}/api/v1/ws/notifications`)
 
                 ws.onopen = () => {
-                    setIsConnected(true)
-                    reconnectAttempts.current = 0
-                    options.onConnect?.()
+                    ws.send(JSON.stringify({ type: 'auth', token }))
+                    pingIntervalRef.current = setInterval(() => {
+                        if (ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'ping' }))
+                        }
+                    }, 30000)
                 }
 
                 ws.onmessage = (event) => {
                     try {
                         const message: WebSocketMessage = JSON.parse(event.data as string)
                         switch (message.type) {
+                            case 'connected':
+                                setIsConnected(true)
+                                reconnectAttempts.current = 0
+                                optionsRef.current.onConnect?.()
+                                break
                             case 'notification':
                                 if (message.data) {
                                     toast.success((message.data as { title: string }).title)
-                                    options.onNotification?.(message.data)
+                                    optionsRef.current.onNotification?.(message.data)
                                 }
                                 break
-                            case 'connected':
                             case 'pong':
                                 break
                         }
@@ -61,7 +71,11 @@ export const useWebSocket = (token: string | null, options: UseWebSocketOptions 
 
                 ws.onclose = () => {
                     setIsConnected(false)
-                    options.onDisconnect?.()
+                    if (pingIntervalRef.current) {
+                        clearInterval(pingIntervalRef.current)
+                        pingIntervalRef.current = undefined
+                    }
+                    optionsRef.current.onDisconnect?.()
 
                     if (reconnectAttempts.current < MAX_RECONNECT_ATTEMPTS) {
                         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000)
@@ -75,14 +89,6 @@ export const useWebSocket = (token: string | null, options: UseWebSocketOptions 
                 }
 
                 wsRef.current = ws
-
-                const pingInterval = setInterval(() => {
-                    if (ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ type: 'ping' }))
-                    }
-                }, 30000)
-
-                return () => clearInterval(pingInterval)
             } catch {
                 // ignore connection errors
             }
@@ -91,6 +97,7 @@ export const useWebSocket = (token: string | null, options: UseWebSocketOptions 
         connect()
 
         return () => {
+            if (pingIntervalRef.current) clearInterval(pingIntervalRef.current)
             if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current)
             wsRef.current?.close()
         }

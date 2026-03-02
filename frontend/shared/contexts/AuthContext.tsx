@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import type { AuthContextData, User } from '@shared/types/auth'
 
@@ -20,25 +20,29 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider = ({ children, authService, validateUser }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const authServiceRef = useRef(authService)
+    const validateUserRef = useRef(validateUser)
+    authServiceRef.current = authService
+    validateUserRef.current = validateUser
 
     useEffect(() => {
         const loadUser = async () => {
             try {
-                if (authService.isAuthenticated()) {
-                    const userData = await authService.getCurrentUser()
-                    validateUser?.(userData)
+                if (authServiceRef.current.isAuthenticated()) {
+                    const userData = await authServiceRef.current.getCurrentUser()
+                    validateUserRef.current?.(userData)
                     setUser(userData)
                 }
             } catch (error) {
                 console.error('Erro ao carregar usuário:', error)
-                authService.logout()
+                authServiceRef.current.logout()
             } finally {
                 setIsLoading(false)
             }
         }
 
         loadUser()
-    }, [])
+    }, []) // mount-only intencional: authService é estável por design
 
     const login = async (email: string, password: string): Promise<void> => {
         try {

@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 import secrets
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import security
@@ -64,7 +64,7 @@ async def request_password_reset(db: AsyncSession, email: str) -> str | None:
 
     reset_token = secrets.token_urlsafe(32)
     user.reset_token = reset_token
-    user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+    user.reset_token_expires = datetime.now(timezone.utc) + timedelta(hours=1)
     await db.commit()
 
     await send_password_reset_email(user.email, reset_token)
@@ -77,8 +77,11 @@ async def reset_password(db: AsyncSession, token: str, new_password: str) -> Non
 
     if not user:
         raise ValidationError("Token de redefinição inválido ou expirado")
-    if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
+    if not user.reset_token_expires or user.reset_token_expires < datetime.now(timezone.utc):
         raise ValidationError("Token de redefinição expirado")
+
+    if len(new_password) < 8:
+        raise ValidationError("A senha deve ter pelo menos 8 caracteres")
 
     user.hashed_password = security.get_password_hash(new_password)
     user.reset_token = None

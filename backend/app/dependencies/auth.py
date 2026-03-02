@@ -46,7 +46,7 @@ async def require_admin(current_user: User = Depends(get_current_user)) -> User:
 
 
 async def require_staff(current_user: User = Depends(get_current_user)) -> User:
-    if current_user.role != UserRole.STAFF:
+    if current_user.role not in (UserRole.STAFF, UserRole.ADMIN):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only staff can perform this action")
     return current_user
 
@@ -71,7 +71,7 @@ def require_self_or_admin(user_id_param: str = "user_id"):
         current_user: User = Depends(get_current_user),
     ) -> User:
         target_id = request.path_params.get(user_id_param)
-        if current_user.role != UserRole.ADMIN and current_user.id != target_id:
+        if current_user.role != UserRole.ADMIN and str(current_user.id) != str(target_id):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access denied",

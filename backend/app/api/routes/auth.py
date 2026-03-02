@@ -36,11 +36,8 @@ async def forgot_password(
     request: ForgotPasswordRequest,
     db: AsyncSession = Depends(get_db)
 ) -> Any:
-    token = await request_password_reset(db, request.email)
-    response: dict = {"message": "Se o email existir, um link de redefinição foi enviado"}
-    if token:
-        response["token"] = token  # REMOVE IN PRODUCTION
-    return response
+    await request_password_reset(db, request.email)
+    return {"message": "Se o email existir, um link de redefinição foi enviado"}
 
 
 @router.post("/reset-password")

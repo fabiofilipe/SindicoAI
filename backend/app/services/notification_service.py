@@ -48,16 +48,11 @@ async def create_notifications(
     broadcast: bool = True,
 ) -> list[Notification]:
     repo = NotificationRepository(db)
-    created = []
-
-    for user_id in user_ids:
-        notification = Notification(
-            title=title,
-            message=message,
-            user_id=user_id,
-            tenant_id=tenant_id,
-        )
-        created.append(await repo.save(notification))
+    objects = [
+        Notification(title=title, message=message, user_id=uid, tenant_id=tenant_id)
+        for uid in user_ids
+    ]
+    created = await repo.bulk_create(objects)
 
     if broadcast:
         for notif in created:

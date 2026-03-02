@@ -31,6 +31,13 @@ class NotificationRepository(BaseRepository[Notification]):
         )
         return result.scalars().all(), total or 0
 
+    async def bulk_create(self, notifications: list[Notification]) -> list[Notification]:
+        self.db.add_all(notifications)
+        await self.db.commit()
+        for n in notifications:
+            await self.db.refresh(n)
+        return notifications
+
     async def get_by_id_and_user(
         self, notification_id: str, user_id: str
     ) -> Notification | None:

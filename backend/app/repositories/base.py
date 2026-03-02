@@ -35,6 +35,8 @@ class BaseRepository(Generic[T]):
         total = await self.db.scalar(
             select(func.count()).select_from(base_query.subquery())
         )
+        if hasattr(self.model, 'created_at'):
+            base_query = base_query.order_by(self.model.created_at.desc())
         result = await self.db.execute(
             base_query.offset((page - 1) * page_size).limit(page_size)
         )

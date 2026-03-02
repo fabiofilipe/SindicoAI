@@ -16,19 +16,21 @@ async def check_rate_limit(request: Request, user_id: str, limit: int | None = N
 
     try:
         redis = get_redis_client()
-        current = await redis.get(key)
-        if current and int(current) >= limit:
+        async with redis.pipeline() as pipe:
+            pipe.incr(key)
+            pipe.expire(key, _RATE_LIMIT_WINDOW)
+            results = await pipe.execute()
+        new_count = results[0]
+        if new_count > limit:
             raise HTTPException(
                 status_code=429,
                 detail=f"Daily limit of {limit} AI requests exceeded. Try again tomorrow.",
             )
-        await redis.incr(key)
-        if not current:
-            await redis.expire(key, _RATE_LIMIT_WINDOW)
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Rate limit check failed: {e}")
+        raise HTTPException(status_code=503, detail="Serviço temporariamente indisponível")
 
 
 async def get_user_request_count(user_id: str) -> dict:

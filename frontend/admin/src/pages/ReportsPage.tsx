@@ -101,6 +101,10 @@ export default function ReportsPage() {
     }
 
     const handleApplyFilters = () => {
+        if (dateRange.start > dateRange.end) {
+            setError('Data inicial não pode ser posterior à final')
+            return
+        }
         if (activeTab === 'areas') {
             loadAreasReport()
         } else {

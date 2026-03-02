@@ -11,6 +11,7 @@ const DashboardPage = () => {
     const navigate = useNavigate()
     const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [hasError, setHasError] = useState(false)
 
     useEffect(() => {
         const loadMetrics = async () => {
@@ -30,6 +31,7 @@ const DashboardPage = () => {
                 })
             } catch (error) {
                 console.error('Erro ao carregar métricas:', error)
+                setHasError(true)
             } finally {
                 setIsLoading(false)
             }
@@ -92,6 +94,11 @@ const DashboardPage = () => {
     return (
         <MainLayout>
             <div className="space-y-8">
+                {hasError && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
+                        Erro ao carregar métricas do dashboard. Verifique a conexão e tente novamente.
+                    </div>
+                )}
                 {/* Header */}
                 <div>
                     <div className="w-12 h-0.5 bg-brass rounded-full mb-4" />

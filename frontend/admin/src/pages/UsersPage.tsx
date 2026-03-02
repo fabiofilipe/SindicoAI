@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Plus, Search, Edit, Key, Power, UserCheck, UserX } from 'lucide-react'
 import toast from 'react-hot-toast'
 import MainLayout from '@/components/layout/MainLayout'
@@ -11,6 +11,7 @@ import SkeletonTable from '@/components/ui/SkeletonTable'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
 import * as userService from '@/services/userService'
 import { usePagination } from '@/hooks/usePagination'
+import { parseApiError } from '@shared/utils/errorParser'
 import type { UserListItem, CreateUserRequest, UpdateUserRequest } from '@/types/user'
 import type { PagedResponse } from '@/types/pagination'
 import { format } from 'date-fns'
@@ -19,13 +20,16 @@ const UsersPage = () => {
     const { page, params, goToPage, reset } = usePagination(20)
     const [pagedData, setPagedData] = useState<PagedResponse<UserListItem> | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [loadError, setLoadError] = useState<string | null>(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [roleFilter, setRoleFilter] = useState('all')
+    const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     // Modals
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false)
+    const [confirmUser, setConfirmUser] = useState<UserListItem | null>(null)
     const [selectedUser, setSelectedUser] = useState<UserListItem | null>(null)
 
     // Form states
@@ -45,28 +49,42 @@ const UsersPage = () => {
         loadUsers()
     }, [page])
 
-    const loadUsers = async () => {
+    useEffect(() => {
+        if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
+        searchDebounceRef.current = setTimeout(() => {
+            reset()
+            loadUsers(searchTerm, roleFilter)
+        }, 400)
+        return () => { if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current) }
+    }, [searchTerm, roleFilter])
+
+    const loadUsers = async (search?: string, role?: string) => {
         try {
             setIsLoading(true)
-            const data = await userService.getUsers(params)
+            setLoadError(null)
+            const data = await userService.getUsers({
+                ...params,
+                ...(search ? { search } : {}),
+                ...(role && role !== 'all' ? { role } : {}),
+            } as any)
             setPagedData(data)
         } catch (error) {
             console.error('Erro ao carregar usuários:', error)
+            setLoadError(parseApiError(error).message)
         } finally {
             setIsLoading(false)
         }
     }
 
-    const displayedUsers = (pagedData?.items ?? []).filter((user) => {
-        const matchesSearch = !searchTerm ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.cpf?.includes(searchTerm)
-        const matchesRole = roleFilter === 'all' || user.role === roleFilter
-        return matchesSearch && matchesRole
-    })
-
     const handleCreateUser = async () => {
+        if (!createForm.email || !createForm.password) {
+            toast.error('Email e senha são obrigatórios')
+            return
+        }
+        if (createForm.password.length < 8) {
+            toast.error('A senha deve ter pelo menos 8 caracteres')
+            return
+        }
         try {
             await userService.createUser(createForm)
             setIsCreateModalOpen(false)
@@ -106,10 +124,16 @@ const UsersPage = () => {
         }
     }
 
-    const handleToggleStatus = async (user: UserListItem) => {
-        const action = user.is_active ? 'desativar' : 'ativar'
+    const handleToggleStatus = (user: UserListItem) => {
+        setConfirmUser(user)
+    }
+
+    const confirmToggleStatus = async () => {
+        if (!confirmUser) return
+        const action = confirmUser.is_active ? 'desativar' : 'ativar'
+        setConfirmUser(null)
         toast.promise(
-            userService.toggleUserStatus(user.id, !user.is_active).then(() => loadUsers()),
+            userService.toggleUserStatus(confirmUser.id, !confirmUser.is_active).then(() => loadUsers()),
             {
                 loading: `${action === 'ativar' ? 'Ativando' : 'Desativando'} usuário...`,
                 success: `Usuário ${action === 'ativar' ? 'ativado' : 'desativado'} com sucesso!`,
@@ -178,6 +202,12 @@ const UsersPage = () => {
                     </Button>
                 </div>
 
+                {loadError && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
+                        {loadError}
+                    </div>
+                )}
+
                 {/* Filters */}
                 <div className="flex gap-4">
                     <div className="flex-1 relative">
@@ -219,14 +249,14 @@ const UsersPage = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {displayedUsers.length === 0 ? (
+                                {(pagedData?.items ?? []).length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="text-center py-8 text-metal-silver/60">
                                             Nenhum usuário encontrado
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    displayedUsers.map((user) => (
+                                    (pagedData?.items ?? []).map((user) => (
                                         <TableRow key={user.id}>
                                             <TableCell>
                                                 <div>
@@ -411,6 +441,30 @@ const UsersPage = () => {
                                 onClick={handleEditUser}
                             >
                                 Salvar Alterações
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+
+                {/* Confirm Toggle Status Modal */}
+                <Modal
+                    isOpen={!!confirmUser}
+                    onClose={() => setConfirmUser(null)}
+                    title="Confirmar Alteração de Status"
+                    size="sm"
+                >
+                    <div className="space-y-4">
+                        <p className="text-metal-silver/80">
+                            Tem certeza que deseja{' '}
+                            <strong className="text-cyan">{confirmUser?.is_active ? 'desativar' : 'ativar'}</strong>{' '}
+                            o usuário <strong className="text-cyan">{confirmUser?.email}</strong>?
+                        </p>
+                        <div className="flex gap-4 mt-6">
+                            <Button variant="outline" fullWidth onClick={() => setConfirmUser(null)}>
+                                Cancelar
+                            </Button>
+                            <Button variant="primary" fullWidth onClick={confirmToggleStatus}>
+                                Confirmar
                             </Button>
                         </div>
                     </div>

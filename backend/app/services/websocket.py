@@ -20,10 +20,8 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, tenant_id: str, user_id: str):
         """
-        Accept WebSocket connection and add to tenant group
+        Add websocket to tenant group (websocket is already accepted by the route)
         """
-        await websocket.accept()
-
         if tenant_id not in self.active_connections:
             self.active_connections[tenant_id] = set()
 

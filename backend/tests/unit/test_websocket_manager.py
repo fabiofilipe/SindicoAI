@@ -8,20 +8,16 @@ from unittest.mock import Mock, AsyncMock
 
 @pytest.mark.asyncio
 async def test_connection_manager_connect():
-    """Test WebSocket connection"""
+    """Test WebSocket connection is tracked after route accepts it"""
     manager = ConnectionManager()
     mock_websocket = Mock()
-    mock_websocket.accept = AsyncMock()
 
     tenant_id = "tenant-123"
     user_id = "user-456"
 
     await manager.connect(mock_websocket, tenant_id, user_id)
 
-    # Check that websocket was accepted
-    mock_websocket.accept.assert_called_once()
-
-    # Check that connection was added
+    # Check that connection was added (accept is now the route's responsibility)
     assert tenant_id in manager.active_connections
     assert mock_websocket in manager.active_connections[tenant_id]
 
@@ -31,7 +27,6 @@ async def test_connection_manager_disconnect():
     """Test WebSocket disconnection"""
     manager = ConnectionManager()
     mock_websocket = Mock()
-    mock_websocket.accept = AsyncMock()
 
     tenant_id = "tenant-123"
     user_id = "user-456"
@@ -52,11 +47,9 @@ async def test_connection_manager_broadcast_to_tenant():
 
     # Create multiple mock websockets
     ws1 = Mock()
-    ws1.accept = AsyncMock()
     ws1.send_json = AsyncMock()
 
     ws2 = Mock()
-    ws2.accept = AsyncMock()
     ws2.send_json = AsyncMock()
 
     tenant_id = "tenant-123"
@@ -80,10 +73,7 @@ async def test_connection_manager_get_connection_count():
     manager = ConnectionManager()
 
     ws1 = Mock()
-    ws1.accept = AsyncMock()
-
     ws2 = Mock()
-    ws2.accept = AsyncMock()
 
     tenant_id = "tenant-123"
 

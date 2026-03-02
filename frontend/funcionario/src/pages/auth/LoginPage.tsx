@@ -159,20 +159,6 @@ const LoginPage = () => {
                         </button>
                     </div>
 
-                    {/* Esqueci minha senha */}
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="text-sm text-cyan hover:text-cyan/80 transition-colors"
-                            onClick={() => {
-                                // TODO: Implementar recuperação de senha
-                                console.log('Recuperar senha')
-                            }}
-                        >
-                            Esqueci minha senha
-                        </button>
-                    </div>
-
                     {/* Botão de Login */}
                     <Button
                         type="submit"

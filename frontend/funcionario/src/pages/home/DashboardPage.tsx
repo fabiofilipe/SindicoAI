@@ -21,35 +21,35 @@ const DashboardPage = () => {
     const [unreadNotifications, setUnreadNotifications] = useState<Notification[]>([])
 
     useEffect(() => {
+        let isMounted = true
+
         const fetchData = async () => {
             try {
                 const now = new Date()
                 const today = now.toISOString().split('T')[0]
 
-                // Fetch reservations and common areas in parallel
-                const [reservations, areasData] = await Promise.all([
+                const [reservations, areasData, notifications] = await Promise.all([
                     listReservations(),
-                    listCommonAreas()
+                    listCommonAreas(),
+                    listNotifications(),
                 ])
 
-                // Store all reservations
+                if (!isMounted) return
+
                 setAllReservations(reservations)
 
-                // Create areas map
                 const areasMap = areasData.reduce((acc: Record<string, CommonArea>, area: CommonArea) => {
                     acc[area.id] = area
                     return acc
                 }, {})
                 setCommonAreas(areasMap)
 
-                // Filter today's reservations
                 const todayRes = reservations.filter((r: Reservation) =>
                     r.start_time.startsWith(today) &&
                     (r.status === 'confirmed' || r.status === 'pending')
                 )
                 setTodayReservations(todayRes)
 
-                // Filter upcoming (next 3 hours)
                 const threeHoursLater = new Date(now.getTime() + 3 * 60 * 60 * 1000)
                 const upcoming = reservations.filter((r: Reservation) => {
                     const startTime = new Date(r.start_time)
@@ -57,19 +57,18 @@ const DashboardPage = () => {
                 })
                 setUpcomingReservations(upcoming)
 
-                // Fetch notifications
-                const notifications = await listNotifications()
-                const unread = notifications.filter(n => !n.is_read)
+                const unread = notifications.filter((n: Notification) => !n.is_read)
                 setUnreadNotifications(unread)
 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error)
             } finally {
-                setIsLoading(false)
+                if (isMounted) setIsLoading(false)
             }
         }
 
         fetchData()
+        return () => { isMounted = false }
     }, [])
 
     const handleExportReport = () => {

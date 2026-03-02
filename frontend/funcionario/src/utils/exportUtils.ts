@@ -65,7 +65,7 @@ export const exportDailyReport = (
     // Create CSV content
     const csvContent = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     ].join('\n')
 
     // Create blob and download
@@ -124,7 +124,7 @@ export const exportReservationsRange = (
     // Create CSV content
     const csvContent = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     ].join('\n')
 
     // Create blob and download

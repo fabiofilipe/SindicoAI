@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Clock, User, MapPin, Loader2, CheckCircle, PlayCircle, AlertTriangle, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Card, Badge, Button, Modal } from '@/components'
-import { listCommonAreas } from '@/services/commonAreaService'
+import { getCommonArea } from '@/services/commonAreaService'
 import {
     getReservationDetails,
     startReservation,
@@ -35,16 +35,10 @@ const ReservationDetailsPage = () => {
 
         try {
             setIsLoading(true)
-            const [resData, areasData] = await Promise.all([
-                getReservationDetails(id),
-                listCommonAreas()
-            ])
-
+            const resData = await getReservationDetails(id)
             setReservation(resData)
-
-            // Find the common area
-            const area = areasData.find((a: CommonArea) => a.id === resData.common_area_id)
-            setCommonArea(area || null)
+            const area = await getCommonArea(resData.common_area_id).catch(() => null)
+            setCommonArea(area)
 
         } catch (err) {
             const errorMessage = 'Erro ao carregar detalhes da reserva'

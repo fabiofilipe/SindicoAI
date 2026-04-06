@@ -34,6 +34,16 @@ async def get_current_user(
         raise HTTPException(status_code=404, detail="User not found")
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    if token_data.type != "access":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token type",
+        )
+    if token_data.sv != user.session_version:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Session no longer valid",
+        )
 
     await set_tenant_context(db, user.tenant_id)
     return user
@@ -78,4 +88,3 @@ def require_self_or_admin(user_id_param: str = "user_id"):
             )
         return current_user
     return _check
-

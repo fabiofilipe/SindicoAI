@@ -28,6 +28,13 @@ class UserRepository(BaseRepository[User]):
         result = await self.db.execute(select(User).where(User.reset_token == token))
         return result.scalars().first()
 
+    async def clear_sessions(self, user: User) -> User:
+        user.session_version += 1
+        user.current_refresh_jti = None
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
     async def get_admins_by_tenant(self, tenant_id: str) -> list[User]:
         result = await self.db.execute(
             select(User).where(

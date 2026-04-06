@@ -3,6 +3,7 @@ from app.core.security import get_password_hash, verify_password
 from app.exceptions import NotFoundError, ValidationError
 from app.models.base import User
 from app.repositories.user import UserRepository
+from app.services.auth_service import validate_password_strength
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,11 +33,27 @@ async def admin_reset_password(db: AsyncSession, user_id: str, tenant_id: str, n
     user = await repo.get_by_id(user_id, tenant_id)
     if not user:
         raise NotFoundError("Usuário não encontrado")
-    return await repo.update_fields(user, {"hashed_password": get_password_hash(new_password)})
+    validate_password_strength(new_password)
+    return await repo.update_fields(
+        user,
+        {
+            "hashed_password": get_password_hash(new_password),
+            "session_version": user.session_version + 1,
+            "current_refresh_jti": None,
+        },
+    )
 
 
 async def change_password(db: AsyncSession, user: User, current_password: str, new_password: str) -> User:
     if not verify_password(current_password, user.hashed_password):
         raise ValidationError("Senha atual incorreta")
+    validate_password_strength(new_password)
     repo = UserRepository(db)
-    return await repo.update_fields(user, {"hashed_password": get_password_hash(new_password)})
+    return await repo.update_fields(
+        user,
+        {
+            "hashed_password": get_password_hash(new_password),
+            "session_version": user.session_version + 1,
+            "current_refresh_jti": None,
+        },
+    )

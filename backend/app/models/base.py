@@ -66,6 +66,8 @@ class User(Base):
     # Password reset fields
     reset_token = Column(String, nullable=True)
     reset_token_expires = Column(DateTime(timezone=True), nullable=True)
+    session_version = Column(Integer, nullable=False, default=0)
+    current_refresh_jti = Column(String, nullable=True)
 
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="users")
@@ -192,4 +194,3 @@ class EventRSVP(Base):
     __table_args__ = (
         UniqueConstraint('event_id', 'user_id', name='uq_event_user_rsvp'),
     )
-

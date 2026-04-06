@@ -1,4 +1,5 @@
 import api from './api'
+import { getAccessTokenValue, setAccessToken } from './api'
 import type { TokenResponse, User } from '../types/auth'
 
 export const login = async (email: string, password: string): Promise<TokenResponse> => {
@@ -10,8 +11,7 @@ export const login = async (email: string, password: string): Promise<TokenRespo
         headers: { 'Content-Type': 'multipart/form-data' },
     })
 
-    localStorage.setItem('access_token', response.data.access_token)
-    localStorage.setItem('refresh_token', response.data.refresh_token)
+    setAccessToken(response.data.access_token)
 
     return response.data
 }
@@ -22,19 +22,23 @@ export const getCurrentUser = async (): Promise<User> => {
 }
 
 export const logout = (): void => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    localStorage.removeItem('user')
+    const currentToken = getAccessTokenValue()
+    setAccessToken(null)
+    void fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/v1/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: currentToken ? { Authorization: `Bearer ${currentToken}` } : undefined,
+    })
 }
 
 export const isAuthenticated = (): boolean => {
-    return !!localStorage.getItem('access_token')
+    return !!getAccessTokenValue()
 }
 
 export const getAccessToken = (): string | null => {
-    return localStorage.getItem('access_token')
+    return getAccessTokenValue()
 }
 
 export const getRefreshToken = (): string | null => {
-    return localStorage.getItem('refresh_token')
+    return null
 }

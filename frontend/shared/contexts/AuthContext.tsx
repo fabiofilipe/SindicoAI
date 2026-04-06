@@ -28,11 +28,9 @@ export const AuthProvider = ({ children, authService, validateUser }: AuthProvid
     useEffect(() => {
         const loadUser = async () => {
             try {
-                if (authServiceRef.current.isAuthenticated()) {
-                    const userData = await authServiceRef.current.getCurrentUser()
-                    validateUserRef.current?.(userData)
-                    setUser(userData)
-                }
+                const userData = await authServiceRef.current.getCurrentUser()
+                validateUserRef.current?.(userData)
+                setUser(userData)
             } catch (error) {
                 console.error('Erro ao carregar usuário:', error)
                 authServiceRef.current.logout()

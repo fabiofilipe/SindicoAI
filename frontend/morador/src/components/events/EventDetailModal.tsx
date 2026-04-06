@@ -10,7 +10,7 @@ import {
     Loader2,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { Modal, Button } from '@/components'
+import { Modal } from '@/components'
 import { createRSVP, getMyRSVP } from '@/services/eventService'
 import type { Event, EventRSVP } from '@/types/models'
 

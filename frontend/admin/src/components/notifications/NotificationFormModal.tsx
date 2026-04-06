@@ -41,8 +41,8 @@ export default function NotificationFormModal({ onClose, onSuccess }: Notificati
                     getUsers(),
                     listUnits()
                 ])
-                setUsers(usersData.filter((u: UserListItem) => u.role === 'resident')) // Apenas moradores
-                setUnits(unitsData)
+                setUsers(usersData.items.filter((u: UserListItem) => u.role === 'resident')) // Apenas moradores
+                setUnits(unitsData.items)
             } catch (err) {
                 console.error('Erro ao carregar dados:', err)
                 setError('Erro ao carregar usuários e unidades')

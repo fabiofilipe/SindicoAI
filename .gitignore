@@ -6,6 +6,8 @@ __pycache__/
 env/
 venv/
 *.log
+node_modules/
+frontend/node_modules
 .DS_Store
 .vscode/
 .idea/
@@ -17,3 +19,5 @@ implementation_fase3.md
 .interface-design
 .agent
 docs
+.agents
+.codex

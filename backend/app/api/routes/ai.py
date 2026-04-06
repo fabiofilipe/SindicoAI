@@ -9,8 +9,10 @@ from app.schemas.document import ChatRequest, ChatResponse
 from app.services.rag_service import RAGService
 from app.services.cache_service import CacheService
 from app.middleware.rate_limit import check_rate_limit, get_user_request_count
+import logging
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 _rag_service = RAGService()
 
@@ -72,9 +74,10 @@ async def chat_with_ai(
         )
 
     except Exception as e:
+        logger.error("AI processing failed: %s", str(e))
         raise HTTPException(
             status_code=500,
-            detail=f"Error processing question: {str(e)}"
+            detail="Erro ao processar a pergunta"
         )
 
 
@@ -90,12 +93,12 @@ async def get_usage_stats(
 
 @router.get("/cache/stats")
 async def get_cache_stats(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_admin)
 ):
     """
     Retorna estatísticas do cache de respostas
     """
-    return await CacheService.get_cache_stats()
+    return await CacheService.get_cache_stats(current_user.tenant_id)
 
 
 @router.delete("/cache")

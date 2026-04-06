@@ -9,28 +9,50 @@ logger = logging.getLogger(__name__)
 _RATE_LIMIT_WINDOW = 86400  # 24 hours in seconds
 
 
-async def check_rate_limit(request: Request, user_id: str, limit: int | None = None) -> None:
-    limit = limit or settings.AI_RATE_LIMIT
-    today = time.strftime("%Y%m%d")
-    key = f"rate_limit:ai:{user_id}:{today}"
-
+async def _check_counter(key: str, limit: int, window_seconds: int, message: str) -> None:
     try:
         redis = get_redis_client()
         async with redis.pipeline() as pipe:
             pipe.incr(key)
-            pipe.expire(key, _RATE_LIMIT_WINDOW)
+            pipe.expire(key, window_seconds)
             results = await pipe.execute()
         new_count = results[0]
         if new_count > limit:
-            raise HTTPException(
-                status_code=429,
-                detail=f"Daily limit of {limit} AI requests exceeded. Try again tomorrow.",
-            )
+            raise HTTPException(status_code=429, detail=message)
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Rate limit check failed: {e}")
         raise HTTPException(status_code=503, detail="Serviço temporariamente indisponível")
+
+
+async def check_rate_limit(request: Request, user_id: str, limit: int | None = None) -> None:
+    limit = limit or settings.AI_RATE_LIMIT
+    today = time.strftime("%Y%m%d")
+    key = f"rate_limit:ai:{user_id}:{today}"
+    await _check_counter(
+        key,
+        limit,
+        _RATE_LIMIT_WINDOW,
+        f"Daily limit of {limit} AI requests exceeded. Try again tomorrow.",
+    )
+
+
+async def check_public_rate_limit(
+    request: Request,
+    scope: str,
+    limit: int,
+    window_seconds: int,
+) -> None:
+    client_ip = request.client.host if request.client else "unknown"
+    bucket = int(time.time() // window_seconds)
+    key = f"rate_limit:{scope}:{client_ip}:{bucket}"
+    await _check_counter(
+        key,
+        limit,
+        window_seconds,
+        "Muitas tentativas. Tente novamente mais tarde.",
+    )
 
 
 async def get_user_request_count(user_id: str) -> dict:

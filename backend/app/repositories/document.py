@@ -7,6 +7,10 @@ from app.repositories.base import BaseRepository
 class DocumentRepository(BaseRepository[Document]):
     model = Document
 
+    async def get_by_id_any_tenant(self, document_id: str) -> Document | None:
+        result = await self.db.execute(select(Document).where(Document.id == document_id))
+        return result.scalars().first()
+
     async def list_with_filters(
         self,
         tenant_id: str,

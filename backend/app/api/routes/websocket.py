@@ -22,6 +22,10 @@ async def get_user_from_token(token: str, db: AsyncSession) -> User:
         user = await UserRepository(db).get_by_id_any_tenant(user_id)
         if not user:
             raise Exception("User not found")
+        if payload.get("type") != "access":
+            raise Exception("Invalid token type")
+        if payload.get("sv", 0) != user.session_version:
+            raise Exception("Session no longer valid")
         return user
     except Exception as e:
         logger.error(f"WebSocket auth failed: {str(e)}")
@@ -73,6 +77,6 @@ async def websocket_notifications(
     except Exception as e:
         logger.error(f"WebSocket error: {str(e)}")
         try:
-            await websocket.close(code=1008, reason=str(e))
+            await websocket.close(code=1008, reason="Authentication failed")
         except Exception:
             pass

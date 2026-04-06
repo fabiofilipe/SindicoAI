@@ -109,7 +109,7 @@ async def upload_documents(
 
             document.status = "processing"
             await db.commit()
-            background_tasks.add_task(processor.process_document, db, document, file_path)
+            background_tasks.add_task(processor.process_document, document.id, file_path)
 
             results.append(FileUploadResult(filename=file.filename, status="success", document_id=document.id, message="Arquivo enviado com sucesso. Processamento em andamento."))
             successful += 1
@@ -188,7 +188,7 @@ async def reprocess_document(
     await db.commit()
 
     logger.info(f"Reprocessing document {document_id} ({document.filename})")
-    background_tasks.add_task(processor.process_document, db, document, file_path)
+    background_tasks.add_task(processor.process_document, document.id, file_path)
 
     return {"message": f"Reprocessamento do documento '{document.filename}' iniciado.", "document_id": document_id, "status": "processing"}
 

@@ -19,6 +19,7 @@ class ReservationRepository(BaseRepository[Reservation]):
         tenant_id: str,
         page: int,
         page_size: int,
+        user_id: str | None = None,
         base_query=None,
     ) -> tuple[list[Reservation], int]:
         """Override to include eager loading of relationships."""
@@ -31,6 +32,8 @@ class ReservationRepository(BaseRepository[Reservation]):
                 selectinload(Reservation.unit),
             )
         )
+        if user_id:
+            query = query.where(Reservation.user_id == user_id)
         return await super().list_paginated(tenant_id, page, page_size, base_query=query)
 
     async def has_conflict(

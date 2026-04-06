@@ -1,14 +1,13 @@
 import json
-from datetime import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.core.config import settings
-from app.core.security import get_password_hash, create_access_token
+from app.core.security import get_password_hash
 from app.exceptions import NotFoundError, ConflictError, AuthorizationError
 from app.models.base import User, Tenant, UserRole
 from app.repositories.user import UserRepository
 from app.repositories.unit import UnitRepository
+from app.services.auth_service import create_tokens, validate_password_strength
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,6 +46,7 @@ async def register_resident(
         raise ConflictError("Email já cadastrado")
     if await user_repo.get_by_cpf(cpf):
         raise ConflictError("CPF já cadastrado")
+    validate_password_strength(password)
 
     new_user = User(
         email=email,
@@ -77,6 +77,7 @@ async def onboard_tenant(
     user_repo = UserRepository(db)
     if await user_repo.get_by_email(admin_email):
         raise ConflictError("Email já cadastrado")
+    validate_password_strength(admin_password)
 
     new_tenant = Tenant(name=tenant_name, address=tenant_address)
     db.add(new_tenant)
@@ -96,8 +97,7 @@ async def onboard_tenant(
     await db.refresh(new_tenant)
     await db.refresh(new_admin)
 
-    access_token = create_access_token(
-        new_admin.id,
-        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    return {"tenant": new_tenant, "admin": new_admin, "access_token": access_token}
+    tokens = create_tokens(new_admin)
+    await db.commit()
+    await db.refresh(new_admin)
+    return {"tenant": new_tenant, "admin": new_admin, **tokens}

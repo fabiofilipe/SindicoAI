@@ -59,10 +59,10 @@ class CacheService:
             return 0
 
     @staticmethod
-    async def get_cache_stats() -> dict:
+    async def get_cache_stats(tenant_id: str) -> dict:
         try:
-            keys = [key async for key in get_redis_client().scan_iter(match="ai_cache:*")]
-            return {"total_cached_responses": len(keys), "cache_pattern": "ai_cache:*"}
+            keys = [key async for key in get_redis_client().scan_iter(match=f"ai_cache:{tenant_id}:*")]
+            return {"total_cached_responses": len(keys), "tenant_id": tenant_id}
         except Exception as e:
             logger.error(f"Error getting cache stats: {e}")
             return {"total_cached_responses": 0, "error": str(e)}

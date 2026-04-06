@@ -109,9 +109,16 @@ async def send_password_reset_email(
         #     server.login(EMAIL_USER, EMAIL_PASSWORD)
         #     server.sendmail(EMAIL_FROM, to_email, msg.as_string())
 
-        logger.info(f"Password reset email would be sent to: {to_email}")
-        logger.info(f"Reset link: {reset_link}")
+        if not EMAIL_USER or not EMAIL_PASSWORD:
+            logger.warning("Password reset email skipped because SMTP credentials are not configured.")
+            return False
 
+        with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_FROM, to_email, msg.as_string())
+
+        logger.info(f"Password reset email sent to: {to_email}")
         return True
 
     except Exception as e:

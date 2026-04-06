@@ -21,7 +21,7 @@ async def list_reservations_endpoint(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await list_reservations(db, current_user.tenant_id, page, page_size)
+    return await list_reservations(db, current_user.tenant_id, page, page_size, current_user)
 
 
 @router.post("/", response_model=ReservationResponse, status_code=status.HTTP_201_CREATED)
@@ -39,7 +39,7 @@ async def get_reservation_endpoint(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await get_reservation(db, reservation_id, current_user.tenant_id)
+    return await get_reservation(db, reservation_id, current_user.tenant_id, current_user)
 
 
 @router.delete("/{reservation_id}", status_code=status.HTTP_204_NO_CONTENT)

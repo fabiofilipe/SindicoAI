@@ -29,7 +29,8 @@ async def set_tenant_context(session: AsyncSession, tenant_id: str) -> None:
     # Only execute on PostgreSQL (SQLite doesn't support this)
     dialect = session.bind.dialect.name if session.bind else "unknown"
     if dialect == "postgresql":
-        await session.execute(text(f"SET app.current_tenant_id = '{tenant_id}'"))
+        safe_tenant_id = str(tenant_id).replace("'", "''")
+        await session.execute(text("SELECT set_config('app.current_tenant_id', :tenant_id, false)"), {"tenant_id": safe_tenant_id})
 
 
 async def get_db():
@@ -42,4 +43,3 @@ def get_db_session():
     Usage: async with get_db_session() as db: ...
     """
     return AsyncSessionLocal()
-

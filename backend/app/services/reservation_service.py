@@ -43,19 +43,26 @@ async def check_unit_limit(
 
 
 async def list_reservations(
-    db: AsyncSession, tenant_id: str, page: int, page_size: int
+    db: AsyncSession, tenant_id: str, page: int, page_size: int, current_user: User
 ) -> PagedResponse:
     repo = ReservationRepository(db)
-    items, total = await repo.list_paginated(tenant_id, page, page_size)
+    items, total = await repo.list_paginated(
+        tenant_id,
+        page,
+        page_size,
+        user_id=current_user.id if current_user.role == UserRole.RESIDENT else None,
+    )
     return PagedResponse.build(items=items, total=total, page=page, page_size=page_size)
 
 
 async def get_reservation(
-    db: AsyncSession, reservation_id: str, tenant_id: str
+    db: AsyncSession, reservation_id: str, tenant_id: str, current_user: User
 ) -> Reservation:
     reservation = await ReservationRepository(db).get_by_id(reservation_id, tenant_id)
     if not reservation:
         raise NotFoundError("Reserva não encontrada")
+    if current_user.role == UserRole.RESIDENT and reservation.user_id != current_user.id:
+        raise AuthorizationError("Você só pode visualizar suas próprias reservas")
     return reservation
 
 

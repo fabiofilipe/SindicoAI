@@ -3,11 +3,12 @@ import pdfplumber
 import pandas as pd
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.document import Document, DocumentChunk
+from app.models.document import DocumentChunk
 from app.core.config import settings
+from app.core.database import get_db_session
+from app.repositories.document import DocumentRepository
 import logging
-from typing import List, Dict, Union
+from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -132,12 +133,7 @@ class DocumentProcessor:
             logger.error(f"Error generating embedding: {e}")
             raise
 
-    async def process_document(
-        self,
-        db: AsyncSession,
-        document: Document,
-        file_path: str
-    ):
+    async def process_document(self, document_id: str, file_path: str):
         """
         Pipeline completo de processamento para PDFs e Excel.
 
@@ -147,55 +143,61 @@ class DocumentProcessor:
             file_path: Caminho do arquivo salvo
         """
         try:
-            # 1. Extrair texto baseado no tipo de arquivo
-            document.status = "extracting"
-            await db.commit()
+            async with get_db_session() as db:
+                repo = DocumentRepository(db)
+                document = await repo.get_by_id_any_tenant(document_id)
+                if not document:
+                    raise ValueError(f"Document {document_id} not found")
 
-            if document.file_type == "pdf":
-                text_by_section = await self.extract_text_from_pdf(file_path)
-                section_type = "page"
-                logger.info(f"Processing PDF: {document.filename}")
+                document.status = "extracting"
+                await db.commit()
 
-            elif document.file_type in ["xlsx", "xls"]:
-                text_by_section = await self.extract_text_from_excel(file_path)
-                section_type = "sheet"
-                logger.info(f"Processing Excel: {document.filename}")
+                if document.file_type == "pdf":
+                    text_by_section = await self.extract_text_from_pdf(file_path)
+                    section_type = "page"
+                    logger.info(f"Processing PDF: {document.filename}")
 
-            else:
-                from app.exceptions import UnprocessableError
-                raise UnprocessableError(f"Tipo de arquivo não suportado: {document.file_type}")
+                elif document.file_type in ["xlsx", "xls"]:
+                    text_by_section = await self.extract_text_from_excel(file_path)
+                    section_type = "sheet"
+                    logger.info(f"Processing Excel: {document.filename}")
 
-            # 2. Chunking
-            document.status = "chunking"
-            await db.commit()
+                else:
+                    from app.exceptions import UnprocessableError
+                    raise UnprocessableError(f"Tipo de arquivo não suportado: {document.file_type}")
 
-            chunks = self.chunk_text(text_by_section, section_type)
+                document.status = "chunking"
+                await db.commit()
 
-            # 3. Gerar embeddings e salvar chunks
-            document.status = "embedding"
-            await db.commit()
+                chunks = self.chunk_text(text_by_section, section_type)
 
-            for chunk_data in chunks:
-                embedding = await self.generate_embedding(chunk_data["text"])
+                document.status = "embedding"
+                await db.commit()
 
-                chunk = DocumentChunk(
-                    chunk_text=chunk_data["text"],
-                    chunk_index=chunk_data["chunk_index"],
-                    page_number=chunk_data["page_number"],
-                    embedding=embedding,
-                    document_id=document.id,
-                    tenant_id=document.tenant_id
-                )
-                db.add(chunk)
+                for chunk_data in chunks:
+                    embedding = await self.generate_embedding(chunk_data["text"])
 
-            # 4. Finalizar
-            document.status = "completed"
-            await db.commit()
+                    chunk = DocumentChunk(
+                        chunk_text=chunk_data["text"],
+                        chunk_index=chunk_data["chunk_index"],
+                        page_number=chunk_data["page_number"],
+                        embedding=embedding,
+                        document_id=document.id,
+                        tenant_id=document.tenant_id
+                    )
+                    db.add(chunk)
 
-            logger.info(f"Document {document.id} processed successfully")
+                document.status = "completed"
+                await db.commit()
+
+                logger.info(f"Document {document.id} processed successfully")
 
         except Exception as e:
-            document.status = "failed"
-            await db.commit()
-            logger.error(f"Error processing document {document.id}: {e}")
+            async with get_db_session() as db:
+                repo = DocumentRepository(db)
+                document = await repo.get_by_id_any_tenant(document_id)
+                if document:
+                    document.status = "failed"
+                    await db.commit()
+            logger.error(f"Error processing document {document_id}: {e}")
             raise

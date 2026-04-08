@@ -1,196 +1,24 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func, JSON, Text, UniqueConstraint, Enum
-from sqlalchemy.orm import relationship
-from app.core.database import Base
-import enum
-import uuid
+"""
+Backward-compatibility shim for imports of `app.models.base`.
 
-def generate_uuid():
-    return str(uuid.uuid4())
+All domain models now live in separate files under `app/models/`.
+This module re-exports everything so existing imports continue to work.
 
+New code should import from the domain-specific modules directly:
+    from app.models.core import Tenant, User, UserRole
+    from app.models.unit import Unit
+    from app.models.common_area import CommonArea
+    from app.models.reservation import Reservation
+    from app.models.notification import Notification
+    from app.models.event import Event, EventRSVP
+"""
 
-class UserRole(str, enum.Enum):
-    ADMIN = "admin"
-    STAFF = "staff"
-    RESIDENT = "resident"
+# noqa: F401, F403 — re-export everything for backward compatibility
 
-class Tenant(Base):
-    __tablename__ = "tenants"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    name = Column(String, nullable=False)
-    domain = Column(String, unique=True, index=True)
-    address = Column(String)
-
-    # Dados adicionais do condomínio
-    phone = Column(String)
-    cnpj = Column(String)
-    city = Column(String)
-    state = Column(String)
-    zipcode = Column(String)
-
-    # Configurações de reserva (JSON)
-    reservation_settings = Column(JSON, default=lambda: {
-        "min_hours_advance": 1,
-        "max_days_advance": 30,
-        "max_hours_duration": 4,
-        "cancellation_hours_advance": 24
-    })
-
-    # Configurações de notificação (JSON)
-    notification_settings = Column(JSON, default=lambda: {
-        "email_enabled": True,
-        "sms_enabled": False,
-        "push_enabled": True,
-        "notification_email": "",
-        "quiet_hours_start": "22:00",
-        "quiet_hours_end": "08:00"
-    })
-
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-    users = relationship("User", back_populates="tenant")
-    units = relationship("Unit", back_populates="tenant")
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    email = Column(String, unique=True, index=True, nullable=False)
-    cpf = Column(String, unique=True, index=True, nullable=True)  # CPF for validation
-    hashed_password = Column(String, nullable=False)
-    full_name = Column(String)
-    role = Column(String, default=UserRole.RESIDENT.value)
-    is_active = Column(Boolean, default=True)
-
-    # Password reset fields
-    reset_token = Column(String, nullable=True)
-    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
-    session_version = Column(Integer, nullable=False, default=0)
-    current_refresh_jti = Column(String, nullable=True)
-
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant", back_populates="users")
-    
-    unit_id = Column(String, ForeignKey("units.id"), nullable=True)
-    unit = relationship("Unit", back_populates="residents")
-
-class Unit(Base):
-    __tablename__ = "units"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    block = Column(String)
-    number = Column(String, nullable=False)
-    floor = Column(Integer, nullable=True)  # Floor number
-    type = Column(String, nullable=True)  # e.g., "2-bedrooms", "3-bedrooms", "studio"
-    authorized_cpfs = Column(String)  # JSON string of authorized CPFs for this unit
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant", back_populates="units")
-    
-    residents = relationship("User", back_populates="unit")
-
-class CommonArea(Base):
-    __tablename__ = "common_areas"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    name = Column(String, nullable=False)
-    description = Column(String)
-    capacity = Column(Integer)
-    opening_time = Column(String)  # Format: "08:00"
-    closing_time = Column(String)  # Format: "22:00"
-    is_active = Column(Boolean, default=True)
-    
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant")
-    
-    reservations = relationship("Reservation", back_populates="common_area")
-
-class Reservation(Base):
-    __tablename__ = "reservations"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    start_time = Column(DateTime(timezone=True), nullable=False)
-    end_time = Column(DateTime(timezone=True), nullable=False)
-    status = Column(String, default="confirmed")  # confirmed, cancelled
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
-    common_area_id = Column(String, ForeignKey("common_areas.id"), nullable=False)
-    common_area = relationship("CommonArea", back_populates="reservations")
-    
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User")
-    
-    unit_id = Column(String, ForeignKey("units.id"), nullable=False)
-    unit = relationship("Unit")
-    
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant")
-
-class Notification(Base):
-    __tablename__ = "notifications"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    title = Column(String, nullable=False)
-    message = Column(String, nullable=False)
-    is_read = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    scheduled_for = Column(DateTime(timezone=True), nullable=True)  # When to send notification
-    sent_at = Column(DateTime(timezone=True), nullable=True)  # When notification was actually sent
-
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User")
-
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant")
-
-class Event(Base):
-    __tablename__ = "events"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    title = Column(String, nullable=False)
-    description = Column(Text)
-    event_date = Column(DateTime(timezone=True), nullable=False)
-    start_time = Column(DateTime(timezone=True), nullable=False)
-    end_time = Column(DateTime(timezone=True), nullable=False)
-    location = Column(String)
-    capacity = Column(Integer)  # Opcional
-    status = Column(String, default="scheduled")  # scheduled, ongoing, completed, cancelled
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-    # Relationships
-    common_area_id = Column(String, ForeignKey("common_areas.id"), nullable=True)
-    common_area = relationship("CommonArea")
-
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant")
-
-    created_by = Column(String, ForeignKey("users.id"), nullable=False)
-    creator = relationship("User", foreign_keys=[created_by])
-
-    rsvps = relationship("EventRSVP", back_populates="event", cascade="all, delete-orphan")
-
-class EventRSVP(Base):
-    __tablename__ = "event_rsvps"
-
-    id = Column(String, primary_key=True, default=generate_uuid)
-    response = Column(String, default="attending")  # attending, declined, maybe
-    attended = Column(Boolean, default=False)  # Marcado por staff
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-    event_id = Column(String, ForeignKey("events.id", ondelete="CASCADE"), nullable=False)
-    event = relationship("Event", back_populates="rsvps")
-
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User")
-
-    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=False)
-    tenant = relationship("Tenant")
-
-    __table_args__ = (
-        UniqueConstraint('event_id', 'user_id', name='uq_event_user_rsvp'),
-    )
+from app.core.uuid import generate_uuid  # noqa: F401
+from app.models.core import Tenant, User, UserRole  # noqa: F401
+from app.models.unit import Unit  # noqa: F401
+from app.models.common_area import CommonArea  # noqa: F401
+from app.models.reservation import Reservation  # noqa: F401
+from app.models.notification import Notification  # noqa: F401
+from app.models.event import Event, EventRSVP  # noqa: F401

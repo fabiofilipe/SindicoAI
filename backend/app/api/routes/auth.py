@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.config import settings
+from app.core.cookies import _set_refresh_cookie, _clear_refresh_cookie
 from app.dependencies.auth import get_current_user
 from app.models.base import User
 from app.schemas.token import Token, TokenRefreshRequest
@@ -16,24 +17,6 @@ from app.services.auth_service import (
 from app.middleware.rate_limit import check_public_rate_limit
 
 router = APIRouter()
-
-REFRESH_COOKIE_NAME = "refresh_token"
-
-
-def _set_refresh_cookie(response: Response, refresh_token: str) -> None:
-    response.set_cookie(
-        key=REFRESH_COOKIE_NAME,
-        value=refresh_token,
-        httponly=True,
-        secure=settings.AUTH_COOKIE_SECURE,
-        samesite="lax",
-        max_age=60 * 60 * 24 * 7,
-        path="/",
-    )
-
-
-def _clear_refresh_cookie(response: Response) -> None:
-    response.delete_cookie(key=REFRESH_COOKIE_NAME, path="/")
 
 
 @router.post("/login", response_model=Token)

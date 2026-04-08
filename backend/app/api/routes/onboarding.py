@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.cookies import _set_refresh_cookie
 from app.schemas.onboarding import TenantOnboardingRequest, TenantOnboardingResponse
 from app.services.registration_service import onboard_tenant
 from app.middleware.rate_limit import check_public_rate_limit
-from app.api.routes.auth import _set_refresh_cookie
 
 router = APIRouter()
 

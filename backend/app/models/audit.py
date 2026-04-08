@@ -1,10 +1,8 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime, func, JSON
 from sqlalchemy.orm import relationship
 from app.core.database import Base
-import uuid
+from app.core.uuid import generate_uuid
 
-def generate_uuid():
-    return str(uuid.uuid4())
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"

@@ -2,11 +2,9 @@ from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, func
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
 from app.core.database import Base
-import uuid
+from app.core.uuid import generate_uuid
 import enum
 
-def generate_uuid():
-    return str(uuid.uuid4())
 
 class DocumentCategory(str, enum.Enum):
     """Categorias de documentos do condomínio"""

@@ -1,8 +1,12 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.base import Notification
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import NotFoundError
-from app.models.base import Notification, User
+from app.models.base import User
 from app.repositories.notification import NotificationRepository
 from app.repositories.user import UserRepository
 from app.schemas.pagination import PagedResponse
@@ -46,13 +50,13 @@ async def create_notifications(
     message: str,
     user_ids: set[str],
     broadcast: bool = True,
-) -> list[Notification]:
+) -> list:
     repo = NotificationRepository(db)
-    objects = [
-        Notification(title=title, message=message, user_id=uid, tenant_id=tenant_id)
+    items = [
+        {"title": title, "message": message, "user_id": uid, "tenant_id": tenant_id}
         for uid in user_ids
     ]
-    created = await repo.bulk_create(objects)
+    created = await repo.bulk_create_from_data(items)
 
     if broadcast:
         for notif in created:
@@ -87,7 +91,7 @@ async def list_notifications(
 
 async def mark_as_read(
     db: AsyncSession, notification_id: str, user_id: str
-) -> Notification:
+) -> "Notification":
     repo = NotificationRepository(db)
     notification = await repo.get_by_id_and_user(notification_id, user_id)
     if not notification:

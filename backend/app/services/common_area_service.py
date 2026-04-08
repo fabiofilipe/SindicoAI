@@ -25,8 +25,7 @@ async def get_common_area(db: AsyncSession, area_id: str, tenant_id: str) -> Com
 
 
 async def create_common_area(db: AsyncSession, data: dict, tenant_id: str) -> CommonArea:
-    area = CommonArea(**data, tenant_id=tenant_id)
-    return await CommonAreaRepository(db).save(area)
+    return await CommonAreaRepository(db).create(**data, tenant_id=tenant_id)
 
 
 async def update_common_area(

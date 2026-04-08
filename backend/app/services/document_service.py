@@ -3,7 +3,6 @@ import pdfplumber
 import pandas as pd
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from app.models.document import DocumentChunk
 from app.core.config import settings
 from app.core.database import get_db_session
 from app.repositories.document import DocumentRepository
@@ -177,15 +176,14 @@ class DocumentProcessor:
                 for chunk_data in chunks:
                     embedding = await self.generate_embedding(chunk_data["text"])
 
-                    chunk = DocumentChunk(
+                    await repo.create_chunk(
                         chunk_text=chunk_data["text"],
                         chunk_index=chunk_data["chunk_index"],
                         page_number=chunk_data["page_number"],
                         embedding=embedding,
                         document_id=document.id,
-                        tenant_id=document.tenant_id
+                        tenant_id=document.tenant_id,
                     )
-                    db.add(chunk)
 
                 document.status = "completed"
                 await db.commit()

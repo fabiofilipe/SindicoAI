@@ -38,6 +38,15 @@ class NotificationRepository(BaseRepository[Notification]):
             await self.db.refresh(n)
         return notifications
 
+    async def bulk_create_from_data(self, items: list[dict]) -> list[Notification]:
+        """Create multiple notifications from dicts without importing the model in services."""
+        notifications = [Notification(**data) for data in items]
+        self.db.add_all(notifications)
+        await self.db.commit()
+        for n in notifications:
+            await self.db.refresh(n)
+        return notifications
+
     async def get_by_id_and_user(
         self, notification_id: str, user_id: str
     ) -> Notification | None:

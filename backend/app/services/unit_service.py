@@ -28,8 +28,7 @@ async def get_unit(db: AsyncSession, unit_id: str, tenant_id: str) -> Unit:
 
 
 async def create_unit(db: AsyncSession, data: dict, tenant_id: str) -> Unit:
-    unit = Unit(**data, tenant_id=tenant_id)
-    return await UnitRepository(db).save(unit)
+    return await UnitRepository(db).create(**data, tenant_id=tenant_id)
 
 
 async def update_unit(db: AsyncSession, unit_id: str, tenant_id: str, data: dict) -> Unit:

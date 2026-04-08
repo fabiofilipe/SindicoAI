@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import select, delete
 from app.models.document import Document, DocumentCategory, DocumentChunk
 from app.repositories.base import BaseRepository
@@ -32,3 +32,11 @@ class DocumentRepository(BaseRepository[Document]):
             delete(DocumentChunk).where(DocumentChunk.document_id == document_id)
         )
         await self.db.commit()
+
+    async def create_chunk(self, **data) -> DocumentChunk:
+        """Create a DocumentChunk without requiring the service to import the model."""
+        chunk = DocumentChunk(**data)
+        self.db.add(chunk)
+        await self.db.commit()
+        await self.db.refresh(chunk)
+        return chunk

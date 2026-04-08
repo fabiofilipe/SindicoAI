@@ -12,6 +12,14 @@ class BaseRepository(Generic[T]):
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def create(self, **data: Any) -> T:
+        """Instantiate and persist a new model instance."""
+        instance = self.model(**data)
+        self.db.add(instance)
+        await self.db.commit()
+        await self.db.refresh(instance)
+        return instance
+
     async def get_by_id(self, entity_id: str, tenant_id: str) -> T | None:
         result = await self.db.execute(
             select(self.model).where(

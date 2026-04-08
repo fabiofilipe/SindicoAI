@@ -83,7 +83,7 @@ async def upload_documents(
 
             ext = file.filename.lower().rsplit(".", 1)[-1] if "." in file.filename else "unknown"
 
-            document = Document(
+            document = await repo.create(
                 filename=file.filename,
                 file_type=ext,
                 file_size=file_size,
@@ -92,7 +92,6 @@ async def upload_documents(
                 uploaded_by=current_user.id,
                 status="uploading",
             )
-            document = await repo.save(document)
 
             file_path = os.path.join(UPLOAD_DIR, f"{document.id}.{ext}")
             with open(file_path, "wb") as buffer:

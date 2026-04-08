@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.base import Event, EventRSVP, User, Notification
+from app.models.base import Event, EventRSVP, User
 from app.repositories.event import EventRepository, EventRSVPRepository
+from app.repositories.notification import NotificationRepository
 from app.repositories.user import UserRepository
 from app.schemas.event import EventCreate, EventResponse
 from app.schemas.pagination import PagedResponse
@@ -52,22 +53,21 @@ async def create_event(db: AsyncSession, event_data: EventCreate, current_user: 
     repo = EventRepository(db)
     user_repo = UserRepository(db)
 
-    db_event = Event(
+    db_event = await repo.create(
         **event_data.model_dump(),
         created_by=current_user.id,
         tenant_id=current_user.tenant_id,
     )
-    db_event = await repo.save(db_event)
 
     residents = await user_repo.get_residents_by_tenant(current_user.tenant_id)
+    notification_repo = NotificationRepository(db)
     for resident in residents:
-        db.add(Notification(
+        await notification_repo.create(
             user_id=resident.id,
             title=f"Novo Evento: {db_event.title}",
             message=f"Participe! {db_event.title} em {db_event.event_date.strftime('%d/%m/%Y às %H:%M')}",
             tenant_id=current_user.tenant_id,
-        ))
-    await db.commit()
+        )
 
     event_response = EventResponse.model_validate(db_event)
     event_response.attendee_count = 0
@@ -87,14 +87,14 @@ async def update_event(
     event = await repo.update_fields(event, update_data)
 
     attending_rsvps = await rsvp_repo.list_by_event(event_id, tenant_id, "attending")
+    notification_repo = NotificationRepository(db)
     for rsvp in attending_rsvps:
-        db.add(Notification(
+        await notification_repo.create(
             user_id=rsvp.user_id,
             title=f"Evento Atualizado: {event.title}",
             message=f"O evento {event.title} foi atualizado. Confira os detalhes!",
             tenant_id=tenant_id,
-        ))
-    await db.commit()
+        )
 
     counts = await rsvp_repo.get_attendee_counts(tenant_id, [event.id])
     event_response = EventResponse.model_validate(event)
@@ -114,14 +114,14 @@ async def cancel_event(db: AsyncSession, event_id: str, tenant_id: str) -> None:
     await db.commit()
 
     attending_rsvps = await rsvp_repo.list_by_event(event_id, tenant_id, "attending")
+    notification_repo = NotificationRepository(db)
     for rsvp in attending_rsvps:
-        db.add(Notification(
+        await notification_repo.create(
             user_id=rsvp.user_id,
             title=f"Evento Cancelado: {event.title}",
             message=f"O evento {event.title} foi cancelado.",
             tenant_id=tenant_id,
-        ))
-    await db.commit()
+        )
 
 
 async def create_or_update_rsvp(
@@ -149,13 +149,13 @@ async def create_or_update_rsvp(
         await db.refresh(existing)
         return existing
 
-    rsvp = EventRSVP(
+    rsvp = await rsvp_repo.create(
         event_id=event_id,
         user_id=current_user.id,
         response=rsvp_response,
         tenant_id=current_user.tenant_id,
     )
-    return await rsvp_repo.save(rsvp)
+    return rsvp
 
 
 async def get_my_rsvp(db: AsyncSession, event_id: str, current_user: User) -> EventRSVP:

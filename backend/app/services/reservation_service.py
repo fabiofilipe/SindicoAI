@@ -3,8 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.exceptions import NotFoundError, ConflictError, AuthorizationError, UnprocessableError
-from app.models.base import Reservation, Notification, User, UserRole
+from app.models.base import Reservation, User, UserRole
 from app.repositories.reservation import ReservationRepository
+from app.repositories.notification import NotificationRepository
 from app.repositories.user import UserRepository
 from app.schemas.pagination import PagedResponse
 import logging
@@ -93,13 +94,13 @@ async def create_reservation(
     ):
         raise UnprocessableError("Unidade atingiu o limite máximo de reservas simultâneas")
 
-    reservation = Reservation(
+    reservation = await repo.create(
         **data,
         user_id=current_user.id,
         unit_id=current_user.unit_id,
         tenant_id=current_user.tenant_id,
     )
-    return await repo.save(reservation)
+    return reservation
 
 
 async def cancel_reservation(
@@ -147,14 +148,12 @@ async def report_reservation_issue(
     user_repo = UserRepository(db)
     admins = await user_repo.get_admins_by_tenant(current_user.tenant_id)
 
+    notification_repo = NotificationRepository(db)
     for admin in admins:
-        notification = Notification(
+        await notification_repo.create(
             user_id=admin.id,
             title=f"Problema Reportado - Reserva #{reservation_id[:8]}",
             message=f"Funcionário {current_user.full_name} reportou: {description} (Severidade: {severity})",
             tenant_id=current_user.tenant_id,
         )
-        db.add(notification)
-
-    await db.commit()
     return {"message": "Problema reportado com sucesso", "notifications_created": len(admins)}

@@ -7,6 +7,7 @@ from app.exceptions import NotFoundError, ConflictError, AuthorizationError
 from app.models.base import User, Tenant, UserRole
 from app.repositories.user import UserRepository
 from app.repositories.unit import UnitRepository
+from app.repositories.tenant import TenantRepository
 from app.services.auth_service import create_tokens, validate_password_strength
 import logging
 
@@ -48,7 +49,7 @@ async def register_resident(
         raise ConflictError("CPF já cadastrado")
     validate_password_strength(password)
 
-    new_user = User(
+    new_user = await user_repo.save(User(
         email=email,
         cpf=cpf,
         full_name=full_name,
@@ -57,8 +58,8 @@ async def register_resident(
         tenant_id=tenant.id,
         unit_id=unit.id,
         is_active=True,
-    )
-    return await user_repo.save(new_user)
+    ))
+    return new_user
 
 
 async def onboard_tenant(
@@ -79,11 +80,10 @@ async def onboard_tenant(
         raise ConflictError("Email já cadastrado")
     validate_password_strength(admin_password)
 
-    new_tenant = Tenant(name=tenant_name, address=tenant_address)
-    db.add(new_tenant)
-    await db.flush()
+    tenant_repo = TenantRepository(db)
+    new_tenant = await tenant_repo.create(name=tenant_name, address=tenant_address)
 
-    new_admin = User(
+    new_admin = await user_repo.create(
         email=admin_email,
         cpf=admin_cpf,
         full_name=admin_full_name,
@@ -92,10 +92,6 @@ async def onboard_tenant(
         tenant_id=new_tenant.id,
         is_active=True,
     )
-    db.add(new_admin)
-    await db.commit()
-    await db.refresh(new_tenant)
-    await db.refresh(new_admin)
 
     tokens = create_tokens(new_admin)
     await db.commit()

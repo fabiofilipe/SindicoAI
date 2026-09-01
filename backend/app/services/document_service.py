@@ -1,27 +1,30 @@
 import asyncio
-import pdfplumber
+import logging
+
 import pandas as pd
-import google.generativeai as genai
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import pdfplumber
+from agno.knowledge.chunking.recursive import RecursiveChunking
+from agno.knowledge.document.base import Document as AgnoDocument
+from agno.knowledge.embedder.google import GeminiEmbedder
+
 from app.core.config import settings
 from app.core.database import get_db_session
 from app.repositories.document import DocumentRepository
-import logging
-from typing import List
 
 logger = logging.getLogger(__name__)
-
-# Configurar Gemini
-genai.configure(api_key=settings.GOOGLE_API_KEY)
 
 
 class DocumentProcessor:
     def __init__(self):
-        self.text_splitter = RecursiveCharacterTextSplitter(
+        self.text_splitter = RecursiveChunking(
             chunk_size=settings.CHUNK_SIZE,
-            chunk_overlap=settings.CHUNK_OVERLAP,
-            length_function=len,
-            separators=["\n\n", "\n", ". ", " ", ""]
+            overlap=settings.CHUNK_OVERLAP,
+        )
+        self.embedder = GeminiEmbedder(
+            id=settings.GEMINI_EMBEDDING_MODEL,
+            task_type="RETRIEVAL_DOCUMENT",
+            dimensions=settings.GEMINI_EMBEDDING_DIMENSIONS,
+            api_key=settings.GOOGLE_API_KEY,
         )
 
     async def extract_text_from_pdf(self, pdf_path: str) -> dict:
@@ -82,7 +85,7 @@ class DocumentProcessor:
             logger.error(f"Error extracting Excel text: {e}")
             raise
 
-    def chunk_text(self, text_by_section: dict, section_type: str = "page") -> List[dict]:
+    def chunk_text(self, text_by_section: dict, section_type: str = "page") -> list[dict]:
         """
         Divide texto em chunks mantendo referência de seção.
 
@@ -93,14 +96,21 @@ class DocumentProcessor:
         Returns:
             Lista de dicionários com chunks e metadados
         """
-        chunks = []
+        chunks: list[dict] = []
 
         for section_id, text in text_by_section.items():
-            section_chunks = self.text_splitter.split_text(text)
+            if not text or not text.strip():
+                continue
 
-            for idx, chunk_text in enumerate(section_chunks):
+            section_document = AgnoDocument(
+                content=text,
+                name=f"{section_type}-{section_id}",
+            )
+            section_chunks = self.text_splitter.chunk(section_document)
+
+            for chunk_document in section_chunks:
                 chunk_data = {
-                    "text": chunk_text,
+                    "text": chunk_document.content,
                     "chunk_index": len(chunks)
                 }
 
@@ -117,16 +127,19 @@ class DocumentProcessor:
         logger.info(f"Created {len(chunks)} chunks from {len(text_by_section)} {section_type}s")
         return chunks
 
-    async def generate_embedding(self, text: str) -> List[float]:
-        """Gera embedding usando Gemini"""
+    async def generate_embedding(self, text: str) -> list[float]:
+        """Gera embedding de documento usando o Gemini via Agno."""
         try:
-            result = await asyncio.to_thread(
-                genai.embed_content,
-                model="models/gemini-embedding-001",
-                content=text,
-                task_type="retrieval_document"
+            embedding = await asyncio.to_thread(
+                self.embedder.get_embedding,
+                text,
             )
-            return result['embedding']
+            if len(embedding) != settings.GEMINI_EMBEDDING_DIMENSIONS:
+                raise ValueError(
+                    "Embedding dimension mismatch: "
+                    f"expected {settings.GEMINI_EMBEDDING_DIMENSIONS}, got {len(embedding)}"
+                )
+            return embedding
 
         except Exception as e:
             logger.error(f"Error generating embedding: {e}")
@@ -148,7 +161,7 @@ class DocumentProcessor:
                 if not document:
                     raise ValueError(f"Document {document_id} not found")
 
-                document.status = "extracting"
+                document.status = "extracting"  # type: ignore[assignment]
                 await db.commit()
 
                 if document.file_type == "pdf":
@@ -165,12 +178,12 @@ class DocumentProcessor:
                     from app.exceptions import UnprocessableError
                     raise UnprocessableError(f"Tipo de arquivo não suportado: {document.file_type}")
 
-                document.status = "chunking"
+                document.status = "chunking"  # type: ignore[assignment]
                 await db.commit()
 
                 chunks = self.chunk_text(text_by_section, section_type)
 
-                document.status = "embedding"
+                document.status = "embedding"  # type: ignore[assignment]
                 await db.commit()
 
                 for chunk_data in chunks:
@@ -185,7 +198,7 @@ class DocumentProcessor:
                         tenant_id=document.tenant_id,
                     )
 
-                document.status = "completed"
+                document.status = "completed"  # type: ignore[assignment]
                 await db.commit()
 
                 logger.info(f"Document {document.id} processed successfully")
@@ -195,7 +208,7 @@ class DocumentProcessor:
                 repo = DocumentRepository(db)
                 document = await repo.get_by_id_any_tenant(document_id)
                 if document:
-                    document.status = "failed"
+                    document.status = "failed"  # type: ignore[assignment]
                     await db.commit()
             logger.error(f"Error processing document {document_id}: {e}")
             raise

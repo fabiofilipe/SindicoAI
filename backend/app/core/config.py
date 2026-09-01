@@ -1,7 +1,8 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field
-from functools import lru_cache
 import logging
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,9 @@ class Settings(BaseSettings):
 
     # Google Gemini API
     GOOGLE_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
+    GEMINI_EMBEDDING_DIMENSIONS: int = 3072
 
     # Redis
     REDIS_URL: str = "redis://redis:6379/0"
@@ -54,7 +58,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = True
 
-@lru_cache()
+@lru_cache
 def get_settings():
     s = Settings()
     if s.SECRET_KEY == "CHANGE_THIS_IN_PRODUCTION":

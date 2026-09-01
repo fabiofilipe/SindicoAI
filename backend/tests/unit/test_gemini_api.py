@@ -1,51 +1,39 @@
 import os
-import google.generativeai as genai
 
-# Configurar API
+from agno.agent import Agent
+from agno.knowledge.embedder.google import GeminiEmbedder
+from agno.models.google import Gemini
+
 api_key = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=api_key)
 
 print("=" * 60)
 print(" TESTANDO GOOGLE GEMINI API")
 print("=" * 60)
 
-# Teste 1: Listar modelos disponíveis
-print("\n Modelos disponíveis:")
+# Teste 1: Gerar embedding
+print("\n1. Testando geração de embedding:")
 try:
-    count = 0
-    for model in genai.list_models():
-        if 'generateContent' in model.supported_generation_methods:
-            print(f"   ✅ {model.name}")
-            count += 1
-            if count >= 3:  # Mostrar apenas 3 primeiros
-                break
-    print(f"   ✅ {count} modelos encontrados!")
-except Exception as e:
-    print(f"   ❌ Erro: {e}")
-
-# Teste 2: Gerar embedding
-print("\n2️⃣ Testando geração de embedding:")
-try:
-    result = genai.embed_content(
-        model="models/text-embedding-004",
-        content="Qual o horário de funcionamento da piscina?",
-        task_type="retrieval_query"
+    embedder = GeminiEmbedder(
+        id="gemini-embedding-001",
+        task_type="RETRIEVAL_QUERY",
+        dimensions=3072,
+        api_key=api_key,
     )
-    embedding = result['embedding']
-    print(f"    Embedding gerado com sucesso!")
+    embedding = embedder.get_embedding("Qual o horário de funcionamento da piscina?")
+    print("    Embedding gerado com sucesso!")
     print(f"    Dimensões: {len(embedding)}")
     print(f"    Primeiros 5 valores: {embedding[:5]}")
-except Exception as e:
+except Exception as e:  # noqa: BLE001 - diagnostic script reports provider errors
     print(f"   ❌ Erro: {e}")
 
-# Teste 3: Gerar resposta com Gemini 2.5 Flash
-print("\n Testando geração de resposta:")
+# Teste 2: Gerar resposta com Gemini 2.5 Flash
+print("\n2. Testando geração de resposta:")
 try:
-    model = genai.GenerativeModel('gemini-2.5-flash')
-    response = model.generate_content("Responda em uma frase: O que é um condomínio?")
-    print(f"    Resposta gerada com sucesso!")
-    print(f"    Resposta: {response.text}")
-except Exception as e:
+    agent = Agent(model=Gemini(id="gemini-2.5-flash", api_key=api_key))
+    response = agent.run("Responda em uma frase: O que é um condomínio?")
+    print("    Resposta gerada com sucesso!")
+    print(f"    Resposta: {response.content}")
+except Exception as e:  # noqa: BLE001 - diagnostic script reports provider errors
     print(f"   ❌ Erro: {e}")
 
 print("\n" + "=" * 60)

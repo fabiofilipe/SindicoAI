@@ -16,11 +16,7 @@ bcrypt==4.0.1
 email-validator==2.3.0
 
 # IA e LLMs
-google-generativeai>=0.8.5
-langchain==0.3.27
-langchain-google-genai==2.0.10
-langchain-community==0.3.31
-langchain_openai==0.3.35
+agno[google]==3.0.5
 instructor==1.13.0
 
 # PDF processing
@@ -33,11 +29,10 @@ xlrd==2.0.1
 pandas==2.2.3
 python-magic==0.4.27
 
-# RAG e embeddings
-ragas==0.3.9
+# Avaliação do RAG é feita pelo script em tests/rag_evaluation
 
 # Utilities
-pydantic==2.12.4
+pydantic==2.12.5
 pydantic-settings==2.12.0
 python-dotenv==1.2.1
 redis==7.1.0

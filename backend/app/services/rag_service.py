@@ -1,31 +1,47 @@
 import asyncio
-import google.generativeai as genai
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
-from app.models.document import DocumentChunk
-from app.core.config import settings
 import logging
-from typing import List
+from collections.abc import Sequence
+from typing import Any
+
+from agno.agent import Agent
+from agno.knowledge.embedder.google import GeminiEmbedder
+from agno.models.google import Gemini
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-
-genai.configure(api_key=settings.GOOGLE_API_KEY)
 
 
 class RAGService:
     def __init__(self):
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        self.query_embedder = GeminiEmbedder(
+            id=settings.GEMINI_EMBEDDING_MODEL,
+            task_type="RETRIEVAL_QUERY",
+            dimensions=settings.GEMINI_EMBEDDING_DIMENSIONS,
+            api_key=settings.GOOGLE_API_KEY,
+        )
+        self.agent = Agent(
+            model=Gemini(
+                id=settings.GEMINI_MODEL,
+                api_key=settings.GOOGLE_API_KEY,
+            ),
+            markdown=False,
+        )
 
-    async def generate_query_embedding(self, query: str) -> List[float]:
-        """Gera embedding para a pergunta do usuário"""
+    async def generate_query_embedding(self, query: str) -> list[float]:
+        """Gera embedding de consulta usando o Gemini via Agno."""
         try:
-            result = await asyncio.to_thread(
-                genai.embed_content,
-                model="models/gemini-embedding-001",
-                content=query,
-                task_type="retrieval_query"
+            embedding = await asyncio.to_thread(
+                self.query_embedder.get_embedding,
+                query,
             )
-            embedding = result['embedding']
+            if len(embedding) != settings.GEMINI_EMBEDDING_DIMENSIONS:
+                raise ValueError(
+                    "Embedding dimension mismatch: "
+                    f"expected {settings.GEMINI_EMBEDDING_DIMENSIONS}, got {len(embedding)}"
+                )
             logger.info(f"Query embedding generated successfully (dims={len(embedding)})")
             return embedding
         except Exception as e:
@@ -35,10 +51,10 @@ class RAGService:
     async def search_similar_chunks(
         self,
         db: AsyncSession,
-        query_embedding: List[float],
+        query_embedding: list[float],
         tenant_id: str,
         max_results: int = 5
-    ) -> List[tuple]:
+    ) -> Sequence[Any]:
         """Busca chunks similares usando pgvector"""
 
         embedding_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
@@ -74,7 +90,7 @@ class RAGService:
     async def generate_answer(
         self,
         question: str,
-        context_chunks: List[tuple]
+        context_chunks: Sequence[Any]
     ) -> dict:
         """Gera resposta usando Gemini com contexto"""
 
@@ -107,7 +123,10 @@ INSTRUÇÕES PARA A RESPOSTA:
 RESPOSTA:"""
 
         try:
-            response = await asyncio.to_thread(self.model.generate_content, prompt)
+            response = await self.agent.arun(prompt)
+            answer = getattr(response, "content", response)
+            if not isinstance(answer, str) or not answer.strip():
+                raise ValueError("Agno returned an empty response")
 
             # Extrair fontes (removendo duplicatas por filename)
             seen_files = set()
@@ -122,7 +141,7 @@ RESPOSTA:"""
                     })
 
             return {
-                "answer": response.text,
+                "answer": answer,
                 "sources": sources
             }
 

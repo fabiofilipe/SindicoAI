@@ -82,11 +82,11 @@ SindicoAI transforma a gestão condominial através de:
 ```
 Framework:   FastAPI 0.121.3 (Python 3.11+)
 ORM:         SQLAlchemy 2.0.44 (async)
-Validação:   Pydantic 2.12.4
+Validação:   Pydantic 2.12.5
 Database:    PostgreSQL 15 + pgvector 0.4.1 (vetores para IA)
 Cache:       Redis 7.1.0
 Auth:        JWT (python-jose 3.5.0) + bcrypt (passlib 1.7.4)
-IA:          Google Gemini 2.5-flash + RAG (langchain 0.3.27)
+IA:          Google Gemini 2.5-flash + RAG (Agno 3.0.5) + PostgreSQL/pgvector
 Scheduler:   APScheduler 3.10.4
 WebSocket:   FastAPI native WebSocket support
 Migrations:  Alembic 1.17.2
